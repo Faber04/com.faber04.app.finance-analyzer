@@ -94,6 +94,18 @@ Utente: Frontend Developer Senior (JS/TS), Junior React, Neofita investimenti.
 
 **File**: `src/components/Navigation.tsx`
 
+### 9. Versioning & GitHub (100% ✅ — Sessione 2)
+
+- [x] Inizializzazione Git locale
+- [x] Configurazione `.gitignore` (multilevel)
+- [x] Repository GitHub: `com.faber04.finance-analyzer`
+- [x] URL: `https://github.com/Faber04/finance-analyzer`
+
+**File chiave:**
+
+- `.gitignore` (root)
+- `.git/` configurato
+
 ---
 
 ## 🚧 Componenti Da Completare

@@ -21,6 +21,13 @@ Questo file traccia cronologicamente tutte le implementazioni, modifiche e decis
   - `src/components/modules/portfolio/index.ts` — Barrel export
   - `src/pages/PortfolioPage.tsx` — Sostituito placeholder con implementazione completa
 
+#### Setup Git & GitHub
+
+- **Cosa**: Inizializzazione repository Git e pubblicazione su GitHub
+- **Perché**: Versioning essenziale per lo sviluppo collaborativo e storico
+- **File creati**: `.gitignore` (root)
+- **Repo**: `https://github.com/Faber04/finance-analyzer`
+
 ### 🎯 Decisioni Tecniche
 
 1. **Donut chart invece di pie chart**: Più leggibile, spazio al centro come elemento visivo
