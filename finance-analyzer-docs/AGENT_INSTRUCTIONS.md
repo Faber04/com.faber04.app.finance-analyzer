@@ -101,6 +101,11 @@ Sviluppare progressivamente una webapp di analisi finanziaria per investimenti V
    - Nuove features
    - Nuovi comandi
    - Nuove dipendenze
+
+5. Pubblicazione e Versioning (FINE PRIORITY):
+   - Al termine di un intero blocco "Priority", effettua la build dell'app.
+   - Pubblica i file via FTP sul server di produzione (usa credenziali note).
+   - Effettua sempre il commit e push sul branch `main`.
 ```
 
 ---

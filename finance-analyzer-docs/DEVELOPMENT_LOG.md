@@ -20,12 +20,14 @@ Questo file traccia cronologicamente tutte le implementazioni, modifiche e decis
   - `src/components/modules/journal/JournalFilters.tsx` — Search e dropdown filters separato da responsability dal componente List.
   - `src/components/modules/journal/index.ts` — Barrel entrypoint.
   - `src/pages/JournalPage.tsx` — Integrato tutto in pagina e sistemato layout.
+- **Commit**: `[a27e261]` "Priorty 2 completed" (11 files changed, 714 insertions(+), 39 deletions(-))
 
 ### 🎯 Decisioni Tecniche
 
 1. **Approccio MVP Forms**: I Type e Tag inputs si validano per virgole o semplice state local.
 2. **Re-use Zustand Store**: Usato array in-memory persistito come gli altri componenti invece di database reali.
 3. **Typescript Code cleanup**: Fixed un paio di lint errors (store.ts parametro get inutilizzato, React var non usata per React 18+ fast refresh). Build success assicurato.
+4. **Nuovo Workflow Pubblicazione**: Concordato che al termine di CIASCUNA priority list, lo sviluppatore/agent dovrà eseguire la *Build*, caricare i files via *FTP* (su `ftp.faber04.com/finance-analyzer`), e infine effettuare `commit` e `push` su `main`. Questo è stato codificato come *Priority 5* ripetibile.
 
 ### 📝 Note per Prossima Sessione
 
