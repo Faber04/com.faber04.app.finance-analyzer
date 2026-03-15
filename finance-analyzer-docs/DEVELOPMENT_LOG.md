@@ -4,6 +4,36 @@ Questo file traccia cronologicamente tutte le implementazioni, modifiche e decis
 
 ---
 
+## 📅 Sessione 3 - 2026-03-15
+
+### ✅ Implementato
+
+#### Journal Module (COMPLETO)
+
+- **Cosa**: Modulo Journal che permette all'utente di tracciare e retrospettirare le posizioni aperte, finite ed eventuali note di approccio.
+- **Perché**: Priority 2 definita in PROJECT_STATE.md.
+- **File creati**:
+  - `src/components/modules/journal/JournalEntryCard.tsx` — Card visuale per le entry. Utilizza lo stesso design feeling delle card di project con espansione per le retrospect e badges contestuali.
+  - `src/components/modules/journal/JournalEntryForm.tsx` — Form input condizionale che reagisce al tipo "buy/sell" (scoprendo price e quantity inputs) vs. regular note.
+  - `src/components/modules/journal/EditJournalModal.tsx` — Container modal popup della Form per edits in loco, preservando lo switch di contesto.
+  - `src/components/modules/journal/JournalList.tsx` — Logica per filtrare le entry, che richiama il store e itera i component card.
+  - `src/components/modules/journal/JournalFilters.tsx` — Search e dropdown filters separato da responsability dal componente List.
+  - `src/components/modules/journal/index.ts` — Barrel entrypoint.
+  - `src/pages/JournalPage.tsx` — Integrato tutto in pagina e sistemato layout.
+
+### 🎯 Decisioni Tecniche
+
+1. **Approccio MVP Forms**: I Type e Tag inputs si validano per virgole o semplice state local.
+2. **Re-use Zustand Store**: Usato array in-memory persistito come gli altri componenti invece di database reali.
+3. **Typescript Code cleanup**: Fixed un paio di lint errors (store.ts parametro get inutilizzato, React var non usata per React 18+ fast refresh). Build success assicurato.
+
+### 📝 Note per Prossima Sessione
+
+**Priorità 3: API Integration**
+- Creare layer servizi e isolare logic di networking da component/store per `QuotePrice` fetch real-time.
+
+---
+
 ## 📅 Sessione 2 - 2026-03-05
 
 ### ✅ Implementato

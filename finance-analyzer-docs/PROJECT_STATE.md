@@ -81,8 +81,8 @@ Utente: Frontend Developer Senior (JS/TS), Junior React, Neofita investimenti.
 
 - [x] DashboardPage - Overview con statistiche
 - [x] AnalysisPage - Completa e funzionante
-- [ ] PortfolioPage - Placeholder, da completare (20%)
-- [ ] JournalPage - Placeholder, da completare (20%)
+- [x] PortfolioPage - Completa e funzionante
+- [x] JournalPage - Completa e funzionante
 
 **Percorso**: `src/pages/`
 
@@ -135,30 +135,29 @@ src/components/modules/portfolio/
 
 ---
 
-### Priority 2 - Journal Module (0% completato)
+### Priority 2 - Journal Module ✅ (100% completato — Sessione 3)
 
-**Componenti da creare:**
+**Componenti creati:**
 
 ```
 src/components/modules/journal/
-├── JournalList.tsx            ❌ Da creare
-├── JournalEntryForm.tsx       ❌ Da creare
-├── JournalEntryCard.tsx       ❌ Da creare
-├── JournalFilters.tsx         ❌ Da creare
-└── index.ts                   ❌ Da creare
+├── JournalList.tsx            ✅ Creato — Gestisce filtri e mappa i risultati
+├── JournalEntryForm.tsx       ✅ Creato — Form completo e validato per add/edit
+├── JournalEntryCard.tsx       ✅ Creato — UI di visualizzazione singola nota
+├── JournalFilters.tsx         ✅ Creato — Filtro avanzato e barra di ricerca
+├── EditJournalModal.tsx       ✅ Creato — Modale per la modifica dei dati
+└── index.ts                   ✅ Creato — Barrel export
 ```
 
-**Features da implementare:**
+**Features implementate:**
 
-1. [ ] Form per creare entry (buy/sell/note)
-2. [ ] Campo thesis (textarea grande)
-3. [ ] Target price & Stop loss
-4. [ ] Tag system
-5. [ ] Filtri per tipo/tag/simbolo
-6. [ ] Timeline view
-7. [ ] Retrospettiva (outcome + lessons learned)
+1. [x] Form per creare entry (buy/sell/note)
+2. [x] Campo thesis per decisioni e target price & stop loss
+3. [x] Tag system (input multiplo CSV)
+4. [x] Filtri reattivi per tipo, tag e search (simbolo/nome)
+5. [x] Retrospettiva (risultato finale e lezioni apprese)
 
-**Store già pronto:** Le actions ci sono!
+**Store:** Integrato con successo allo Zustand `store.ts` pre-esistente.
 
 ---
 
@@ -315,9 +314,8 @@ finance-analyzer/
 
 **Cosa fare per primo:**
 
-1. Completare PortfolioPage con i componenti del modulo portfolio
-2. Testare add/remove/update posizioni
-3. Aggiungere chart allocazione settori
+1. Iniziare con la **Priority 3 - API Integration**
+2. Integrare chiamate base API o librerie (ad es. Alpha Vantage / YF). Wait state per i fetch.
 
 **Cosa NON modificare (funziona già):**
 

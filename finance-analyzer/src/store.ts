@@ -31,7 +31,7 @@ interface AppStore extends AppState {
 
 export const useAppStore = create<AppStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       // Initial state
       currentAnalysis: null,
       currentRatios: null,
