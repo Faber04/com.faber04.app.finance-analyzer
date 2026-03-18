@@ -5,21 +5,40 @@ import {
   TrendingDown,
   DollarSign,
   AlertCircle,
+  RefreshCw,
 } from "lucide-react";
-import { Card } from "@/components/common";
+import { Card, Button, ApiKeySettings } from "@/components/common";
 import { useAppStore } from "@/store";
 import { PortfolioPosition } from "@/types";
 import {
   formatCurrency,
   formatPercentage,
 } from "@/utils/financial-calculations";
+import { getBulkQuotes } from "@/services";
 import { PositionCard } from "./PositionCard";
 import { EditPositionModal } from "./EditPositionModal";
 
 export const PortfolioList: React.FC = () => {
-  const { portfolio, removePosition } = useAppStore();
+  const { portfolio, removePosition, updatePortfolioPrice } = useAppStore();
   const [positionToEdit, setPositionToEdit] =
     useState<PortfolioPosition | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefreshPrices = async () => {
+    if (portfolio.positions.length === 0) return;
+    setIsRefreshing(true);
+    try {
+      const symbols = portfolio.positions.map((p) => p.symbol);
+      const newPrices = await getBulkQuotes(symbols);
+      Object.entries(newPrices).forEach(([sym, price]) => {
+        updatePortfolioPrice(sym, price);
+      });
+    } catch (err: any) {
+      alert(err.message || "Errore durante l'aggiornamento dei prezzi.");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const {
     positions,
@@ -36,10 +55,11 @@ export const PortfolioList: React.FC = () => {
     }
   };
 
-  // Stato vuoto
   if (positions.length === 0) {
     return (
-      <Card>
+      <div className="space-y-6">
+        <ApiKeySettings />
+        <Card>
         <div className="text-center py-16">
           <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
             <Briefcase size={32} className="text-primary-400" />
@@ -65,12 +85,28 @@ export const PortfolioList: React.FC = () => {
             </div>
           </div>
         </div>
-      </Card>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="space-y-6">
+      <ApiKeySettings />
+      
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-bold text-gray-900">Il Tuo Portfolio</h2>
+        <Button 
+          variant="secondary" 
+          onClick={handleRefreshPrices} 
+          disabled={isRefreshing || positions.length === 0}
+          className="flex items-center gap-2"
+        >
+          <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
+          {isRefreshing ? 'Aggiornamento...' : 'Aggiorna Prezzi'}
+        </Button>
+      </div>
+
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="!p-4">
@@ -180,6 +216,6 @@ export const PortfolioList: React.FC = () => {
         position={positionToEdit}
         onClose={() => setPositionToEdit(null)}
       />
-    </>
+    </div>
   );
 };
