@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 export const getFmpApiKey = (): string => {
   // Priority 1: Check localStorage (user settings)
   const localKey = localStorage.getItem('FMP_API_KEY');

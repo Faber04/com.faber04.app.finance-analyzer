@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Card, Input, Button } from '@/components/common';
+import { Card, Input, Button, ApiKeySettings } from '@/components/common';
 import { CompanyFinancials } from '@/types';
 import { useAppStore } from '@/store';
+import { getCompanyFinancials } from '@/services';
 
 export const FinancialDataInput: React.FC = () => {
   const { setAnalysis, setLoading } = useAppStore();
@@ -25,6 +26,25 @@ export const FinancialDataInput: React.FC = () => {
     sharesOutstanding: 0,
     reportDate: new Date().toISOString().split('T')[0],
   });
+
+  const [isApiLoading, setIsApiLoading] = useState(false);
+
+  const handleAutofill = async () => {
+    if (!formData.symbol) {
+      alert("Inserisci il simbolo prima di autocompletare dai dati API.");
+      return;
+    }
+    
+    setIsApiLoading(true);
+    try {
+      const data = await getCompanyFinancials(formData.symbol);
+      setFormData(prev => ({ ...prev, ...data }));
+    } catch (err: any) {
+      alert(err.message || "Errore durante l'autocompletamento. Verifica il simbolo e l'API Key.");
+    } finally {
+      setIsApiLoading(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -55,34 +75,49 @@ export const FinancialDataInput: React.FC = () => {
   };
 
   return (
-    <Card title="Inserisci i Dati Finanziari" subtitle="Compila i campi con i dati dal bilancio dell'azienda">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Informazioni base */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Input
-            label="Simbolo (Ticker)"
-            name="symbol"
-            value={formData.symbol}
-            onChange={handleChange}
-            placeholder="es. AAPL"
-            required
-          />
-          <Input
-            label="Nome Azienda"
-            name="companyName"
-            value={formData.companyName}
-            onChange={handleChange}
-            placeholder="es. Apple Inc."
-            required
-          />
-          <Input
-            label="Settore"
-            name="sector"
-            value={formData.sector}
-            onChange={handleChange}
-            placeholder="es. Technology"
-          />
-        </div>
+    <div className="space-y-6">
+      <ApiKeySettings />
+      <Card title="Inserisci i Dati Finanziari" subtitle="Compila i campi con i dati dal bilancio dell'azienda">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Informazioni base */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div className="flex gap-2 items-end">
+              <div className="flex-1">
+                <Input
+                  label="Simbolo (Ticker)"
+                  name="symbol"
+                  value={formData.symbol}
+                  onChange={handleChange}
+                  placeholder="es. AAPL"
+                  required
+                />
+              </div>
+              <Button 
+                type="button" 
+                variant="secondary" 
+                className="mb-[2px] shrink-0" 
+                onClick={handleAutofill}
+                disabled={isApiLoading}
+              >
+                {isApiLoading ? 'Wait...' : 'Auto-Fill'}
+              </Button>
+            </div>
+            <Input
+              label="Nome Azienda"
+              name="companyName"
+              value={formData.companyName}
+              onChange={handleChange}
+              placeholder="es. Apple Inc."
+              required
+            />
+            <Input
+              label="Settore"
+              name="sector"
+              value={formData.sector}
+              onChange={handleChange}
+              placeholder="es. Technology"
+            />
+          </div>
 
         {/* Dati di Conto Economico */}
         <div className="border-t pt-4 mt-4">
@@ -239,6 +274,7 @@ export const FinancialDataInput: React.FC = () => {
           </Button>
         </div>
       </form>
-    </Card>
+      </Card>
+    </div>
   );
 };
