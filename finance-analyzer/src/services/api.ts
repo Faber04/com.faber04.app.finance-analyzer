@@ -23,7 +23,7 @@ export const removeFmpApiKey = (): void => {
   localStorage.removeItem('FMP_API_KEY');
 };
 
-const BASE_URL = 'https://financialmodelingprep.com/api/v3';
+const BASE_URL = 'https://financialmodelingprep.com/stable';
 
 export async function fetchFromFmp<T>(endpoint: string): Promise<T> {
   const apiKey = getFmpApiKey();

@@ -10,7 +10,7 @@ Questo file documenta tutti gli errori incontrati durante lo sviluppo, le loro s
 
 | ID | Tipo | Descrizione Breve | Status |
 |----|------|-------------------|--------|
-| - | - | Nessun errore registrato | - |
+| ERROR-001 | API | FMP Legacy Endpoint (403 Forbidden) | ✅ Risolto |
 
 ---
 
@@ -103,69 +103,76 @@ Questo file documenta tutti gli errori incontrati durante lo sviluppo, le loro s
 
 ---
 
-## 🎯 Categorie Errori Comuni
+## 🔴 ERROR-001 - FMP Legacy Endpoint (403 Forbidden)
 
-### TypeScript Errors
-[Nessuno registrato]
+**Data**: 2026-03-20
+**Sessione**: 5
+**Severità**: 🔴 Critico
+**Status**: ✅ Risolto
 
-### Runtime Errors
-[Nessuno registrato]
+### 📝 Descrizione
 
-### Build Errors
-[Nessuno registrato]
+Le chiamate alle API di Financial Modeling Prep (FMP) fallivano con errore HTTP 403 Forbidden e un messaggio indicante che l'endpoint utilizzato era "Legacy" e non più supportato per i nuovi account (creati dopo il 31 agosto 2025).
 
-### Logic Errors (Bug)
-[Nessuno registrato]
+### 🔍 Come si Manifesta
 
-### Performance Issues
-[Nessuno registrato]
+**Sintomi:**
+- Cliccando su "Auto-Fill" nella pagina Analisi, i campi non venivano popolati.
+- Messaggio di errore: `Legacy Endpoint : Due to Legacy endpoints being no longer supported...`
 
-### UI/UX Bugs
-[Nessuno registrato]
+**Condizioni:**
+- Qualsiasi chiamata agli endpoint `/v3/` usando path parameters per il simbolo (es. `/v3/profile/AAPL`).
+
+### 💻 Stack Trace / Messaggio Errore
+
+```json
+{
+    "Error Message": "Legacy Endpoint : Due to Legacy endpoints being no longer supported - This endpoint is only available for legacy users who have valid subscriptions prior August 31, 2025. Please visit our documentation page https://site.financialmodelingprep.com/developer/docs for our current APIs. "
+}
+```
+
+### 🕵️ Root Cause
+
+**Causa principale:**
+FMP ha rimosso il supporto per gli endpoint basati su path parameter (`/api/v3/endpoint/SYMBOL`) per tutti i nuovi utenti, obbligando l'uso della versione `/stable/` con query parameters (`/stable/endpoint?symbol=SYMBOL`).
+
+### ✅ Soluzione
+
+**Fix applicato:**
+1. Migrazione della `BASE_URL` in `api.ts` a `https://financialmodelingprep.com/stable`.
+2. Aggiornamento di tutti i fetcher in `fmp.ts` per utilizzare il parametro di ricerca `?symbol=`.
+
+**File modificati:**
+- `src/services/api.ts` - Aggiornata BASE_URL.
+- `src/services/fmp.ts` - Aggiornati path degli endpoint.
+
+### 🛡️ Prevenzione Futura
+
+**Come evitare questo errore:**
+1. Consultare sempre la documentazione "Stable" delle API di terze parti.
+2. Monitorare i messaggi di deprecazione nei log delle API.
+
+**Checklist per l'Agent:**
+- [x] Verificare se l'endpoint è stabile o legacy.
+- [x] Controllare le comunicazioni dei provider API.
+
+---
+
+## 📊 Statistiche
+
+**Totale errori registrati**: 1
+**Errori risolti**: 1
+**Errori aperti**: 0
+**Errori critici**: 1
 
 ---
 
-## 🔍 Come Usare Questo File
+## 🎓 Lezioni Apprese
 
-### Per l'Agent:
-
-**PRIMA di implementare qualcosa:**
-1. Cerca in questo file se errori simili sono già stati incontrati
-2. Leggi le soluzioni e pattern per evitare errori noti
-3. Segui le checklist di prevenzione
-
-**QUANDO incontri un errore:**
-1. Crea un nuovo entry con ID progressivo (ERROR-001, ERROR-002, ecc.)
-2. Documenta tutto: sintomi, causa, soluzione
-3. Aggiungi alla checklist di prevenzione
-4. Aggiorna l'indice in cima al file
-5. Incrementa le statistiche
-
-**FORMATO ID:**
-- ERROR-XXX dove XXX è numero progressivo a 3 cifre
-- Es: ERROR-001, ERROR-002, ..., ERROR-099, ERROR-100
-
-### Per lo Sviluppatore:
-
-**Prima di fare debug:**
-1. Controlla se l'errore è già documentato qui
-2. Segui la soluzione già testata
-3. Se l'errore persiste, aggiorna il documento
-
-**Dopo aver risolto un bug:**
-1. Documenta nel formato sopra
-2. Aggiungi note su come prevenirlo
-3. Considera se serve un test automatico
+Le API di Financial Modeling Prep hanno una politica di deprecazione aggressiva per i nuovi account. Gli endpoint `/v3/` documentati in molti tutorial sono ora considerati Legacy. Usare sempre `/stable/` per garantire compatibilità.
 
 ---
 
-## 🎓 Lezioni Apprese (Quando ci saranno errori)
-
-Questa sezione conterrà pattern ricorrenti e lezioni generali dopo aver incontrato e risolto vari errori.
-
-**Al momento**: Nessun errore incontrato, progetto pulito al primo tentativo! ✅
-
----
 
 ## 📝 Note
 

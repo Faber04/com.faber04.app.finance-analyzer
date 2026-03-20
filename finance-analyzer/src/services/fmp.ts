@@ -10,19 +10,19 @@ import { CompanyFinancials } from '@/types';
 
 // Fetchers Specifici
 export const fetchCompanyProfile = (symbol: string) => 
-  fetchFromFmp<FMPProfile[]>(`/profile/${symbol.toUpperCase()}`);
+  fetchFromFmp<FMPProfile[]>(`/profile?symbol=${symbol.toUpperCase()}`);
 
 export const fetchIncomeStatement = (symbol: string) => 
-  fetchFromFmp<FMPIncomeStatement[]>(`/income-statement/${symbol.toUpperCase()}?limit=1`);
+  fetchFromFmp<FMPIncomeStatement[]>(`/income-statement?symbol=${symbol.toUpperCase()}&limit=1`);
 
 export const fetchBalanceSheet = (symbol: string) => 
-  fetchFromFmp<FMPBalanceSheet[]>(`/balance-sheet-statement/${symbol.toUpperCase()}?limit=1`);
+  fetchFromFmp<FMPBalanceSheet[]>(`/balance-sheet-statement?symbol=${symbol.toUpperCase()}&limit=1`);
 
 export const fetchKeyMetrics = (symbol: string) => 
-  fetchFromFmp<FMPKeyMetrics[]>(`/key-metrics/${symbol.toUpperCase()}?limit=1`);
+  fetchFromFmp<FMPKeyMetrics[]>(`/key-metrics?symbol=${symbol.toUpperCase()}&limit=1`);
 
 export const fetchQuote = (symbol: string) => 
-  fetchFromFmp<FMPQuote[]>(`/quote/${symbol.toUpperCase()}`);
+  fetchFromFmp<FMPQuote[]>(`/quote?symbol=${symbol.toUpperCase()}`);
 
 /**
  * Funzione aggregatrice che scarica tutti i dati fondamentali da FMP
@@ -99,7 +99,7 @@ export async function getBulkQuotes(symbols: string[]): Promise<Record<string, n
   if (symbols.length === 0) return {};
 
   const uniqueSymbols = Array.from(new Set(symbols)).join(',');
-  const quotesData = await fetchFromFmp<FMPQuote[]>(`/quote/${uniqueSymbols}`);
+  const quotesData = await fetchFromFmp<FMPQuote[]>(`/quote?symbol=${uniqueSymbols}`);
   
   const priceMap: Record<string, number> = {};
   quotesData.forEach(q => {

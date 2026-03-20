@@ -1,8 +1,8 @@
 # 📊 Finance Analyzer - Stato del Progetto
 
-> **Ultimo aggiornamento**: 2026-03-05
-> **Versione**: 0.1.0 (MVP)
-> **Stato generale**: ✅ Base funzionante, pronta per espansione
+> **Ultimo aggiornamento**: 2026-03-20
+> **Versione**: 0.1.1 (Bugfix FMP API)
+> **Stato generale**: ✅ Base funzionante, API migrata a versione stabile
 
 ---
 

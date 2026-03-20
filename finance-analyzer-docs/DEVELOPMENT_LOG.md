@@ -4,6 +4,18 @@ Questo file traccia cronologicamente tutte le implementazioni, modifiche e decis
 
 ---
 
+## 📅 Sessione 5 - 2026-03-20
+
+### 🐛 Bug Risolti
+
+#### ERROR-001: FMP Legacy Endpoint (403 Forbidden)
+- **Problema**: L'Auto-Fill falliva con errore 403 causa endpoint legacy non più supportati per nuovi account.
+- **Soluzione**: Migrata l'integrazione FMP alla versione `/stable/` utilizzando parametri di query (`?symbol=`) invece di path parameters.
+- **File modificati**: `src/services/api.ts`, `src/services/fmp.ts`.
+- **Note**: Documentato dettagliatamente in `ERROR_LOG.md`.
+
+---
+
 ## 📅 Sessione 4 - 2026-03-18
 
 ### ✅ Implementato
@@ -259,9 +271,9 @@ Questo file traccia cronologicamente tutte le implementazioni, modifiche e decis
 - **File totali**: ~30
 - **Componenti React**: 12
 - **Types definiti**: 8
-- **Utility functions**: 7
-- **Linee di codice**: ~1,500
-- **Test coverage**: 0% (da implementare)
+- **Ultimo aggiornamento**: 2026-03-20
+> **Versione**: 0.1.1 (Bugfix FMP API)
+> **Stato generale**: ✅ Base funzionante, API migrata a versione stabile)
 
 ### 🐛 Problemi Riscontrati
 
