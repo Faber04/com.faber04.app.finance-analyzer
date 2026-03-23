@@ -1,12 +1,20 @@
 import React from 'react';
 import { Card } from '@/components/common';
 import { useAppStore } from '@/store';
-import { TrendingUp, TrendingDown, DollarSign, FileText } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, FileText, X, Briefcase } from 'lucide-react';
 import { formatCurrency, formatPercentage } from '@/utils/financial-calculations';
 import { SectorPieChart, GainLossBarChart } from '@/components/charts';
 
+// Mappa colori per raccomandazione
+const RECOMMENDATION_STYLES: Record<string, { label: string; color: string; bg: string }> = {
+  'strong-buy': { label: 'Strong Buy', color: 'text-emerald-700', bg: 'bg-emerald-100' },
+  'buy':        { label: 'Buy',        color: 'text-green-700',   bg: 'bg-green-100'   },
+  'hold':       { label: 'Hold',       color: 'text-yellow-700',  bg: 'bg-yellow-100'  },
+  'avoid':      { label: 'Avoid',      color: 'text-red-700',     bg: 'bg-red-100'     },
+};
+
 export const DashboardPage: React.FC = () => {
-  const { portfolio, journalEntries, currentAnalysis } = useAppStore();
+  const { portfolio, journalEntries, recentAnalyses, removeRecentAnalysis } = useAppStore();
 
   const stats = [
     {
@@ -78,46 +86,86 @@ export const DashboardPage: React.FC = () => {
       {/* Quick Info & Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Allocazione Settori */}
-        <SectorPieChart 
+        <SectorPieChart
           title="Allocazione per Settore"
           subtitle="Distribuzione valore portfolio"
-          data={portfolio.positions.map(p => ({
+          data={portfolio.positions.map((p) => ({
             name: p.sector || 'N/A',
-            value: p.shares * p.currentPrice
+            value: p.shares * p.currentPrice,
           }))}
           valueFormatter={formatCurrency}
         />
 
         {/* Gain/Loss per Posizione */}
-        <GainLossBarChart 
+        <GainLossBarChart
           title="Performance per Posizione"
           subtitle="Guadagno/Perdita in Euro"
-          data={portfolio.positions.map(p => ({
+          data={portfolio.positions.map((p) => ({
             name: p.symbol,
-            value: (p.currentPrice - p.avgCostPerShare) * p.shares
+            value: (p.currentPrice - p.avgCostPerShare) * p.shares,
           }))}
           valueFormatter={formatCurrency}
         />
 
-        {/* Ultima Analisi */}
-        <Card title="Ultima Analisi">
-          {currentAnalysis ? (
-            <div className="space-y-2">
-              <div>
-                <span className="font-semibold text-gray-900">
-                  {currentAnalysis.companyName}
-                </span>
-                <span className="text-gray-600 ml-2">({currentAnalysis.symbol})</span>
-              </div>
-              <div className="text-sm text-gray-600">
-                Prezzo: <span className="font-semibold">${currentAnalysis.currentPrice}</span>
-              </div>
-              <div className="text-sm text-gray-600">
-                Settore: {currentAnalysis.sector || 'N/A'}
-              </div>
-            </div>
-          ) : (
+        {/* Analisi Recenti */}
+        <Card title="Analisi Recenti" subtitle="Ultime aziende analizzate">
+          {recentAnalyses.length === 0 ? (
             <p className="text-gray-500 italic">Nessuna analisi effettuata ancora</p>
+          ) : (
+            <ul className="space-y-2">
+              {recentAnalyses.map((analysis) => {
+                const rec =
+                  RECOMMENDATION_STYLES[analysis.recommendation] ??
+                  RECOMMENDATION_STYLES['hold'];
+                const date = new Date(analysis.analyzedAt).toLocaleDateString('it-IT', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                });
+                return (
+                  <li
+                    key={analysis.id}
+                    className="flex items-center justify-between gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    {/* Info azienda */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-gray-900 truncate">
+                          {analysis.companyName}
+                        </span>
+                        <span className="text-xs text-gray-500 font-mono">
+                          {analysis.symbol}
+                        </span>
+                        <span
+                          className={`text-xs font-semibold px-2 py-0.5 rounded-full ${rec.bg} ${rec.color}`}
+                        >
+                          {rec.label}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                        <span>${analysis.currentPrice.toFixed(2)}</span>
+                        <span>
+                          Score:{' '}
+                          <strong className="text-gray-700">{analysis.overallScore}/100</strong>
+                        </span>
+                        {analysis.sector && <span>{analysis.sector}</span>}
+                        <span>{date}</span>
+                      </div>
+                    </div>
+
+                    {/* Pulsante rimozione */}
+                    <button
+                      onClick={() => removeRecentAnalysis(analysis.id)}
+                      className="flex-shrink-0 p-1.5 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                      title="Rimuovi dall'elenco"
+                      aria-label={`Rimuovi analisi di ${analysis.companyName}`}
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
           )}
         </Card>
 
@@ -146,6 +194,3 @@ export const DashboardPage: React.FC = () => {
     </div>
   );
 };
-
-// Import Briefcase icon
-import { Briefcase } from 'lucide-react';

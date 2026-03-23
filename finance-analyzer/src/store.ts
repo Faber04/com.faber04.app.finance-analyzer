@@ -4,7 +4,8 @@ import {
   AppState, 
   CompanyFinancials, 
   PortfolioPosition, 
-  JournalEntry 
+  JournalEntry,
+  RecentAnalysis
 } from '@/types';
 import { calculateFinancialRatios, analyzeValueInvesting } from '@/utils/financial-calculations';
 
@@ -12,6 +13,7 @@ interface AppStore extends AppState {
   // Actions per analisi
   setAnalysis: (data: CompanyFinancials) => void;
   clearAnalysis: () => void;
+  removeRecentAnalysis: (id: string) => void;
   
   // Actions per portfolio
   addPosition: (position: Omit<PortfolioPosition, 'id'>) => void;
@@ -36,6 +38,7 @@ export const useAppStore = create<AppStore>()(
       currentAnalysis: null,
       currentRatios: null,
       currentScore: null,
+      recentAnalyses: [],
       portfolio: {
         positions: [],
         totalValue: 0,
@@ -51,11 +54,29 @@ export const useAppStore = create<AppStore>()(
       setAnalysis: (data) => {
         const ratios = calculateFinancialRatios(data);
         const score = analyzeValueInvesting(data, ratios);
-        set({
-          currentAnalysis: data,
-          currentRatios: ratios,
-          currentScore: score,
-          error: null,
+
+        const newEntry: RecentAnalysis = {
+          id: `analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          symbol: data.symbol,
+          companyName: data.companyName,
+          sector: data.sector,
+          currentPrice: data.currentPrice,
+          overallScore: score.overallScore,
+          recommendation: score.recommendation,
+          analyzedAt: new Date().toISOString(),
+        };
+
+        set((state) => {
+          // Rimuovi eventuale voce precedente per lo stesso symbol, poi aggiungi in cima (max 10)
+          const filtered = state.recentAnalyses.filter((a) => a.symbol !== data.symbol);
+          const updated = [newEntry, ...filtered].slice(0, 10);
+          return {
+            currentAnalysis: data,
+            currentRatios: ratios,
+            currentScore: score,
+            recentAnalyses: updated,
+            error: null,
+          };
         });
       },
 
@@ -65,6 +86,12 @@ export const useAppStore = create<AppStore>()(
           currentRatios: null,
           currentScore: null,
         });
+      },
+
+      removeRecentAnalysis: (id) => {
+        set((state) => ({
+          recentAnalyses: state.recentAnalyses.filter((a) => a.id !== id),
+        }));
       },
 
       // Portfolio
@@ -142,6 +169,7 @@ export const useAppStore = create<AppStore>()(
       partialize: (state) => ({
         portfolio: state.portfolio,
         journalEntries: state.journalEntries,
+        recentAnalyses: state.recentAnalyses,
       }),
     }
   )

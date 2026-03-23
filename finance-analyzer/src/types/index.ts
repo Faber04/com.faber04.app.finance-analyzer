@@ -87,6 +87,18 @@ export interface Portfolio {
   totalGainLossPercent: number;
 }
 
+// Storico analisi recenti
+export interface RecentAnalysis {
+  id: string;
+  symbol: string;
+  companyName: string;
+  sector?: string;
+  currentPrice: number;
+  overallScore: number;
+  recommendation: 'strong-buy' | 'buy' | 'hold' | 'avoid';
+  analyzedAt: string; // ISO date
+}
+
 // Investment Journal
 export interface JournalEntry {
   id: string;
@@ -115,6 +127,9 @@ export interface AppState {
   currentAnalysis: CompanyFinancials | null;
   currentRatios: FinancialRatios | null;
   currentScore: ValueInvestingScore | null;
+
+  // Storico analisi recenti
+  recentAnalyses: RecentAnalysis[];
   
   // Portfolio
   portfolio: Portfolio;
