@@ -52,7 +52,7 @@ export const DashboardPage: React.FC = () => {
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-primary-600 to-primary-800 rounded-lg p-8 text-white">
-        <h1 className="text-3xl font-bold mb-2">Benvenuto nel tuo com.faber04.finance-analyzer</h1>
+        <h1 className="text-3xl font-bold mb-2">Benvenuto nel tuo Finance Analyzer</h1>
         <p className="text-primary-100">
           Analizza aziende, gestisci il tuo portfolio e tieni traccia delle tue decisioni di investimento
         </p>
