@@ -52,6 +52,10 @@ npm install
 # 3. Configura le variabili di ambiente
 echo "VITE_FMP_API_KEY=tua_api_key_qui" > .env.local
 
+# 4. Avvia il server di sviluppo
+npm run dev
+```
+
 ### Configurazione API Key
 L'applicazione richiede una API Key di **Financial Modeling Prep**. Puoi configurarla in due modi:
 1. **Nell'App**: Usa il componente "Impostazioni API" direttamente nella dashboard o nella pagina Analisi (i dati vengono salvati nel browser).
@@ -59,8 +63,8 @@ L'applicazione richiede una API Key di **Financial Modeling Prep**. Puoi configu
 
 ## 📁 Struttura del Progetto
 
-- **[finance-analyzer/](file:///Users/fabiobernardi/Development/web/com.faber04.finance-analyzer/finance-analyzer/)**: Codice sorgente dell'applicazione (Vite + React + TS).
-- **[finance-analyzer-docs/](file:///Users/fabiobernardi/Development/web/com.faber04.finance-analyzer/finance-analyzer-docs/)**: Documentazione tecnica, log di sviluppo e istruzioni per l'AI Agent.
+- **[finance-analyzer/](finance-analyzer/)**: Codice sorgente dell'applicazione (Vite + React + TS).
+- **[finance-analyzer-docs/](finance-analyzer-docs/)**: Documentazione tecnica, log di sviluppo e istruzioni per l'AI Agent.
 - **README.md**: Questo file.
 
 ## 🧮 Criteri di Valutazione (Scoring)
@@ -98,4 +102,3 @@ MIT - Libero utilizzo per scopi educativi e personali.
 ---
 
 **Sviluppato da @Faber04** 📈
-```
