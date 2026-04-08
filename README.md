@@ -1,4 +1,4 @@
-# 💰 com.faber04.finance-analyzer
+# 💰 Finance Analyzer
 
 Una webapp professionale per analizzare investimenti, capire i bilanci delle aziende e applicare i principi di Value Investing di Benjamin Graham e Warren Buffett.
 
@@ -8,30 +8,34 @@ Una webapp professionale per analizzare investimenti, capire i bilanci delle azi
 ## 🎯 Caratteristiche Implementate
 
 ### ✅ Analisi Fondamentale Automatica
+
 - **Auto-Fill via API**: Inserisci il simbolo e l'app recupera automaticamente gli ultimi 5 anni di bilanci da Financial Modeling Prep (FMP).
 - **Calcolo Ratio**: P/E, P/B, PS, ROE, ROA, Debt/Equity, Current Ratio.
 - **Value Score**: Sistema di scoring (0-100) basato sui criteri Graham/Buffett con raccomandazione finale.
 - **Reset Intelligente**: Il form si resetta automaticamente ad ogni nuovo accesso per garantire un'analisi pulita.
 
 ### ✅ Portfolio Tracker
+
 - **Gestione Posizioni**: Aggiungi e monitora le tue posizioni azionarie.
 - **Performance Real-time**: Calcolo automatico di gain/loss (euro e %) grazie al refresh dei prezzi via API.
 - **Visualizzazione Dati**: Grafico a torta per l'allocazione settoriale e grafico a barre per la performance delle singole posizioni.
 
 ### ✅ Investment Journal
+
 - **Diario Decisionale**: Documenta la tua thesis prima dell'acquisto.
 - **Tag System**: Organizza le tue note per categorie.
 - **Retrospettiva**: Analizza l'esito dei tuoi investimenti e le lezioni apprese.
 
 ### ✅ Dashboard & Analisi Recenti
+
 - **Analisi Recenti**: Storico persistente (localStorage) delle ultime 10 aziende analizzate, con score e raccomandazione visibili subito in homepage.
 - **Overview Statistiche**: Visualizzazione immediata di valore totale, gain/loss e note del portfolio.
 - **Charts**: Grafici interattivi con Recharts per una migliore comprensione del rischio e del rendimento.
 
-
 ## 🚀 Quick Start
 
 ### Prerequisiti
+
 - Node.js (versione 18 o superiore)
 - npm o yarn
 
@@ -94,3 +98,4 @@ MIT - Libero utilizzo per scopi educativi e personali.
 ---
 
 **Sviluppato da @Faber04** 📈
+```
