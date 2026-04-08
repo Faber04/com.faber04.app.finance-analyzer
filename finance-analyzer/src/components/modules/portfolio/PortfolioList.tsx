@@ -161,8 +161,7 @@ export const PortfolioList: React.FC = () => {
               <p
                 className={`text-lg font-bold ${isPositive ? "text-success-700" : "text-danger-700"}`}
               >
-                {isPositive ? "+" : ""}
-                {formatCurrency(totalGainLoss)}
+                {formatCurrency(totalGainLoss, 2, true)}
               </p>
             </div>
           </div>
@@ -188,7 +187,6 @@ export const PortfolioList: React.FC = () => {
               <p
                 className={`text-lg font-bold ${isPositive ? "text-success-700" : "text-danger-700"}`}
               >
-                {isPositive ? "+" : ""}
                 {formatPercentage(totalGainLossPercent)}
               </p>
             </div>

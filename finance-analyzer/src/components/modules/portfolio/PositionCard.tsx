@@ -125,14 +125,12 @@ export const PositionCard: React.FC<PositionCardProps> = ({
           <span
             className={`font-bold text-lg ${isPositive ? "text-success-700" : "text-danger-700"}`}
           >
-            {isPositive ? "+" : ""}
-            {formatCurrency(gainLoss)}
+            {formatCurrency(gainLoss, 2, true)}
           </span>
           <span
             className={`ml-2 text-sm ${isPositive ? "text-success-600" : "text-danger-600"}`}
           >
-            ({isPositive ? "+" : ""}
-            {formatPercentage(gainLossPercent)})
+            ({formatPercentage(gainLossPercent)})
           </span>
         </div>
       </div>

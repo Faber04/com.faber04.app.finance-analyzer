@@ -132,13 +132,18 @@ export const analyzeValueInvesting = (
 /**
  * Formatta valori monetari
  */
-export const formatCurrency = (value: number, decimals: number = 2): string => {
-  return new Intl.NumberFormat('it-IT', {
+export const formatCurrency = (value: number, decimals: number = 2, includeSign: boolean = false): string => {
+  const formatted = new Intl.NumberFormat('it-IT', {
     style: 'currency',
     currency: 'EUR',
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   }).format(value);
+
+  if (includeSign && value >= 0) {
+    return `+${formatted}`;
+  }
+  return formatted;
 };
 
 /**
