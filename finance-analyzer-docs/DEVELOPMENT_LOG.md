@@ -95,12 +95,12 @@
 ## 📅 Sessione 14 - 2026-04-10
 
 ### 🐛 Fix Deploy Asset Vuoti
-- **Cosa**: Risolto il problema della pagina bianca in produzione dovuto a file JS/CSS caricati come zero-byte sul server.
-- **Perché**: I bundle `index-DyVNGEz5.js` e `index-DitpbQiM.css` erano presenti ma vuoti, causando il caricamento di script e stili nulli.
+- **Cosa**: Risolto il problema della pagina bianca in produzione dovuto a file JS/CSS caricati come zero-byte o troncati sul server.
+- **Perché**: I bundle `index-DyVNGEz5.js`, `index-DitpbQiM.css`, `ui-DWgJWPSx.js` e `vendor-w69AXDQj.js` erano stati caricati in modo incompleto via FTP.
 - **Modifiche effettuate**:
-  - Ricaricati manualmente i file `index-DyVNGEz5.js` e `index-DitpbQiM.css` via FTP con `curl`.
-  - Verificato che il server risponda con `content-length` corretto per entrambi i file.
-- **Risultato**: App ora carica correttamente in produzione.
+  - Ricaricati manualmente i file critici via FTP con Python `ftplib`, che ha scritto i contenuti completi correttamente.
+  - Verificato che il server HTTP ora serva le risorse con `content-length` corretto, bypassando la cache.
+- **Risultato**: produzione ora serve asset completi e la pagina principale è raggiungibile.
 - **File modificati**: Nessuno (solo deploy).
 
 ---
