@@ -15,7 +15,16 @@
 
 ---
 
-## 📅 Sessione 7 - 2026-04-09
+## 📅 Sessione 9 - 2026-04-10
+
+### ✅ Task Ad-Hoc / Modifiche Extra
+
+#### Aggiunta Hamburger Menu Mobile al Backlog
+- **Cosa**: Aggiunta voce al backlog per implementare un hamburger menu per dispositivi mobili invece delle icone in header.
+- **Perché**: Richiesta utente per migliorare l'UX mobile sostituendo le icone con un menu hamburger.
+- **File modificati**: `PROJECT_STATE.md`.
+
+---
 
 ### ✅ Implementato
 

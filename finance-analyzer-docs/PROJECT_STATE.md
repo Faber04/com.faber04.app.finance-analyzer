@@ -1,6 +1,6 @@
 # 📊 com.faber04.finance-analyzer - Stato del Progetto
 
-> **Ultimo aggiornamento**: 2026-04-09
+> **Ultimo aggiornamento**: 2026-04-10
 > **Versione**: 0.3.1 (Rebranding & Deploy Consolidato)
 > **Stato generale**: ✅ Applicazione completa, verificata e pubblicata online
 
@@ -238,6 +238,7 @@ Pubblicare la webapp su dominio live tramite FTP al completamento della Priority
 - [x] Reset Analisi al caricamento — pulire i dati finanziari e nascondere il pannello dei risultati ogni volta che si accede alla sezione "Analisi Fondamentale"
 - [x] Rimuovere box "Financial Modeling Prep API Key" — eliminare ovunque il box per l'inserimento della API Key
 - [x] Pagina Settings — creare una sezione dedicata alle impostazioni (es. API Key) con menu laterale e pannelli per argomento, rimuovendo le impostazioni sparse dalle altre viste
+- [ ] Hamburger menu mobile — sostituire le icone in header con un hamburger menu per dispositivi mobili
 - [ ] Screener multi-azienda
 - [ ] Comparazione side-by-side
 - [ ] Export PDF reports
