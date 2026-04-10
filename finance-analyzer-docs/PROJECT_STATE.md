@@ -1,7 +1,7 @@
 # 📊 com.faber04.finance-analyzer - Stato del Progetto
 
 > **Ultimo aggiornamento**: 2026-04-10
-> **Versione**: 0.3.1 (Rebranding & Deploy Consolidato)
+> **Versione**: 0.3.2 (Hamburger Menu & Deploy)
 > **Stato generale**: ✅ Applicazione completa, verificata e pubblicata online
 
 

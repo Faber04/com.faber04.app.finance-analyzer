@@ -37,6 +37,20 @@
 
 ---
 
+## 📅 Sessione 10 - 2026-04-10
+
+### ✅ Deploy Pubblicazione Post-Hamburger Menu
+- **Cosa**: Build di produzione e deploy via FTP dopo implementazione hamburger menu mobile.
+- **Perché**: Pubblicazione delle nuove features sul dominio live.
+- **Modifiche effettuate**:
+  - Eseguita build di produzione (`npm run build`).
+  - Caricati file via FTP in `/www.faber04.com/app/finance-analyzer/` usando lftp.
+  - File pubblicati: `index.html`, `assets/index-DitpbQiM.css`, `assets/index-BPuoLNae.js`.
+- **URL**: `https://www.faber04.com/app/finance-analyzer/`
+- **File modificati**: Nessuno (solo deploy).
+
+---
+
 ### ✅ Implementato
 
 #### Header Rebranding Verification & Build
