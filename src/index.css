@@ -29,3 +29,42 @@ body {
 * {
   box-sizing: border-box;
 }
+
+/* Reusable motion utilities for panel transitions across the app */
+.ui-anim-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: grid-template-rows 280ms ease, opacity 220ms ease, transform 280ms ease;
+}
+
+.ui-anim-collapse[data-state='open'] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ui-anim-collapse-content {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ui-anim-fade-slide {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 260ms ease, transform 260ms ease;
+}
+
+.ui-anim-fade-slide[data-state='open'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-anim-collapse,
+  .ui-anim-fade-slide {
+    transition: none;
+    transform: none;
+  }
+}

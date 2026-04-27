@@ -4,7 +4,17 @@ import { CompanyFinancials } from '@/types';
 import { useAppStore } from '@/store';
 import { getCompanyFinancials } from '@/services';
 
-export const FinancialDataInput: React.FC = () => {
+interface FinancialDataInputProps {
+  isCollapsed?: boolean;
+  onStartNewSearch?: () => void;
+  onAnalysisSuccess?: () => void;
+}
+
+export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
+  isCollapsed = false,
+  onStartNewSearch,
+  onAnalysisSuccess,
+}) => {
   const { setAnalysis, setLoading } = useAppStore();
   
   const [formData, setFormData] = useState<Partial<CompanyFinancials>>({
@@ -92,13 +102,23 @@ export const FinancialDataInput: React.FC = () => {
     setTimeout(() => {
       setAnalysis(formData as CompanyFinancials);
       setLoading(false);
+      onAnalysisSuccess?.();
     }, 500);
   };
 
   return (
     <div className="space-y-6">
-      <Card title="Inserisci i Dati Finanziari" subtitle="Compila i campi con i dati dal bilancio dell'azienda">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <Card>
+        <div className="mb-4">
+          <h3 className="text-xl font-bold text-gray-900">Inserisci i Dati Fondamentali</h3>
+          <p className="text-sm text-gray-600 mt-1">
+            Compila i campi con i dati dal bilancio dell'azienda
+          </p>
+        </div>
+
+        <div className="ui-anim-collapse" data-state={isCollapsed ? 'closed' : 'open'}>
+          <div className="ui-anim-collapse-content">
+            <form onSubmit={handleSubmit} className="space-y-4">
           {/* Informazioni base */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <div className="flex gap-2 items-end">
@@ -294,6 +314,19 @@ export const FinancialDataInput: React.FC = () => {
           </Button>
         </div>
       </form>
+          </div>
+        </div>
+
+        <div className="ui-anim-fade-slide mt-4" data-state={isCollapsed ? 'open' : 'closed'}>
+          {isCollapsed && (
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <span>Analisi completata. Avvia una nuova ricerca per inserire nuovi dati.</span>
+              <Button type="button" variant="secondary" size="sm" onClick={onStartNewSearch}>
+                Nuova Ricerca
+              </Button>
+            </div>
+          )}
+        </div>
       </Card>
     </div>
   );
