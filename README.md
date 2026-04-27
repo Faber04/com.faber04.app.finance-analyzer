@@ -3,7 +3,8 @@
 Una webapp professionale per analizzare investimenti, capire i bilanci delle aziende e applicare i principi di Value Investing di Benjamin Graham e Warren Buffett.
 
 **🚀 Live Demo**: [https://www.faber04.com/app/finance-analyzer/](https://www.faber04.com/app/finance-analyzer/)  
-**Versione Corrente**: `v0.3.0`
+**Versione Corrente**: `v0.3.4` (HashRouter Fix)  
+**Stato Progetto**: Applicazione completa, verificata e pubblicata online
 
 ## 🎯 Caratteristiche Implementate
 
@@ -18,13 +19,21 @@ Una webapp professionale per analizzare investimenti, capire i bilanci delle azi
 
 - **Gestione Posizioni**: Aggiungi e monitora le tue posizioni azionarie.
 - **Performance Real-time**: Calcolo automatico di gain/loss (euro e %) grazie al refresh dei prezzi via API.
-- **Visualizzazione Dati**: Grafico a torta per l'allocazione settoriale e grafico a barre per la performance delle singole posizioni.
+- **Visualizzazione Dati**: Donut chart allocazione settoriale, grafico a barre gain/loss e grafici portfolio con Recharts.
+- **Gestione Completa**: Creazione, modifica ed eliminazione posizioni con form validato e modal di edit.
 
 ### ✅ Investment Journal
 
 - **Diario Decisionale**: Documenta la tua thesis prima dell'acquisto.
 - **Tag System**: Organizza le tue note per categorie.
+- **Filtri e Ricerca**: Ricerca per simbolo/nome e filtri per tipo/tag.
 - **Retrospettiva**: Analizza l'esito dei tuoi investimenti e le lezioni apprese.
+
+### ✅ Navigazione e Impostazioni
+
+- **Menu Mobile**: Hamburger menu responsive per dispositivi mobili.
+- **Routing Produzione**: HashRouter per compatibilita con hosting senza fallback server-side.
+- **Settings Page**: Pagina dedicata alle impostazioni e alle integrazioni API.
 
 ### ✅ Dashboard & Analisi Recenti
 
@@ -58,14 +67,38 @@ npm run dev
 
 ### Configurazione API Key
 L'applicazione richiede una API Key di **Financial Modeling Prep**. Puoi configurarla in due modi:
-1. **Nell'App**: Usa il componente "Impostazioni API" direttamente nella dashboard o nella pagina Analisi (i dati vengono salvati nel browser).
+1. **Nell'App**: Vai nella pagina **Impostazioni** e configura l'integrazione API (i dati vengono salvati nel browser).
 2. **File Environment**: Crea un file `.env.local` nella cartella `finance-analyzer/` con: `VITE_FMP_API_KEY=tua_api_key`.
+
+### Nota Routing in Produzione
+
+L'app e pubblicata in sottocartella (`/app/finance-analyzer/`) e usa HashRouter. Le route in produzione hanno formato:
+- `https://www.faber04.com/app/finance-analyzer/#/analysis`
+- `https://www.faber04.com/app/finance-analyzer/#/portfolio`
 
 ## 📁 Struttura del Progetto
 
-- **[finance-analyzer/](finance-analyzer/)**: Codice sorgente dell'applicazione (Vite + React + TS).
-- **[finance-analyzer-docs/](finance-analyzer-docs/)**: Documentazione tecnica, log di sviluppo e istruzioni per l'AI Agent.
-- **README.md**: Questo file.
+```text
+src/
+	components/
+		common/                         # Card, Button, Input, componenti riutilizzabili
+		modules/
+			fundamental-analysis/         # Input dati, ratios, value score
+			portfolio/                    # Lista posizioni, form, modal, allocazione
+			journal/                      # Form entry, lista, filtri, card
+		charts/                         # Grafici dashboard e portfolio (Recharts)
+		Navigation.tsx                  # Navbar + menu mobile
+	pages/
+		DashboardPage.tsx
+		AnalysisPage.tsx
+		PortfolioPage.tsx
+		JournalPage.tsx
+		SettingsPage.tsx
+	services/                         # API client + integrazione FMP
+	store.ts                          # Zustand global state + persistence
+	types/                            # TypeScript domain models
+	utils/                            # Calcoli finanziari e formatter
+```
 
 ## 🧮 Criteri di Valutazione (Scoring)
 
@@ -90,6 +123,15 @@ L'app analizza le aziende secondo i pesi definiti in `financial-calculations.ts`
 - **Recharts**: Visualizzazioni dati
 - **Lucide React**: Icone
 - **Financial Modeling Prep (FMP)**: API provider
+
+## 🗺️ Roadmap (Allineata a PROJECT_STATE)
+
+- **0.4.0**: Screener multi-azienda + comparazione side-by-side.
+- **0.5.0**: Export PDF (analisi e portfolio) + storico export.
+- **0.6.0**: Dark mode + miglioramenti mobile + accessibilita base.
+- **0.7.0**: PWA installabile + alert + centro notifiche.
+- **0.8.0**: Backtesting MVP con metriche chiave.
+- **1.0.0**: Stabilizzazione finale, test end-to-end e documentazione release.
 
 ## ⚠️ Disclaimer
 
