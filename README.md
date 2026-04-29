@@ -124,7 +124,7 @@ L'app analizza le aziende secondo i pesi definiti in `financial-calculations.ts`
 - **Lucide React**: Icone
 - **Financial Modeling Prep (FMP)**: API provider
 
-## 🗺️ Roadmap (Allineata a PROJECT_STATE)
+## 🗺️ Roadmap 
 
 - **0.4.0**: Screener multi-azienda + comparazione side-by-side.
 - **0.5.0**: Export PDF (analisi e portfolio) + storico export.
