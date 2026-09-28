@@ -3,8 +3,8 @@
 Una webapp professionale per analizzare investimenti, capire i bilanci delle aziende e applicare i principi di Value Investing di Benjamin Graham e Warren Buffett.
 
 **🚀 Live Demo**: [https://www.faber04.com/app/finance-analyzer/](https://www.faber04.com/app/finance-analyzer/)  
-**Versione Corrente**: `v0.4.0` (Screener Multi-Azienda)  
-**Stato Progetto**: Applicazione completa, verificata e pubblicata online
+**Versione Corrente**: `v0.4.0-rc.1` (Screener Multi-Azienda - Release Candidate)  
+**Stato Progetto**: Applicazione completa, verificata e pronta per il testing finale prima del rilascio stabile
 
 ## 🎯 Caratteristiche Implementate
 
