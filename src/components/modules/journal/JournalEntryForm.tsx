@@ -53,10 +53,10 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (field: keyof JournalEntry, value: any) => {
+  const handleChange = (field: keyof JournalEntry, value: JournalEntry[typeof field]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined } as any));
+      setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
 

@@ -19,6 +19,7 @@ const COLORS = [
 interface ChartData {
   name: string;
   value: number;
+  percent?: number;
 }
 
 interface SectorPieChartProps {
@@ -50,7 +51,7 @@ export const SectorPieChart: React.FC<SectorPieChartProps> = ({
     payload,
   }: {
     active?: boolean;
-    payload?: { payload: any }[];
+    payload?: { payload: ChartData }[];
   }) => {
     if (active && payload && payload.length) {
       const { name, value, percent } = payload[0].payload;

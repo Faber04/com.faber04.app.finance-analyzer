@@ -40,7 +40,7 @@ export const GainLossBarChart: React.FC<GainLossBarChartProps> = ({
     payload,
   }: {
     active?: boolean;
-    payload?: { payload: any }[];
+    payload?: { payload: ChartData }[];
   }) => {
     if (active && payload && payload.length) {
       const { name, value } = payload[0].payload;

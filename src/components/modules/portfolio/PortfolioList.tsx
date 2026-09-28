@@ -33,7 +33,9 @@ export const PortfolioList: React.FC = () => {
       Object.entries(newPrices).forEach(([sym, price]) => {
         updatePortfolioPrice(sym, price);
       });
-    } catch (err: any) {
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Errore durante l'aggiornamento dei prezzi.";
+      alert(message);
       alert(err.message || "Errore durante l'aggiornamento dei prezzi.");
     } finally {
       setIsRefreshing(false);
