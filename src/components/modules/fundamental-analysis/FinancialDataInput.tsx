@@ -72,7 +72,6 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
     } catch (err) {
       const message = err instanceof Error ? err.message : "Errore durante l'autocompletamento. Verifica il simbolo e l'API Key.";
       alert(message);
-      alert(err.message || "Errore durante l'autocompletamento. Verifica il simbolo e l'API Key.");
     } finally {
       setIsApiLoading(false);
     }

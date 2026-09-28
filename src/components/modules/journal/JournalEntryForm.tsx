@@ -56,7 +56,11 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
   const handleChange = (field: keyof JournalEntry, value: JournalEntry[typeof field]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors(prev => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
     }
   };
 

@@ -36,7 +36,6 @@ export const PortfolioList: React.FC = () => {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Errore durante l'aggiornamento dei prezzi.";
       alert(message);
-      alert(err.message || "Errore durante l'aggiornamento dei prezzi.");
     } finally {
       setIsRefreshing(false);
     }
