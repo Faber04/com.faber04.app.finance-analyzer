@@ -3,7 +3,7 @@
 Una webapp professionale per analizzare investimenti, capire i bilanci delle aziende e applicare i principi di Value Investing di Benjamin Graham e Warren Buffett.
 
 **🚀 Live Demo**: [https://www.faber04.com/app/finance-analyzer/](https://www.faber04.com/app/finance-analyzer/)  
-**Versione Corrente**: `v0.3.4` (HashRouter Fix)  
+**Versione Corrente**: `v0.4.0` (Screener Multi-Azienda)  
 **Stato Progetto**: Applicazione completa, verificata e pubblicata online
 
 ## 🎯 Caratteristiche Implementate
@@ -28,6 +28,12 @@ Una webapp professionale per analizzare investimenti, capire i bilanci delle azi
 - **Tag System**: Organizza le tue note per categorie.
 - **Filtri e Ricerca**: Ricerca per simbolo/nome e filtri per tipo/tag.
 - **Retrospettiva**: Analizza l'esito dei tuoi investimenti e le lezioni apprese.
+
+### ✅ Screener Multi-Azienda
+
+- **Comparazione**: Confronta fino a 6 aziende fianco a fianco con un'unica analisi.
+- **Value Score Comparato**: Score 0-100, P/E, P/B, ROE e Debt/Equity in un'unica tabella ordinabile.
+- **Best in Class**: Trofeo assegnato automaticamente all'azienda con il miglior Value Score.
 
 ### ✅ Navigazione e Impostazioni
 
@@ -126,7 +132,6 @@ L'app analizza le aziende secondo i pesi definiti in `financial-calculations.ts`
 
 ## 🗺️ Roadmap 
 
-- **0.4.0**: Screener multi-azienda + comparazione side-by-side.
 - **0.5.0**: Export PDF (analisi e portfolio) + storico export.
 - **0.6.0**: Dark mode + miglioramenti mobile + accessibilita base.
 - **0.7.0**: PWA installabile + alert + centro notifiche.

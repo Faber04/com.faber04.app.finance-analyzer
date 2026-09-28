@@ -4,6 +4,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { AnalysisPage } from './pages/AnalysisPage';
 import { PortfolioPage } from './pages/PortfolioPage';
 import { JournalPage } from './pages/JournalPage';
+import { ScreenerPage } from './pages/ScreenerPage';
 import { SettingsPage } from './pages/SettingsPage';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/analysis" element={<AnalysisPage />} />
+            <Route path="/screener" element={<ScreenerPage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/journal" element={<JournalPage />} />
             <Route path="/settings" element={<SettingsPage />} />
