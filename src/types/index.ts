@@ -114,6 +114,17 @@ export interface Portfolio {
   totalGainLossPercent: number;
 }
 
+// Provenance di ogni campo: api = preso dall'API, derived = calcolato/fallback, missing = assente, manual = inserito a mano
+export type ProvenanceSource = 'api' | 'derived' | 'missing' | 'manual';
+export type FieldProvenance = Record<string, ProvenanceSource>;
+
+// Risultato dell'auto-fill FMP: dati + provenance + storico 10y
+export interface CompanyFinancialsResult {
+  financials: Partial<CompanyFinancials>;
+  provenance: FieldProvenance;
+  history: HistoricalMetrics[];
+}
+
 // Storico analisi recenti
 export interface RecentAnalysis {
   id: string;
@@ -154,6 +165,8 @@ export interface AppState {
   currentAnalysis: CompanyFinancials | null;
   currentRatios: FinancialRatios | null;
   currentScore: ValueInvestingScore | null;
+  currentProvenance: FieldProvenance | null;
+  currentHistory: HistoricalMetrics[] | null;
 
   // Storico analisi recenti
   recentAnalyses: RecentAnalysis[];

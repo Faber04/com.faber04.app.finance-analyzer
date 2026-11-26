@@ -50,9 +50,9 @@ export const ScreenerPage: React.FC = () => {
 
     settled.forEach((outcome, index) => {
       if (outcome.status === 'fulfilled') {
-        const financials = toFullFinancials(outcome.value);
+        const financials = toFullFinancials(outcome.value.financials);
         const ratios = calculateFinancialRatios(financials);
-        const score = analyzeValueInvesting(financials, ratios);
+        const score = analyzeValueInvesting(financials, ratios, outcome.value.history);
         nextResults.push({ financials, ratios, score });
       } else {
         const reason = outcome.reason instanceof Error ? outcome.reason.message : String(outcome.reason);

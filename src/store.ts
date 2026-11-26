@@ -1,17 +1,39 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { 
-  AppState, 
-  CompanyFinancials, 
-  PortfolioPosition, 
+import {
+  AppState,
+  CompanyFinancials,
+  FieldProvenance,
+  HistoricalMetrics,
+  PortfolioPosition,
   JournalEntry,
   RecentAnalysis
 } from '@/types';
 import { calculateFinancialRatios, analyzeValueInvesting } from '@/utils/financial-calculations';
 
+// localStorage versionata fa:v1:* — migrazione best-effort dalla chiave legacy
+const STORAGE_KEY = 'fa:v1:app';
+const LEGACY_STORAGE_KEY = 'com.faber04.finance-analyzer-storage';
+
+function migrateLegacyStorage(): void {
+  try {
+    const raw = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (!raw) return;
+    if (!localStorage.getItem(STORAGE_KEY)) {
+      const parsed = JSON.parse(raw);
+      const legacyState = parsed?.state ?? parsed;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ state: legacyState, version: 1 }));
+    }
+    localStorage.removeItem(LEGACY_STORAGE_KEY);
+  } catch {
+    // migrazione best-effort: in caso di errore si riparte da zero
+  }
+}
+migrateLegacyStorage();
+
 interface AppStore extends AppState {
   // Actions per analisi
-  setAnalysis: (data: CompanyFinancials) => void;
+  setAnalysis: (data: CompanyFinancials, history?: HistoricalMetrics[], provenance?: FieldProvenance) => void;
   clearAnalysis: () => void;
   removeRecentAnalysis: (id: string) => void;
   
@@ -38,6 +60,8 @@ export const useAppStore = create<AppStore>()(
       currentAnalysis: null,
       currentRatios: null,
       currentScore: null,
+      currentProvenance: null,
+      currentHistory: null,
       recentAnalyses: [],
       portfolio: {
         positions: [],
@@ -51,9 +75,9 @@ export const useAppStore = create<AppStore>()(
       error: null,
 
       // Analisi
-      setAnalysis: (data) => {
+      setAnalysis: (data, history, provenance) => {
         const ratios = calculateFinancialRatios(data);
-        const score = analyzeValueInvesting(data, ratios);
+        const score = analyzeValueInvesting(data, ratios, history);
 
         const newEntry: RecentAnalysis = {
           id: `analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -74,6 +98,8 @@ export const useAppStore = create<AppStore>()(
             currentAnalysis: data,
             currentRatios: ratios,
             currentScore: score,
+            currentProvenance: provenance ?? null,
+            currentHistory: history ?? null,
             recentAnalyses: updated,
             error: null,
           };
@@ -85,6 +111,8 @@ export const useAppStore = create<AppStore>()(
           currentAnalysis: null,
           currentRatios: null,
           currentScore: null,
+          currentProvenance: null,
+          currentHistory: null,
         });
       },
 
@@ -165,7 +193,8 @@ export const useAppStore = create<AppStore>()(
       setError: (error) => set({ error }),
     }),
     {
-      name: 'com.faber04.finance-analyzer-storage',
+      name: STORAGE_KEY,
+      version: 1,
       partialize: (state) => ({
         portfolio: state.portfolio,
         journalEntries: state.journalEntries,

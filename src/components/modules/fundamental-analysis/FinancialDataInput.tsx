@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Card, Input, Button } from '@/components/common';
-import { CompanyFinancials } from '@/types';
+import { CompanyFinancials, FieldProvenance, HistoricalMetrics } from '@/types';
 import { useAppStore } from '@/store';
 import { getCompanyFinancials } from '@/services';
 
@@ -42,6 +42,9 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
   });
 
   const [isApiLoading, setIsApiLoading] = useState(false);
+  // Provenance e storico dell'ultimo auto-fill: servono a setAnalysis
+  const provenanceRef = useRef<FieldProvenance>({});
+  const historyRef = useRef<HistoricalMetrics[] | undefined>(undefined);
 
   const sanitizeNumber = (val: unknown): number =>
     typeof val === 'number' && isFinite(val) ? val : 0;
@@ -54,7 +57,10 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
     
     setIsApiLoading(true);
     try {
-      const data = await getCompanyFinancials(formData.symbol);
+      const result = await getCompanyFinancials(formData.symbol);
+      const data = result.financials;
+      provenanceRef.current = result.provenance;
+      historyRef.current = result.history;
       // Sanitizza i campi numerici per evitare NaN negli input
       setFormData(prev => ({
         ...prev,
@@ -75,6 +81,7 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
         sharesOutstanding:   sanitizeNumber(data.sharesOutstanding),
         marketCap:           sanitizeNumber(data.marketCap),
         dcf:                 sanitizeNumber(data.dcf),
+        currency:            data.currency ?? prev.currency,
       }));
     } catch (err) {
       const message = err instanceof Error ? err.message : "Errore durante l'autocompletamento. Verifica il simbolo e l'API Key.";
@@ -108,7 +115,7 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
 
     // Simula un piccolo delay per l'analisi
     setTimeout(() => {
-      setAnalysis(formData as CompanyFinancials);
+      setAnalysis(formData as CompanyFinancials, historyRef.current, provenanceRef.current);
       setLoading(false);
       onAnalysisSuccess?.();
     }, 500);
