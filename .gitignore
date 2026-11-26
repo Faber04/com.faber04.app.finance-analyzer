@@ -52,3 +52,6 @@ Thumbs.db
 /googleOneTap/
 /google-one-tap/
 /private-project-docs/
+
+# AGENTS.md puntatore locale alla repo docs privata: non committare nelle repo pubbliche
+AGENTS.md
