@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '@/components/common';
 import { ValueInvestingScore } from '@/types';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import { CheckCircle2, MinusCircle, XCircle } from 'lucide-react';
 
 interface ValueScoreDisplayProps {
   score: ValueInvestingScore;
@@ -37,8 +37,9 @@ export const ValueScoreDisplay: React.FC<ValueScoreDisplayProps> = ({ score }) =
     );
   };
 
-  const passedCount = score.criteria.filter(c => c.passed).length;
-  const totalCount = score.criteria.length;
+  const passedCount = score.criteria.filter(c => c.status === 'pass').length;
+  const naCount = score.criteria.filter(c => c.status === 'na').length;
+  const totalCount = score.criteria.length - naCount;
 
   return (
     <Card>
@@ -69,6 +70,7 @@ export const ValueScoreDisplay: React.FC<ValueScoreDisplayProps> = ({ score }) =
 
           <div className="text-sm text-gray-600">
             Criteri soddisfatti: {passedCount} su {totalCount}
+            {naCount > 0 && ` (${naCount} N/A esclusi dal totale)`}
           </div>
         </div>
 
@@ -76,15 +78,21 @@ export const ValueScoreDisplay: React.FC<ValueScoreDisplayProps> = ({ score }) =
         <div className="space-y-3">
           <h4 className="font-semibold text-gray-900">Criteri di Valutazione</h4>
           {score.criteria.map((criterion, index) => (
-            <div 
+            <div
               key={index}
               className={`flex items-start gap-3 p-3 rounded-lg ${
-                criterion.passed ? 'bg-success-50' : 'bg-danger-50'
+                criterion.status === 'pass'
+                  ? 'bg-success-50'
+                  : criterion.status === 'na'
+                    ? 'bg-gray-50'
+                    : 'bg-danger-50'
               }`}
             >
               <div className="flex-shrink-0 mt-0.5">
-                {criterion.passed ? (
+                {criterion.status === 'pass' ? (
                   <CheckCircle2 className="w-5 h-5 text-success-600" />
+                ) : criterion.status === 'na' ? (
+                  <MinusCircle className="w-5 h-5 text-gray-400" />
                 ) : (
                   <XCircle className="w-5 h-5 text-danger-600" />
                 )}

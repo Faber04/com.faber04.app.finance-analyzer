@@ -4,8 +4,8 @@ export interface CompanyFinancials {
   companyName: string;
   sector?: string;
   industry?: string;
-  
-  // Dati di bilancio
+
+  // Dati di bilancio (in milioni, come da UI)
   revenue: number;
   netIncome: number;
   totalAssets: number;
@@ -14,54 +14,81 @@ export interface CompanyFinancials {
   longTermDebt: number;
   currentAssets: number;
   currentLiabilities: number;
-  
+  inventory?: number; // in milioni; se mancante il quickRatio è N/A
+
   // Dati per azione
   eps: number; // Earnings Per Share
   bookValuePerShare: number;
   dividendPerShare?: number;
-  
+
   // Dati di mercato
   currentPrice: number;
-  sharesOutstanding: number;
-  
+  sharesOutstanding: number; // in milioni
+  marketCap?: number; // in milioni; se presente il P/S si calcula da qui, non dalle azioni
+  dcf?: number; // DCF per azione (FMP profile.dcf)
+  currency?: string; // valuta del titolo (es. 'USD')
+
   // Date
   reportDate: string;
 }
 
-// Ratios calcolati
+// Ratios calcolati: null-safe, mai zeri fittizi (null = dato mancante/non calcolabile)
 export interface FinancialRatios {
   // Valutazione
-  pe: number; // Price to Earnings
-  pb: number; // Price to Book
-  ps: number; // Price to Sales
-  
+  pe: number | null; // Price to Earnings (null se EPS <= 0)
+  pb: number | null; // Price to Book (null se BVPS mancante)
+  ps: number | null; // Price to Sales (da marketCap, non da sharesOutstanding)
+
   // Profittabilità
-  roe: number; // Return on Equity
-  roa: number; // Return on Assets
-  netProfitMargin: number;
-  
+  roe: number | null; // Return on Equity %
+  roa: number | null; // Return on Assets %
+  netProfitMargin: number | null;
+
   // Solidità finanziaria
-  debtToEquity: number;
-  currentRatio: number;
-  quickRatio: number;
-  
+  debtToEquity: number | null; // null se equity <= 0: un dato mancante non deve mai passare il test
+  currentRatio: number | null;
+  quickRatio: number | null; // usa l'inventario reale, non una stima
+
   // Dividendi
-  dividendYield?: number;
-  payoutRatio?: number;
+  dividendYield?: number | null;
+  payoutRatio?: number | null;
 }
 
-// Analisi Graham/Buffett
+// Metriche storiche per anno (trend multi-anno, popolato da FMP con limit=10)
+export interface HistoricalMetrics {
+  date: string; // ISO date dell'anno fiscale
+  eps: number | null;
+  roe: number | null; // ROE % dell'anno
+  revenue: number | null; // in milioni
+  netIncome: number | null; // in milioni
+  dividendPerShare: number | null;
+  bookValuePerShare: number | null;
+}
+
+// Trend calcolato dallo storico
+export interface HistoricalTrend {
+  years: number;
+  epsCagr: number | null; // CAGR EPS % primo -> ultimo anno
+  roeByYear: { year: string; roe: number }[];
+  roeConsistent10y: boolean | null; // true se ROE >= 10% in ognuno degli ultimi 10 anni; null se anni < 10
+}
+
+export type CriterionStatus = 'pass' | 'fail' | 'na';
+
+export interface ScoreCriterion {
+  name: string;
+  status: CriterionStatus;
+  value: string;
+  benchmark: string;
+  weight: number;
+}
+
+// Analisi Graham/Buffett (Value Score v2)
 export interface ValueInvestingScore {
   symbol: string;
   companyName: string;
-  overallScore: number; // 0-100
-  criteria: {
-    name: string;
-    passed: boolean;
-    value: string;
-    benchmark: string;
-    weight: number;
-  }[];
+  overallScore: number; // 0-100, N/A esclusi dal totale
+  criteria: ScoreCriterion[];
   recommendation: 'strong-buy' | 'buy' | 'hold' | 'avoid';
   notes: string[];
 }

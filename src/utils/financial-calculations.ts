@@ -1,124 +1,258 @@
-import { CompanyFinancials, FinancialRatios, ValueInvestingScore } from '@/types';
+import {
+  CompanyFinancials,
+  FinancialRatios,
+  HistoricalMetrics,
+  HistoricalTrend,
+  ScoreCriterion,
+  ValueInvestingScore,
+} from '@/types';
+
+const isValid = (v: number | null | undefined): v is number =>
+  typeof v === 'number' && isFinite(v);
+
+/** Divisione null-safe: mai zeri fittizi, null se un operando manca o il divisore è 0 */
+const safeDiv = (a: number | null | undefined, b: number | null | undefined): number | null =>
+  isValid(a) && isValid(b) && b !== 0 ? a / b : null;
 
 /**
- * Calcola tutti i ratio finanziari fondamentali
+ * Calcola tutti i ratio finanziari fondamentali.
+ * Ogni ratio è null-safe: torna null quando il dato manca, mai 0 arbitrario.
  */
 export const calculateFinancialRatios = (data: CompanyFinancials): FinancialRatios => {
-  const marketCap = data.currentPrice * data.sharesOutstanding;
-  
+  // Market cap: prima da API (campo marketCap), altrimenti derivato da prezzo × azioni
+  const marketCap =
+    isValid(data.marketCap) && data.marketCap > 0
+      ? data.marketCap
+      : isValid(data.sharesOutstanding) && data.sharesOutstanding > 0 && isValid(data.currentPrice)
+        ? data.currentPrice * data.sharesOutstanding
+        : null;
+
   return {
     // Valutazione
-    pe: data.eps !== 0 ? data.currentPrice / data.eps : 0,
-    pb: data.bookValuePerShare !== 0 ? data.currentPrice / data.bookValuePerShare : 0,
-    ps: data.revenue !== 0 ? marketCap / data.revenue : 0,
-    
+    pe: isValid(data.eps) && data.eps > 0 ? safeDiv(data.currentPrice, data.eps) : null, // N/A se EPS ≤ 0
+    pb: safeDiv(data.currentPrice, data.bookValuePerShare), // N/A se BVPS mancante
+    ps: marketCap !== null ? safeDiv(marketCap, data.revenue) : null, // da marketCap, non da sharesOutstanding
+
     // Profittabilità
-    roe: data.shareholdersEquity !== 0 ? (data.netIncome / data.shareholdersEquity) * 100 : 0,
-    roa: data.totalAssets !== 0 ? (data.netIncome / data.totalAssets) * 100 : 0,
-    netProfitMargin: data.revenue !== 0 ? (data.netIncome / data.revenue) * 100 : 0,
-    
+    roe: safeDiv(isValid(data.netIncome) ? data.netIncome * 100 : null, data.shareholdersEquity),
+    roa: safeDiv(isValid(data.netIncome) ? data.netIncome * 100 : null, data.totalAssets),
+    netProfitMargin: safeDiv(isValid(data.netIncome) ? data.netIncome * 100 : null, data.revenue),
+
     // Solidità finanziaria
-    debtToEquity: data.shareholdersEquity !== 0 ? data.longTermDebt / data.shareholdersEquity : 0,
-    currentRatio: data.currentLiabilities !== 0 ? data.currentAssets / data.currentLiabilities : 0,
-    quickRatio: data.currentLiabilities !== 0 ? 
-      (data.currentAssets - (data.currentAssets * 0.3)) / data.currentLiabilities : 0, // Stima conservativa
-    
+    debtToEquity:
+      isValid(data.shareholdersEquity) && data.shareholdersEquity > 0
+        ? safeDiv(data.longTermDebt, data.shareholdersEquity)
+        : null, // N/A se equity ≤ 0: un dato mancante non deve mai passare il test
+    currentRatio: safeDiv(data.currentAssets, data.currentLiabilities),
+    quickRatio:
+      isValid(data.inventory)
+        ? safeDiv(data.currentAssets - data.inventory, data.currentLiabilities)
+        : null, // usa l'inventario reale; se manca il ratio è N/A
+
     // Dividendi
-    dividendYield: data.dividendPerShare ? (data.dividendPerShare / data.currentPrice) * 100 : undefined,
-    payoutRatio: data.dividendPerShare && data.eps !== 0 ? 
-      (data.dividendPerShare / data.eps) * 100 : undefined,
+    dividendYield:
+      isValid(data.dividendPerShare) && data.dividendPerShare > 0 && isValid(data.currentPrice) && data.currentPrice > 0
+        ? (data.dividendPerShare / data.currentPrice) * 100
+        : null,
+    payoutRatio:
+      isValid(data.dividendPerShare) && data.dividendPerShare > 0 && isValid(data.eps) && data.eps > 0
+        ? (data.dividendPerShare / data.eps) * 100
+        : null,
   };
 };
 
 /**
- * Analisi Value Investing secondo i criteri di Graham e Buffett
+ * Calcola il trend multi-anno dallo storico (FMP limit=10).
+ */
+export const calculateHistoricalTrend = (history: HistoricalMetrics[]): HistoricalTrend => {
+  const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
+  const years = sorted.length;
+  const first = sorted[0];
+  const last = sorted[years - 1];
+
+  let epsCagr: number | null = null;
+  if (years > 1 && isValid(first?.eps) && isValid(last?.eps) && first.eps > 0 && last.eps > 0) {
+    epsCagr = (Math.pow(last.eps / first.eps, 1 / (years - 1)) - 1) * 100;
+  }
+
+  const roeByYear = sorted
+    .filter((h) => isValid(h.roe))
+    .map((h) => ({ year: h.date.slice(0, 4), roe: h.roe as number }));
+
+  const last10 = sorted.slice(-10);
+  const roeConsistent10y =
+    last10.length >= 10 ? last10.every((h) => isValid(h.roe) && h.roe >= 10) : null;
+
+  return { years, epsCagr, roeByYear, roeConsistent10y };
+};
+
+const crit = (
+  name: string,
+  weight: number,
+  benchmark: string,
+  value: string,
+  status: ScoreCriterion['status']
+): ScoreCriterion => ({ name, status, value, benchmark, weight });
+
+/**
+ * Value Score v2 — criteri Graham/Buffett pesati (somma 100).
+ * Gli N/A sono esclusi dal totale: un dato mancante non fa mai passare né fallire il criterio.
  */
 export const analyzeValueInvesting = (
   data: CompanyFinancials,
-  ratios: FinancialRatios
+  ratios: FinancialRatios,
+  historical?: HistoricalMetrics[]
 ): ValueInvestingScore => {
-  const criteria = [
-    {
-      name: 'P/E Ratio ragionevole',
-      passed: ratios.pe > 0 && ratios.pe < 15,
-      value: ratios.pe.toFixed(2),
-      benchmark: '< 15',
-      weight: 15,
-    },
-    {
-      name: 'P/B Ratio attraente',
-      passed: ratios.pb > 0 && ratios.pb < 1.5,
-      value: ratios.pb.toFixed(2),
-      benchmark: '< 1.5',
-      weight: 10,
-    },
-    {
-      name: 'ROE solido',
-      passed: ratios.roe >= 15,
-      value: `${ratios.roe.toFixed(2)}%`,
-      benchmark: '≥ 15%',
-      weight: 15,
-    },
-    {
-      name: 'Margine di profitto sano',
-      passed: ratios.netProfitMargin >= 10,
-      value: `${ratios.netProfitMargin.toFixed(2)}%`,
-      benchmark: '≥ 10%',
-      weight: 10,
-    },
-    {
-      name: 'Debito sotto controllo',
-      passed: ratios.debtToEquity < 0.5,
-      value: ratios.debtToEquity.toFixed(2),
-      benchmark: '< 0.5',
-      weight: 20,
-    },
-    {
-      name: 'Liquidità adeguata',
-      passed: ratios.currentRatio >= 1.5,
-      value: ratios.currentRatio.toFixed(2),
-      benchmark: '≥ 1.5',
-      weight: 15,
-    },
-    {
-      name: 'Utili positivi',
-      passed: data.eps > 0,
-      value: `$${data.eps.toFixed(2)}`,
-      benchmark: '> 0',
-      weight: 15,
-    },
+  const trend = historical ? calculateHistoricalTrend(historical) : null;
+  const currency = data.currency ?? 'USD';
+  const price = isValid(data.currentPrice) ? data.currentPrice : null;
+
+  // Graham Number: √(22.5 · EPS · BVPS), valido solo con EPS > 0 e BVPS > 0
+  const grahamNumber =
+    isValid(data.eps) && data.eps > 0 && isValid(data.bookValuePerShare) && data.bookValuePerShare > 0
+      ? Math.sqrt(22.5 * data.eps * data.bookValuePerShare)
+      : null;
+
+  // NCAV net-net per azione: ⅔ · (currentAssets − totalLiabilities) / shares
+  const ncavPerShare =
+    isValid(data.sharesOutstanding) && data.sharesOutstanding > 0
+      ? safeDiv(data.currentAssets - data.totalLiabilities, data.sharesOutstanding)
+      : null;
+  const ncavThreshold = ncavPerShare !== null ? (2 / 3) * ncavPerShare : null;
+
+  const criteria: ScoreCriterion[] = [
+    crit(
+      'EPS positivo',
+      10,
+      '> 0',
+      isValid(data.eps) ? formatCurrency(data.eps, 2, false, currency) : 'N/A',
+      !isValid(data.eps) ? 'na' : data.eps > 0 ? 'pass' : 'fail'
+    ),
+    crit(
+      'P/E ragionevole',
+      10,
+      '< 15',
+      ratios.pe !== null ? ratios.pe.toFixed(2) : 'N/A',
+      ratios.pe === null ? 'na' : ratios.pe < 15 ? 'pass' : 'fail'
+    ),
+    crit(
+      'P/B attraente',
+      5,
+      '< 1.5',
+      ratios.pb !== null ? ratios.pb.toFixed(2) : 'N/A',
+      ratios.pb === null ? 'na' : ratios.pb < 1.5 ? 'pass' : 'fail'
+    ),
+    crit(
+      'P/S attraente',
+      5,
+      '< 3',
+      ratios.ps !== null ? ratios.ps.toFixed(2) : 'N/A',
+      ratios.ps === null ? 'na' : ratios.ps < 3 ? 'pass' : 'fail'
+    ),
+    crit(
+      'ROE solido',
+      10,
+      '≥ 15%',
+      ratios.roe !== null ? `${ratios.roe.toFixed(2)}%` : 'N/A',
+      ratios.roe === null ? 'na' : ratios.roe >= 15 ? 'pass' : 'fail'
+    ),
+    crit(
+      'ROE costante 10 anni',
+      10,
+      '≥ 10% in ognuno degli ultimi 10 anni',
+      trend?.roeConsistent10y !== null && trend?.roeConsistent10y !== undefined
+        ? `${trend.years} anni analizzati`
+        : 'N/A',
+      trend?.roeConsistent10y === null || trend?.roeConsistent10y === undefined
+        ? 'na'
+        : trend.roeConsistent10y
+          ? 'pass'
+          : 'fail'
+    ),
+    crit(
+      'Margine netto sano',
+      5,
+      '≥ 10%',
+      ratios.netProfitMargin !== null ? `${ratios.netProfitMargin.toFixed(2)}%` : 'N/A',
+      ratios.netProfitMargin === null ? 'na' : ratios.netProfitMargin >= 10 ? 'pass' : 'fail'
+    ),
+    crit(
+      'Debito sotto controllo',
+      10,
+      '< 0.5',
+      ratios.debtToEquity !== null ? ratios.debtToEquity.toFixed(2) : 'N/A',
+      ratios.debtToEquity === null ? 'na' : ratios.debtToEquity < 0.5 ? 'pass' : 'fail'
+    ),
+    crit(
+      'Liquidità adeguata',
+      5,
+      '≥ 1.5',
+      ratios.currentRatio !== null ? ratios.currentRatio.toFixed(2) : 'N/A',
+      ratios.currentRatio === null ? 'na' : ratios.currentRatio >= 1.5 ? 'pass' : 'fail'
+    ),
+    crit(
+      'Graham Number',
+      10,
+      `prezzo < √(22.5 · EPS · BVPS)`,
+      grahamNumber !== null
+        ? `${formatCurrency(grahamNumber, 2, false, currency)} vs ${formatCurrency(price ?? 0, 2, false, currency)}`
+        : 'N/A',
+      grahamNumber === null || price === null ? 'na' : price < grahamNumber ? 'pass' : 'fail'
+    ),
+    crit(
+      'NCAV net-net',
+      10,
+      `prezzo < ⅔ · NCAV/share`,
+      ncavThreshold !== null
+        ? `${formatCurrency(ncavThreshold, 2, false, currency)} vs ${formatCurrency(price ?? 0, 2, false, currency)}`
+        : 'N/A',
+      ncavThreshold === null || price === null ? 'na' : price < ncavThreshold ? 'pass' : 'fail'
+    ),
+    crit(
+      'Margin of safety vs DCF',
+      10,
+      '< 70% del DCF',
+      isValid(data.dcf) && data.dcf > 0
+        ? `${formatCurrency(0.7 * data.dcf, 2, false, currency)} vs ${formatCurrency(price ?? 0, 2, false, currency)}`
+        : 'N/A',
+      !isValid(data.dcf) || data.dcf <= 0 || price === null
+        ? 'na'
+        : price < 0.7 * data.dcf
+          ? 'pass'
+          : 'fail'
+    ),
   ];
-  
-  // Calcola score pesato
-  const totalWeight = criteria.reduce((sum, c) => sum + c.weight, 0);
-  const achievedWeight = criteria
-    .filter(c => c.passed)
+
+  // Score pesato: gli N/A sono esclusi dal totale
+  const totalWeight = criteria
+    .filter((c) => c.status !== 'na')
     .reduce((sum, c) => sum + c.weight, 0);
-  
-  const overallScore = (achievedWeight / totalWeight) * 100;
-  
-  // Determina raccomandazione
+  const achievedWeight = criteria
+    .filter((c) => c.status === 'pass')
+    .reduce((sum, c) => sum + c.weight, 0);
+
+  const overallScore = totalWeight > 0 ? (achievedWeight / totalWeight) * 100 : 0;
+
   let recommendation: ValueInvestingScore['recommendation'];
   if (overallScore >= 80) recommendation = 'strong-buy';
   else if (overallScore >= 60) recommendation = 'buy';
   else if (overallScore >= 40) recommendation = 'hold';
   else recommendation = 'avoid';
-  
-  // Note aggiuntive
+
   const notes: string[] = [];
-  if (ratios.pe < 10 && ratios.pe > 0) {
+  if (ratios.pe !== null && ratios.pe < 10) {
     notes.push('P/E molto attraente - possibile sottovalutazione');
   }
-  if (ratios.roe > 20) {
+  if (ratios.roe !== null && ratios.roe > 20) {
     notes.push('ROE eccellente - management efficiente');
   }
-  if (ratios.debtToEquity > 1) {
+  if (ratios.debtToEquity !== null && ratios.debtToEquity > 1) {
     notes.push('⚠️ Livello di debito preoccupante');
   }
-  if (ratios.currentRatio < 1) {
+  if (ratios.currentRatio !== null && ratios.currentRatio < 1) {
     notes.push('⚠️ Possibili problemi di liquidità a breve termine');
   }
-  
+
   return {
     symbol: data.symbol,
     companyName: data.companyName,
@@ -130,12 +264,18 @@ export const analyzeValueInvesting = (
 };
 
 /**
- * Formatta valori monetari
+ * Formatta valori monetari nella valuta dichiarata (default EUR per il portfolio;
+ * per i dati del titolo passare la valuta del titolo, es. 'USD').
  */
-export const formatCurrency = (value: number, decimals: number = 2, includeSign: boolean = false): string => {
+export const formatCurrency = (
+  value: number,
+  decimals: number = 2,
+  includeSign: boolean = false,
+  currency: string = 'EUR'
+): string => {
   const formatted = new Intl.NumberFormat('it-IT', {
     style: 'currency',
-    currency: 'EUR',
+    currency,
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   }).format(value);

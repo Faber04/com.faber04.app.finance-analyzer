@@ -25,8 +25,8 @@ const recommendationLabels: Record<ValueInvestingScore['recommendation'], string
   avoid: 'Avoid',
 };
 
-const safeValue = (val: number | undefined): string =>
-  val === undefined || !isFinite(val) ? 'N/D' : val.toFixed(2);
+const safeValue = (val: number | null | undefined): string =>
+  val === null || val === undefined || !isFinite(val) ? 'N/D' : val.toFixed(2);
 
 const formatPrice = (val: number): string =>
   isFinite(val) ? `$${val.toFixed(2)}` : 'N/D';
@@ -51,7 +51,7 @@ export const ScreenerComparisonTable: React.FC<ScreenerComparisonTableProps> = (
       case 'pb':
       case 'roe':
       case 'debtToEquity':
-        cmp = (a.ratios[sortKey] || 0) - (b.ratios[sortKey] || 0);
+        cmp = (a.ratios[sortKey] ?? 0) - (b.ratios[sortKey] ?? 0);
         break;
       default:
         cmp = a.score.overallScore - b.score.overallScore;

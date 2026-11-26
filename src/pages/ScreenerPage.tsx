@@ -19,11 +19,15 @@ const toFullFinancials = (partial: Partial<CompanyFinancials>): CompanyFinancial
   longTermDebt: partial.longTermDebt ?? 0,
   currentAssets: partial.currentAssets ?? 0,
   currentLiabilities: partial.currentLiabilities ?? 0,
+  inventory: partial.inventory,
   eps: partial.eps ?? 0,
   bookValuePerShare: partial.bookValuePerShare ?? 0,
   dividendPerShare: partial.dividendPerShare,
   currentPrice: partial.currentPrice ?? 0,
   sharesOutstanding: partial.sharesOutstanding ?? 0,
+  marketCap: partial.marketCap,
+  dcf: partial.dcf,
+  currency: partial.currency,
   reportDate: partial.reportDate ?? '',
 });
 

@@ -29,11 +29,15 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
     longTermDebt: 0,
     currentAssets: 0,
     currentLiabilities: 0,
+    inventory: 0,
     eps: 0,
     bookValuePerShare: 0,
     dividendPerShare: 0,
     currentPrice: 0,
     sharesOutstanding: 0,
+    marketCap: 0,
+    dcf: 0,
+    currency: 'USD',
     reportDate: new Date().toISOString().split('T')[0],
   });
 
@@ -63,11 +67,14 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
         longTermDebt:        sanitizeNumber(data.longTermDebt),
         currentAssets:       sanitizeNumber(data.currentAssets),
         currentLiabilities:  sanitizeNumber(data.currentLiabilities),
+        inventory:           sanitizeNumber(data.inventory),
         eps:                 sanitizeNumber(data.eps),
         bookValuePerShare:   sanitizeNumber(data.bookValuePerShare),
         dividendPerShare:    sanitizeNumber(data.dividendPerShare),
         currentPrice:        sanitizeNumber(data.currentPrice),
         sharesOutstanding:   sanitizeNumber(data.sharesOutstanding),
+        marketCap:           sanitizeNumber(data.marketCap),
+        dcf:                 sanitizeNumber(data.dcf),
       }));
     } catch (err) {
       const message = err instanceof Error ? err.message : "Errore durante l'autocompletamento. Verifica il simbolo e l'API Key.";
@@ -82,8 +89,8 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: ['symbol', 'companyName', 'sector', 'reportDate'].includes(name) 
-        ? value 
+      [name]: ['symbol', 'companyName', 'sector', 'reportDate', 'currency'].includes(name)
+        ? value
         : parseFloat(value) || 0
     }));
   };
@@ -243,6 +250,15 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
               onChange={handleChange}
               helperText="In milioni"
             />
+            <Input
+              label="Inventario (Inventory)"
+              name="inventory"
+              type="number"
+              step="0.01"
+              value={formData.inventory}
+              onChange={handleChange}
+              helperText="In milioni — serve per il Quick Ratio"
+            />
           </div>
         </div>
 
@@ -298,6 +314,31 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
               value={formData.sharesOutstanding}
               onChange={handleChange}
               helperText="In milioni"
+            />
+            <Input
+              label="Market Cap"
+              name="marketCap"
+              type="number"
+              step="0.01"
+              value={formData.marketCap}
+              onChange={handleChange}
+              helperText="In milioni — se presente il P/S si calcula da qui"
+            />
+            <Input
+              label="DCF per azione"
+              name="dcf"
+              type="number"
+              step="0.01"
+              value={formData.dcf}
+              onChange={handleChange}
+              helperText="Da FMP profile — per il margin of safety"
+            />
+            <Input
+              label="Valuta"
+              name="currency"
+              value={formData.currency}
+              onChange={handleChange}
+              placeholder="es. USD"
             />
             <Input
               label="Data Report"
