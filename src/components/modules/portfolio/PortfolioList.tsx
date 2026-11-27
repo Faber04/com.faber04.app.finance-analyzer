@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import {
-  Briefcase,
   TrendingUp,
   TrendingDown,
   DollarSign,
-  AlertCircle,
   RefreshCw,
 } from "lucide-react";
-import { Card, Button } from "@/components/common";
+import { Card, Button, ErrorState, translateError } from "@/components/common";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
 import { PortfolioPosition } from "@/types";
@@ -25,10 +23,12 @@ export const PortfolioList: React.FC = () => {
   const [positionToEdit, setPositionToEdit] =
     useState<PortfolioPosition | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [refreshError, setRefreshError] = useState<string | null>(null);
 
   const handleRefreshPrices = async () => {
     if (portfolio.positions.length === 0) return;
     setIsRefreshing(true);
+    setRefreshError(null);
     try {
       const symbols = portfolio.positions.map((p) => p.symbol);
       const newPrices = await getBulkQuotes(symbols);
@@ -36,8 +36,8 @@ export const PortfolioList: React.FC = () => {
         updatePortfolioPrice(sym, price);
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : t("portfolio.refreshError");
-      alert(message);
+      // PR5: error state distinto con retry invece di un alert
+      setRefreshError(translateError(t, err));
     } finally {
       setIsRefreshing(false);
     }
@@ -58,40 +58,21 @@ export const PortfolioList: React.FC = () => {
     }
   };
 
-  if (positions.length === 0) {
-    return (
-      <div className="space-y-6">
-        <Card>
-        <div className="text-center py-16">
-          <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Briefcase size={32} className="text-primary-400" />
-          </div>
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            {t("portfolio.emptyTitle")}
-          </h3>
-          <p className="text-gray-500 text-sm max-w-sm mx-auto">
-            {t("portfolio.emptyText")}
-          </p>
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg max-w-sm mx-auto text-left">
-            <div className="flex gap-2">
-              <AlertCircle
-                size={16}
-                className="text-blue-500 mt-0.5 shrink-0"
-              />
-              <p className="text-xs text-blue-700">
-                <strong>{t("portfolio.emptyTipStrong")}</strong> {t("portfolio.emptyTip")}
-              </p>
-            </div>
-          </div>
-        </div>
-        </Card>
-      </div>
-    );
-  }
+  // Nota: lo stato vuoto è gestito da PortfolioPage con EmptyState + CTA (PR5)
 
   return (
     <div className="space-y-6">
-      
+
+      {refreshError && (
+        <ErrorState
+          compact
+          title={t("portfolio.refreshErrorTitle")}
+          message={refreshError}
+          onRetry={handleRefreshPrices}
+          retryLabel={t("common.retry")}
+        />
+      )}
+
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold text-gray-900">{t("portfolio.listTitle")}</h2>
         <Button

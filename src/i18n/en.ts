@@ -318,4 +318,21 @@ export const en: Dictionary = {
 
   // Charts
   'charts.ofTotal': '{percent}% of total',
+
+  // Common states (PR5)
+  'common.retry': 'Retry',
+  'common.loading': 'Loading...',
+  'errors.title': 'Something went wrong',
+  'errors.invalidKey': 'Invalid or missing FMP API key. Check Settings.',
+  'errors.invalidKeyAction': 'Open Settings',
+  'errors.rateLimit': 'API rate limit reached. Wait a moment, then retry.',
+  'errors.notFound': 'Ticker "{symbol}" not found. Check the spelling.',
+  'errors.network': 'No connection. Check you are online, then retry.',
+  'errors.server': 'API server error (status {status}). Retry in a moment.',
+  'errors.generic': 'Unexpected error: {message}',
+  'screener.errorTitle': 'Some tickers could not be analyzed',
+  'form.autofillErrorTitle': 'Auto-fill failed',
+  'portfolio.emptyCta': 'Add your first position',
+  'portfolio.refreshErrorTitle': 'Price refresh failed',
+  'journal.emptyCta': 'Write your first entry',
 };

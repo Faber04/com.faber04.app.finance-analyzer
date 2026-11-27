@@ -1,6 +1,8 @@
 import React from "react";
+import { Briefcase } from "lucide-react";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
+import { EmptyState } from "@/components/common";
 import { AddPositionForm } from "@/components/modules/portfolio/AddPositionForm";
 import { PortfolioList } from "@/components/modules/portfolio/PortfolioList";
 import { SectorAllocationChart } from "@/components/modules/portfolio/SectorAllocationChart";
@@ -20,15 +22,25 @@ export const PortfolioPage: React.FC = () => {
             {t("portfolio.subtitle")}
           </p>
         </div>
-        <AddPositionForm />
+        {hasPositions && <AddPositionForm />}
       </div>
 
-      {/* Summary + Posizioni */}
-      <PortfolioList />
-
-      {/* Chart allocazione — solo se ci sono posizioni */}
-      {hasPositions && (
-        <SectorAllocationChart positions={portfolio.positions} />
+      {hasPositions ? (
+        <>
+          {/* Summary + Posizioni */}
+          <PortfolioList />
+          {/* Chart allocazione */}
+          <SectorAllocationChart positions={portfolio.positions} />
+        </>
+      ) : (
+        // PR5: empty state con CTA (mai un'area bianca)
+        <EmptyState
+          icon={Briefcase}
+          title={t("portfolio.emptyTitle")}
+          text={t("portfolio.emptyText")}
+          tip={`${t("portfolio.emptyTipStrong")} ${t("portfolio.emptyTip")}`}
+          action={<AddPositionForm />}
+        />
       )}
     </div>
   );

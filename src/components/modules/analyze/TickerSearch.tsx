@@ -1,28 +1,32 @@
 import React, { useState } from 'react';
-import { Search, Loader2, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/common';
+import { Search, Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button, ErrorState, translateError } from '@/components/common';
 import { useAppStore } from '@/store';
 import { getCompanyFinancials } from '@/services';
+import { FmpApiError } from '@/services/api';
 import { useTranslation } from '@/i18n';
 import { toFullFinancials } from './toFullFinancials';
 
 interface TickerSearchProps {
   onAnalyzed?: () => void;
+  onSearchingChange?: (searching: boolean) => void;
 }
 
 // Hero search della home Analyze: un ticker -> auto-fill FMP + Value Score in un gesto
-export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed }) => {
+export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed, onSearchingChange }) => {
   const { setAnalysis } = useAppStore();
   const { t } = useTranslation();
   const [symbol, setSymbol] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ message: string; isInvalidKey: boolean } | null>(null);
 
   const handleSearch = async () => {
     const clean = symbol.trim().toUpperCase();
     if (!clean || isLoading) return;
 
     setIsLoading(true);
+    onSearchingChange?.(true);
     setError(null);
     try {
       const result = await getCompanyFinancials(clean);
@@ -30,13 +34,13 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed }) => {
       setAnalysis(financials, result.history, result.provenance);
       onAnalyzed?.();
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : t('analyze.heroErrorFallback')
-      );
+      setError({
+        message: translateError(t, err, clean),
+        isInvalidKey: err instanceof FmpApiError && err.code === 'invalid-key',
+      });
     } finally {
       setIsLoading(false);
+      onSearchingChange?.(false);
     }
   };
 
@@ -82,10 +86,25 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed }) => {
         </Button>
       </div>
       {error && (
-        <p className="mt-3 flex items-start gap-2 text-sm text-red-100">
-          <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-          {error}
-        </p>
+        <div className="mt-4">
+          <ErrorState
+            compact
+            title={t('errors.title')}
+            message={error.message}
+            onRetry={handleSearch}
+            retryLabel={t('common.retry')}
+            action={
+              error.isInvalidKey ? (
+                <Link
+                  to="/settings"
+                  className="text-sm font-semibold text-red-100 underline hover:text-white"
+                >
+                  {t('errors.invalidKeyAction')}
+                </Link>
+              ) : undefined
+            }
+          />
+        </div>
       )}
     </div>
   );

@@ -46,7 +46,7 @@ export const JournalPage: React.FC = () => {
         </div>
       )}
 
-      <JournalList />
+      <JournalList onAddEntry={() => setShowAddForm(true)} />
     </div>
   );
 };

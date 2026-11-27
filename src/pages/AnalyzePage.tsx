@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Card, Button } from '@/components/common';
+import { Card, Button, ErrorState } from '@/components/common';
 import { useAppStore } from '@/store';
 import {
   FinancialDataInput,
@@ -11,13 +11,13 @@ import {
   ScreenerComparisonTable,
   ScreenerResult,
 } from '@/components/modules/screener';
-import { TickerSearch, RecentAnalyses } from '@/components/modules/analyze';
+import { TickerSearch, RecentAnalyses, AnalysisSkeleton } from '@/components/modules/analyze';
 import { toFullFinancials } from '@/components/modules/analyze/toFullFinancials';
 import { getCompanyFinancials } from '@/services';
 import { calculateFinancialRatios, analyzeValueInvesting } from '@/utils/financial-calculations';
 import { ProvenanceSource } from '@/types';
 import { useTranslation } from '@/i18n';
-import { AlertCircle, CheckCircle2, Search, Layers } from 'lucide-react';
+import { CheckCircle2, Search, Layers } from 'lucide-react';
 
 type AnalyzeTab = 'single' | 'compare';
 
@@ -30,16 +30,18 @@ const provenanceStyles: Record<ProvenanceSource, string> = {
 
 // Home "cockpit": hero search ticker + tab Single | Compare + analisi recenti
 export const AnalyzePage: React.FC = () => {
-  const { currentAnalysis, currentRatios, currentScore, currentProvenance } = useAppStore();
+  const { currentAnalysis, currentRatios, currentScore, currentProvenance, isLoading } = useAppStore();
   const { t } = useTranslation();
   const [tab, setTab] = useState<AnalyzeTab>('single');
   const [isInputCollapsed, setIsInputCollapsed] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Stato del Compare mode (screener multi-azienda dentro Analyze)
   const [isScreenerLoading, setIsScreenerLoading] = useState(false);
   const [screenerResults, setScreenerResults] = useState<ScreenerResult[]>([]);
   const [screenerErrors, setScreenerErrors] = useState<string[]>([]);
+  const [lastScreenerSymbols, setLastScreenerSymbols] = useState<string[]>([]);
 
   const hasVisibleAnalysis = Boolean(
     showResults && currentRatios && currentScore && currentAnalysis
@@ -66,6 +68,7 @@ export const AnalyzePage: React.FC = () => {
     setIsScreenerLoading(true);
     setScreenerResults([]);
     setScreenerErrors([]);
+    setLastScreenerSymbols(symbols);
 
     const settled = await Promise.allSettled(
       symbols.map((symbol) => getCompanyFinancials(symbol))
@@ -96,6 +99,9 @@ export const AnalyzePage: React.FC = () => {
     setScreenerErrors([]);
   };
 
+  // PR5: durante la ricerca hero o l'analisi del form, mostra skeleton al posto dei risultati
+  const showAnalysisSkeleton = tab === 'single' && (isSearching || isLoading);
+
   const tabs: { id: AnalyzeTab; label: string; icon: typeof Search }[] = [
     { id: 'single', label: t('analyze.tabSingle'), icon: Search },
     { id: 'compare', label: t('analyze.tabCompare'), icon: Layers },
@@ -104,7 +110,7 @@ export const AnalyzePage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Hero search — il gesto principale dell'app */}
-      <TickerSearch onAnalyzed={handleAnalysisSuccess} />
+      <TickerSearch onAnalyzed={handleAnalysisSuccess} onSearchingChange={setIsSearching} />
 
       {/* Tab Single | Compare */}
       <div className="flex gap-2 border-b border-gray-200" role="tablist" aria-label={t('analyze.tabsLabel')}>
@@ -140,19 +146,21 @@ export const AnalyzePage: React.FC = () => {
             onAnalysisSuccess={handleAnalysisSuccess}
           />
 
-          <div className="ui-anim-fade-slide" data-state={hasVisibleAnalysis ? 'open' : 'closed'}>
+          {showAnalysisSkeleton && <AnalysisSkeleton />}
+
+          <div className="ui-anim-fade-slide" data-state={hasVisibleAnalysis && !showAnalysisSkeleton ? 'open' : 'closed'}>
             {currentRatios && <RatiosDisplay ratios={currentRatios} />}
           </div>
 
           <div
             className="ui-anim-fade-slide"
-            data-state={hasVisibleAnalysis ? 'open' : 'closed'}
+            data-state={hasVisibleAnalysis && !showAnalysisSkeleton ? 'open' : 'closed'}
             style={{ transitionDelay: hasVisibleAnalysis ? '80ms' : '0ms' }}
           >
             {currentScore && <ValueScoreDisplay score={currentScore} />}
           </div>
 
-          {hasVisibleAnalysis && currentProvenance && (
+          {hasVisibleAnalysis && !showAnalysisSkeleton && currentProvenance && (
             <Card title={t('analyze.provenanceTitle')} subtitle={t('analyze.provenanceSubtitle')}>
               <div className="flex flex-wrap gap-2">
                 {Object.entries(currentProvenance).map(([field, source]) => (
@@ -175,16 +183,12 @@ export const AnalyzePage: React.FC = () => {
           <ScreenerInput onScreenerRun={handleScreenerRun} isLoading={isScreenerLoading} />
 
           {screenerErrors.length > 0 && (
-            <Card className="border border-danger-200 bg-red-50">
-              <div className="flex flex-col gap-2">
-                {screenerErrors.map((error) => (
-                  <p key={error} className="flex items-start gap-2 text-sm text-danger-700">
-                    <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                    {error}
-                  </p>
-                ))}
-              </div>
-            </Card>
+            <ErrorState
+              title={t('screener.errorTitle')}
+              message={screenerErrors.join(' · ')}
+              onRetry={() => handleScreenerRun(lastScreenerSymbols)}
+              retryLabel={t('common.retry')}
+            />
           )}
 
           {screenerResults.length > 0 && (

@@ -318,4 +318,21 @@ export const it: Dictionary = {
 
   // Grafici
   'charts.ofTotal': '{percent}% del totale',
+
+  // Stati comuni (PR5)
+  'common.retry': 'Riprova',
+  'common.loading': 'Caricamento...',
+  'errors.title': 'Qualcosa è andato storto',
+  'errors.invalidKey': 'API Key FMP non valida o mancante. Controlla le Impostazioni.',
+  'errors.invalidKeyAction': 'Apri Impostazioni',
+  'errors.rateLimit': 'Rate limit API superato. Attendi un istante e riprova.',
+  'errors.notFound': 'Ticker "{symbol}" non trovato. Controlla la grafia.',
+  'errors.network': 'Nessuna connessione. Verifica di essere online e riprova.',
+  'errors.server': 'Errore del server API (status {status}). Riprova tra poco.',
+  'errors.generic': 'Errore imprevisto: {message}',
+  'screener.errorTitle': 'Alcuni ticker non sono stati analizzati',
+  'form.autofillErrorTitle': 'Auto-fill non riuscito',
+  'portfolio.emptyCta': 'Aggiungi la prima posizione',
+  'portfolio.refreshErrorTitle': 'Aggiornamento prezzi non riuscito',
+  'journal.emptyCta': 'Scrivi la prima nota',
 };

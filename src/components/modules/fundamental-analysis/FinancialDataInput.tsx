@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { Card, Input, Button } from '@/components/common';
+import { Card, Input, Button, ErrorState, Skeleton } from '@/components/common';
+import { translateError } from '@/components/common';
 import { CompanyFinancials, FieldProvenance, HistoricalMetrics } from '@/types';
 import { useAppStore } from '@/store';
 import { getCompanyFinancials } from '@/services';
@@ -44,6 +45,7 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
   });
 
   const [isApiLoading, setIsApiLoading] = useState(false);
+  const [autofillError, setAutofillError] = useState<string | null>(null);
   // Provenance e storico dell'ultimo auto-fill: servono a setAnalysis
   const provenanceRef = useRef<FieldProvenance>({});
   const historyRef = useRef<HistoricalMetrics[] | undefined>(undefined);
@@ -53,11 +55,12 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
 
   const handleAutofill = async () => {
     if (!formData.symbol) {
-      alert(t('form.alertSymbol'));
+      setAutofillError(t('form.alertSymbol'));
       return;
     }
-    
+
     setIsApiLoading(true);
+    setAutofillError(null);
     try {
       const result = await getCompanyFinancials(formData.symbol);
       const data = result.financials;
@@ -86,8 +89,7 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
         currency:            data.currency ?? prev.currency,
       }));
     } catch (err) {
-      const message = err instanceof Error ? err.message : t('form.alertAutofillFallback');
-      alert(message);
+      setAutofillError(translateError(t, err, (formData.symbol ?? '').toUpperCase()) || t('form.alertAutofillFallback'));
     } finally {
       setIsApiLoading(false);
     }
@@ -133,8 +135,43 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
           </p>
         </div>
 
+        {autofillError && (
+          <div className="mb-4">
+            <ErrorState
+              compact
+              title={t('form.autofillErrorTitle')}
+              message={autofillError}
+              onRetry={handleAutofill}
+              retryLabel={t('common.retry')}
+            />
+          </div>
+        )}
+
         <div className="ui-anim-collapse" data-state={isCollapsed ? 'closed' : 'open'}>
           <div className="ui-anim-collapse-content">
+            {isApiLoading ? (
+              // PR5: skeleton durante l'auto-fill API, al posto del form
+              <div className="space-y-4" aria-busy="true">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <Skeleton className="h-6 w-40" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <Skeleton className="h-6 w-40" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              </div>
+            ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
           {/* Informazioni base */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
@@ -365,6 +402,7 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
           </Button>
         </div>
       </form>
+            )}
           </div>
         </div>
 

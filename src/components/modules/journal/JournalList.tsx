@@ -1,13 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { useAppStore } from '@/store';
 import { useTranslation } from '@/i18n';
+import { EmptyState, Button } from '@/components/common';
 import { JournalEntryCard } from './JournalEntryCard';
 import { JournalFilters } from './JournalFilters';
 import { EditJournalModal } from './EditJournalModal';
 import { JournalEntry } from '@/types';
-import { FileText } from 'lucide-react';
+import { FileText, Plus } from 'lucide-react';
 
-export const JournalList: React.FC = () => {
+interface JournalListProps {
+  onAddEntry?: () => void; // CTA dell'empty state (PR5)
+}
+
+export const JournalList: React.FC<JournalListProps> = ({ onAddEntry }) => {
   const { journalEntries, updateJournalEntry, removeJournalEntry } = useAppStore();
   const { t } = useTranslation();
   
@@ -41,14 +46,21 @@ export const JournalList: React.FC = () => {
   }, [journalEntries, searchTerm, typeFilter, tagFilter]);
 
   if (journalEntries.length === 0) {
+    // PR5: empty state con CTA
     return (
-      <div className="text-center py-12 bg-white rounded-lg border border-dashed border-gray-300">
-        <FileText className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-        <h3 className="text-lg font-medium text-gray-900 mb-1">{t('journal.emptyTitle')}</h3>
-        <p className="text-gray-500 max-w-sm mx-auto">
-          {t('journal.emptyText')}
-        </p>
-      </div>
+      <EmptyState
+        icon={FileText}
+        title={t('journal.emptyTitle')}
+        text={t('journal.emptyText')}
+        action={
+          onAddEntry && (
+            <Button onClick={onAddEntry} type="button" className="flex items-center gap-2">
+              <Plus className="w-4 h-4" />
+              {t('journal.emptyCta')}
+            </Button>
+          )
+        }
+      />
     );
   }
 

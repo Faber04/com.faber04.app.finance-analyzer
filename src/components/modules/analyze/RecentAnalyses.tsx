@@ -1,8 +1,8 @@
 import React from 'react';
-import { Card } from '@/components/common';
+import { Card, EmptyState } from '@/components/common';
 import { useAppStore } from '@/store';
 import { useTranslation } from '@/i18n';
-import { X } from 'lucide-react';
+import { History, X } from 'lucide-react';
 
 // Mappa colori per raccomandazione
 const RECOMMENDATION_STYLES: Record<string, { label: string; color: string; bg: string }> = {
@@ -17,14 +17,14 @@ export const RecentAnalyses: React.FC = () => {
   const { recentAnalyses, removeRecentAnalysis } = useAppStore();
   const { t, locale } = useTranslation();
 
+  if (recentAnalyses.length === 0) {
+    // PR5: empty state (fuori dalla Card, che mostrerebbe un box dentro il box)
+    return <EmptyState icon={History} title={t('analyze.recentTitle')} text={t('analyze.recentEmpty')} />;
+  }
+
   return (
     <Card title={t('analyze.recentTitle')} subtitle={t('analyze.recentSubtitle')}>
-      {recentAnalyses.length === 0 ? (
-        <p className="text-gray-500 italic">
-          {t('analyze.recentEmpty')}
-        </p>
-      ) : (
-        <ul className="space-y-2">
+      <ul className="space-y-2">
           {recentAnalyses.map((analysis) => {
             const rec =
               RECOMMENDATION_STYLES[analysis.recommendation] ??
@@ -77,8 +77,7 @@ export const RecentAnalyses: React.FC = () => {
               </li>
             );
           })}
-        </ul>
-      )}
+      </ul>
     </Card>
   );
 };
