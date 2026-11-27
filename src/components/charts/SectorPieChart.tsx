@@ -88,7 +88,7 @@ export const SectorPieChart: React.FC<SectorPieChartProps> = ({
                 innerRadius={50}
                 dataKey="value"
                 strokeWidth={2}
-                stroke="#fff"
+                stroke="var(--pie-stroke)"
               >
                 {processedData.map((_, index) => (
                   <Cell

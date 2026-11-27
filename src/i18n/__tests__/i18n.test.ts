@@ -21,7 +21,7 @@ describe('createTranslator', () => {
 
   it('resolves a key in the active dictionary', () => {
     expect(t('nav.analyze')).toBe('Analyze');
-    expect(createTranslator(itDict)('nav.settings')).toBe('Impostazioni');
+    expect(createTranslator(itDict)('nav.journal')).toBe('Journal');
   });
 
   it('falls back to English when the active dictionary misses the key', () => {

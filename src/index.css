@@ -11,6 +11,13 @@
   color: rgba(17, 24, 39, 1);
   background-color: #f9fafb;
 
+  /* PR9: colori grafici (Recharts) — cambiano col tema senza JS */
+  --chart-grid: #e2e8f0;
+  --chart-axis: #cbd5e1;
+  --chart-tick: #94a3b8;
+  --chart-cursor: #f8fafc;
+  --pie-stroke: #ffffff;
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -22,12 +29,42 @@
   color-scheme: dark;
   color: rgba(243, 244, 246, 1);
   background-color: #0a0f1c; /* brand.navy */
+
+  --chart-grid: #1e293b;
+  --chart-axis: #334155;
+  --chart-tick: #64748b;
+  --chart-cursor: #16213a;
+  --pie-stroke: #0a0f1c;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   transition: background-color 200ms ease, color 200ms ease;
+  /* PR9: sfondo mesh — accenti blu in scala con l'hero sopra il chiaro */
+  background-image:
+    radial-gradient(60rem 40rem at 85% -10%, rgba(56, 189, 248, 0.18), transparent 60%),
+    radial-gradient(50rem 36rem at -10% 110%, rgba(14, 165, 233, 0.12), transparent 60%);
+  background-attachment: fixed;
+}
+
+.dark body {
+  /* PR9: stesso mesh in dark, aloni più tenui sul navy */
+  background-image:
+    radial-gradient(60rem 40rem at 85% -10%, rgba(251, 191, 36, 0.08), transparent 60%),
+    radial-gradient(50rem 36rem at -10% 110%, rgba(14, 165, 233, 0.12), transparent 60%);
+  background-attachment: fixed;
+}
+
+/* PR9: vetro smerigliato riutilizzabile (card, stati vuoti/errore) */
+@layer components {
+  .glass {
+    @apply bg-white/60 dark:bg-gray-900/50 backdrop-blur-xl border border-white/60 dark:border-white/10 shadow-card rounded-card;
+  }
+
+  .glass-strong {
+    @apply bg-white/75 dark:bg-gray-900/70 backdrop-blur-xl border border-white/70 dark:border-white/10 shadow-card rounded-card;
+  }
 }
 
 #root {

@@ -180,7 +180,7 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
             <span className="text-gray-400 dark:text-gray-500 font-normal ml-2">{t('journal.thesisHint')}</span>
           </label>
           <textarea
-            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[120px] ${
+            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[120px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${
               errors.thesis ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
             }`}
             placeholder={t('journal.thesisPlaceholder')}

@@ -43,7 +43,7 @@ export const PortfolioPerformanceChart: React.FC<PortfolioPerformanceChartProps>
       return (
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-3 shadow-lg">
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{label}</p>
-          <p className="text-lg font-bold text-indigo-600">
+          <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
             {valueFormatter(payload[0].value)}
           </p>
         </div>
@@ -66,16 +66,16 @@ export const PortfolioPerformanceChart: React.FC<PortfolioPerformanceChartProps>
                 <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
             <XAxis 
               dataKey="date" 
-              tick={{ fontSize: 12, fill: '#94a3b8' }}
+              tick={{ fontSize: 12, fill: 'var(--chart-tick)' }}
               axisLine={{ stroke: '#e2e8f0' }}
               tickLine={false}
               dy={10}
             />
             <YAxis 
-              tick={{ fontSize: 12, fill: '#94a3b8' }}
+              tick={{ fontSize: 12, fill: 'var(--chart-tick)' }}
               axisLine={{ stroke: '#e2e8f0' }}
               tickLine={false}
               tickFormatter={(val) => valueFormatter(val)}

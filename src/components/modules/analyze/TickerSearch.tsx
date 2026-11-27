@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Download, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { Button, ErrorState, translateError } from '@/components/common';
 import { getCompanyFinancials } from '@/services';
-import { FmpApiError } from '@/services/api';
 import { useTranslation } from '@/i18n';
 import { CompanyFinancials, FieldProvenance, HistoricalMetrics } from '@/types';
 import { toFullFinancials } from './toFullFinancials';
@@ -19,7 +17,7 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onDataLoaded, onSear
   const { t } = useTranslation();
   const [symbol, setSymbol] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<{ message: string; isInvalidKey: boolean } | null>(null);
+  const [error, setError] = useState<{ message: string } | null>(null);
 
   const handleSearch = async () => {
     const clean = symbol.trim().toUpperCase();
@@ -32,10 +30,7 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onDataLoaded, onSear
       const result = await getCompanyFinancials(clean);
       onDataLoaded(toFullFinancials(result.financials), result.history, result.provenance);
     } catch (err) {
-      setError({
-        message: translateError(t, err, clean),
-        isInvalidKey: err instanceof FmpApiError && err.code === 'invalid-key',
-      });
+      setError({ message: translateError(t, err, clean) });
     } finally {
       setIsLoading(false);
       onSearchingChange?.(false);
@@ -50,7 +45,7 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onDataLoaded, onSear
   };
 
   return (
-    <div className="bg-gradient-to-r from-brand-navy via-primary-900 to-primary-700 rounded-lg p-6 sm:p-8 text-white">
+    <div className="bg-gradient-to-r from-brand-navy/85 via-primary-900/85 to-primary-700/85 backdrop-blur-xl border border-white/20 rounded-lg p-6 sm:p-8 text-white shadow-card">
       <h1 className="text-3xl font-bold mb-2">{t('analyze.heroTitle')}</h1>
       <p className="text-primary-100 mb-6">
         {t('analyze.loadHint')}
@@ -70,7 +65,7 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onDataLoaded, onSear
           disabled={!symbol.trim() || isLoading}
           size="lg"
           type="button"
-          className="bg-white text-brand-navy hover:bg-primary-50 dark:bg-white dark:text-brand-navy dark:hover:bg-gray-200 shrink-0"
+          className="bg-brand-teal text-brand-navy hover:bg-primary-400 shrink-0"
         >
           {isLoading ? (
             <span className="flex items-center gap-2">
@@ -91,16 +86,6 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onDataLoaded, onSear
             message={error.message}
             onRetry={handleSearch}
             retryLabel={t('common.retry')}
-            action={
-              error.isInvalidKey ? (
-                <Link
-                  to="/settings"
-                  className="text-sm font-semibold text-red-100 underline hover:text-white"
-                >
-                  {t('errors.invalidKeyAction')}
-                </Link>
-              ) : undefined
-            }
           />
         </div>
       )}

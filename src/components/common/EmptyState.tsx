@@ -12,7 +12,7 @@ interface EmptyStateProps {
 // Empty state con CTA: mai aree bianche (PR5)
 export const EmptyState: React.FC<EmptyStateProps> = ({ icon: Icon, title, text, tip, action }) => {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-card shadow-soft dark:shadow-card dark:border dark:border-gray-800 p-6 transition-colors duration-200">
+    <div className="glass p-6 transition-colors duration-200">
       <div className="text-center py-12">
         <div className="w-16 h-16 bg-primary-50 dark:bg-primary-900/40 rounded-full flex items-center justify-center mx-auto mb-4">
           <Icon size={32} className="text-primary-400 dark:text-primary-300" />

@@ -3,7 +3,6 @@ import { Navigation } from './components/Navigation';
 import { AnalyzePage } from './pages/AnalyzePage';
 import { PortfolioPage } from './pages/PortfolioPage';
 import { JournalPage } from './pages/JournalPage';
-import { SettingsPage } from './pages/SettingsPage';
 
 function App() {
   return (
@@ -15,8 +14,6 @@ function App() {
             <Route path="/" element={<AnalyzePage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/journal" element={<JournalPage />} />
-            {/* Settings raggiungibile solo dall'icona in nav, non da voce di menu */}
-            <Route path="/settings" element={<SettingsPage />} />
           </Routes>
         </main>
       </div>

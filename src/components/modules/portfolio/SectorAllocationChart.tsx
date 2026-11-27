@@ -104,7 +104,7 @@ export const SectorAllocationChart: React.FC<SectorAllocationChartProps> = ({
                 innerRadius={50}
                 dataKey="value"
                 strokeWidth={2}
-                stroke="#fff"
+                stroke="var(--pie-stroke)"
               >
                 {data.map((_, index) => (
                   <Cell

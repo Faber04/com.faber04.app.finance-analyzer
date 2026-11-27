@@ -13,10 +13,10 @@ export interface ScreenerResult {
 type SortKey = 'symbol' | 'overallScore' | 'pe' | 'pb' | 'roe' | 'debtToEquity';
 
 const recommendationStyles: Record<ValueInvestingScore['recommendation'], string> = {
-  'strong-buy': 'bg-success-100 dark:bg-success-500/20 text-success-800 dark:text-success-300',
+  'strong-buy': 'bg-success-50 dark:bg-success-500/20 text-success-700 dark:text-success-300',
   buy: 'bg-green-100 dark:bg-success-500/20 text-green-800 dark:text-success-300',
   hold: 'bg-yellow-100 dark:bg-brand-amber/20 text-yellow-800 dark:text-brand-amber',
-  avoid: 'bg-danger-100 dark:bg-danger-500/20 text-danger-700 dark:text-danger-400',
+  avoid: 'bg-danger-50 dark:bg-danger-500/20 text-danger-700 dark:text-danger-400',
 };
 
 const recommendationKeys: Record<ValueInvestingScore['recommendation'], string> = {

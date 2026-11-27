@@ -6,8 +6,6 @@ export const it: Dictionary = {
   'nav.analyze': 'Analyze',
   'nav.portfolio': 'Portfolio',
   'nav.journal': 'Journal',
-  'nav.settings': 'Impostazioni',
-  'nav.settingsLink': 'Impostazioni',
   'nav.mobileMenu': 'Apri/chiudi menu mobile',
   'nav.language': 'Lingua',
   'theme.toggle': 'Cambia tema',
@@ -297,19 +295,6 @@ export const it: Dictionary = {
   'journal.cardDeleteConfirm': 'Sei sicuro di voler eliminare questa nota per {symbol}?',
 
   // Impostazioni
-  'settings.title': 'Impostazioni',
-  'settings.tabGeneral': 'Generali',
-  'settings.tabIntegrations': 'Integrazioni API',
-  'settings.generalEmpty': 'Nessuna impostazione generale configurabile al momento.',
-  'settings.apiTitle': 'Financial Modeling Prep API Key',
-  'settings.apiSubtitle': 'Per ottenere i dati finanziari in tempo reale, inserisci la tua API Key di FMP. La chiave verrà salvata in modo sicuro nel localStorage del browser.',
-  'settings.apiEnvDetected': '✓ API Key rilevata dal file di configurazione ambientale (.env).',
-  'settings.apiLabel': 'Chiave API',
-  'settings.apiPlaceholder': 'Inserisci qui la chiave API...',
-  'settings.apiSave': 'Salva',
-  'settings.apiRemove': 'Rimuovi',
-  'settings.apiSavedAlert': 'API Key salvata con successo nel browser!',
-  'settings.apiRemovedAlert': 'API Key rimossa dal browser.',
 
   // Grafici
   'charts.ofTotal': '{percent}% del totale',
@@ -318,8 +303,7 @@ export const it: Dictionary = {
   'common.retry': 'Riprova',
   'common.loading': 'Caricamento...',
   'errors.title': 'Qualcosa è andato storto',
-  'errors.invalidKey': 'API Key FMP non valida o mancante. Controlla le Impostazioni.',
-  'errors.invalidKeyAction': 'Apri Impostazioni',
+  'errors.invalidKey': 'API Key FMP non valida o mancante.',
   'errors.rateLimit': 'Rate limit API superato. Attendi un istante e riprova.',
   'errors.notFound': 'Ticker "{symbol}" non trovato. Controlla la grafia.',
   'errors.network': 'Nessuna connessione. Verifica di essere online e riprova.',

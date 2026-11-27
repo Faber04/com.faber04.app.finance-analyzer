@@ -7,7 +7,7 @@ interface ErrorStateProps {
   message: string;
   onRetry?: () => void;
   retryLabel?: string;
-  action?: React.ReactNode; // es. link a Settings per invalid-key
+  action?: React.ReactNode; // CTA aggiuntiva opzionale
   compact?: boolean; // variante inline compatta (sotto un form/hero)
 }
 
@@ -43,7 +43,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   }
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-card shadow-soft dark:shadow-card dark:border dark:border-gray-800 p-6 transition-colors duration-200" role="alert">
+    <div className="glass p-6 transition-colors duration-200" role="alert">
       <div className="text-center py-8">
         <div className="w-14 h-14 bg-danger-50 dark:bg-danger-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
           <AlertTriangle size={28} className="text-danger-500 dark:text-danger-400" />
