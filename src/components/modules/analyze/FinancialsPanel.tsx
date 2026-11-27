@@ -95,6 +95,7 @@ export const FinancialsPanel: React.FC<FinancialsPanelProps> = ({ value, onChang
                       <td className="py-1.5 pr-4">
                         <input
                           type={field.type}
+                          aria-label={t(field.labelKey)}
                           step={field.type === 'number' ? '0.01' : undefined}
                           value={(value[field.name] as string | number | undefined) ?? ''}
                           onChange={(e) => handleChange(field.name, e.target.value, field.type)}

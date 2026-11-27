@@ -23,7 +23,7 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
     switch (type) {
       case 'buy': return 'text-green-600 dark:text-success-400 bg-green-50 dark:bg-success-500/10 border-green-200 dark:border-success-700';
       case 'sell': return 'text-red-600 dark:text-danger-400 bg-red-50 dark:bg-danger-500/10 border-red-200 dark:border-danger-700';
-      default: return 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-700';
+      default: return 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10 border-primary-200 dark:border-primary-700';
     }
   };
 
@@ -39,7 +39,7 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
     switch (outcome) {
       case 'success': return 'text-green-600 dark:text-success-400';
       case 'failure': return 'text-red-600 dark:text-danger-400';
-      case 'learning': return 'text-blue-600 dark:text-blue-400';
+      case 'learning': return 'text-primary-600 dark:text-primary-400';
       default: return 'text-gray-600 dark:text-gray-400';
     }
   };
@@ -71,7 +71,7 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
           <div className="flex space-x-2">
             <button
               onClick={() => onEdit(entry)}
-              className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+              className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-primary-600 hover:bg-primary-50 rounded transition-colors"
               title={t('journal.cardEdit')}
             >
               <Edit2 className="w-4 h-4" />
@@ -148,7 +148,7 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
           </button>
 
           {isExpanded && (
-            <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-500/10/50 rounded-lg space-y-3">
+            <div className="mt-3 p-3 bg-primary-50 dark:bg-primary-500/10 rounded-lg space-y-3">
               {entry.outcome && (
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('journal.cardOutcome')}</p>

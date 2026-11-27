@@ -84,7 +84,7 @@ export const JournalList: React.FC<JournalListProps> = ({ onAddEntry }) => {
               setTypeFilter('all');
               setTagFilter('');
             }}
-            className="mt-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 text-sm font-medium"
+            className="mt-2 text-primary-600 dark:text-primary-400 hover:text-primary-800 text-sm font-medium"
           >
             {t('journal.resetFilters')}
           </button>

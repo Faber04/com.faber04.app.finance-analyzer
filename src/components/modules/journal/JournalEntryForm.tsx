@@ -109,7 +109,7 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
               {t('journal.entryTypeLabel')}
             </label>
             <select
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               value={formData.type}
               onChange={(e) => handleChange('type', e.target.value)}
             >
@@ -180,7 +180,7 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
             <span className="text-gray-400 dark:text-gray-500 font-normal ml-2">{t('journal.thesisHint')}</span>
           </label>
           <textarea
-            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[120px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${
+            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[120px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${
               errors.thesis ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
             }`}
             placeholder={t('journal.thesisPlaceholder')}
@@ -200,7 +200,7 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
         />
 
         {/* Retrospettiva */}
-        <div className="p-4 bg-blue-50 dark:bg-blue-500/10/30 rounded-lg border border-blue-100 space-y-4">
+        <div className="p-4 bg-primary-50 dark:bg-primary-500/10 rounded-lg border border-primary-100 space-y-4">
              <h4 className="text-sm font-bold text-gray-800 dark:text-gray-200">{t('journal.retroTitle')}</h4>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div>
@@ -208,7 +208,7 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
                       {t('journal.outcomeLabel')}
                     </label>
                     <select
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       value={formData.outcome || ''}
                       onChange={(e) => handleChange('outcome', e.target.value || undefined)}
                     >
@@ -224,7 +224,7 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
                   {t('journal.lessonsLabel')}
                 </label>
                 <textarea
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[80px]"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[80px]"
                   placeholder={t('journal.lessonsPlaceholder')}
                   value={formData.lessonsLearned}
                   onChange={(e) => handleChange('lessonsLearned', e.target.value)}

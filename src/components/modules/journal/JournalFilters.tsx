@@ -34,7 +34,7 @@ export const JournalFilters: React.FC<JournalFiltersProps> = ({
             <input
               type="text"
               placeholder={t('journal.searchPlaceholder')}
-              className="w-full pl-9 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full pl-9 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
             />
@@ -48,7 +48,7 @@ export const JournalFilters: React.FC<JournalFiltersProps> = ({
             {t('journal.typeLabel')}
           </label>
           <select
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             value={typeFilter}
             onChange={(e) => onTypeFilterChange(e.target.value)}
           >
