@@ -15,8 +15,8 @@ export const RatiosDisplay: React.FC<RatiosDisplayProps> = ({ ratios }) => {
   const { t } = useTranslation();
 
   const getRatioColor = (good: boolean | null) => {
-    if (good === null) return 'text-gray-400';
-    return good ? 'text-success-700' : 'text-danger-700';
+    if (good === null) return 'text-gray-400 dark:text-gray-500';
+    return good ? 'text-success-700 dark:text-success-400' : 'text-danger-700 dark:text-danger-400';
   };
 
   const ratioGroups = [
@@ -116,14 +116,14 @@ export const RatiosDisplay: React.FC<RatiosDisplayProps> = ({ ratios }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {ratioGroups.map((group) => (
           <div key={group.title} className="space-y-3">
-            <h4 className="font-semibold text-gray-900 text-lg border-b pb-2">
+            <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-lg border-b pb-2">
               {group.title}
             </h4>
             {group.metrics.map((metric) => (
               <div key={metric.label} className="flex justify-between items-start">
                 <div className="flex-1">
-                  <div className="text-sm text-gray-600">{metric.label}</div>
-                  <div className="text-xs text-gray-400 mt-0.5">{metric.info}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">{metric.label}</div>
+                  <div className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{metric.info}</div>
                 </div>
                 <div
                   className={`text-xl font-bold ${getRatioColor(metric.good)}`}

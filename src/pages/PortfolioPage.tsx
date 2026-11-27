@@ -17,8 +17,8 @@ export const PortfolioPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-1">{t("portfolio.title")}</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">{t("portfolio.title")}</h1>
+          <p className="text-gray-600 dark:text-gray-400">
             {t("portfolio.subtitle")}
           </p>
         </div>

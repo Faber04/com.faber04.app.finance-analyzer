@@ -22,7 +22,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
 }) => {
   if (compact) {
     return (
-      <div className="rounded-lg border border-danger-200 bg-red-50 p-3 flex items-start gap-2 text-sm text-danger-700" role="alert">
+      <div className="rounded-lg border border-danger-200 dark:border-danger-700/60 bg-red-50 dark:bg-danger-500/10 p-3 flex items-start gap-2 text-sm text-danger-700 dark:text-danger-400" role="alert">
         <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
         <div className="flex-1">
           {title && <p className="font-semibold">{title}</p>}
@@ -43,13 +43,13 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6" role="alert">
+    <div className="bg-white dark:bg-gray-900 rounded-card shadow-soft dark:shadow-card dark:border dark:border-gray-800 p-6 transition-colors duration-200" role="alert">
       <div className="text-center py-8">
-        <div className="w-14 h-14 bg-danger-50 rounded-full flex items-center justify-center mx-auto mb-4">
-          <AlertTriangle size={28} className="text-danger-500" />
+        <div className="w-14 h-14 bg-danger-50 dark:bg-danger-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <AlertTriangle size={28} className="text-danger-500 dark:text-danger-400" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
-        <p className="text-sm text-gray-600 max-w-md mx-auto">{message}</p>
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">{title}</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md mx-auto">{message}</p>
         {(onRetry || action) && (
           <div className="mt-5 flex items-center justify-center gap-3">
             {onRetry && <Button onClick={onRetry} type="button">{retryLabel}</Button>}

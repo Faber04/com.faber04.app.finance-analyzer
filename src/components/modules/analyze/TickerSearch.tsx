@@ -63,14 +63,14 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onDataLoaded, onSear
           onKeyDown={handleKeyDown}
           placeholder={t('analyze.heroPlaceholder')}
           aria-label={t('analyze.heroAria')}
-          className="flex-1 rounded-lg border-0 px-4 py-3 text-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/60"
+          className="flex-1 rounded-lg border-0 px-4 py-3 text-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/60"
         />
         <Button
           onClick={handleSearch}
           disabled={!symbol.trim() || isLoading}
           size="lg"
           type="button"
-          className="bg-white text-brand-navy hover:bg-primary-50 shrink-0"
+          className="bg-white text-brand-navy hover:bg-primary-50 dark:bg-white dark:text-brand-navy dark:hover:bg-gray-200 shrink-0"
         >
           {isLoading ? (
             <span className="flex items-center gap-2">

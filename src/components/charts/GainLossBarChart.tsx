@@ -45,8 +45,8 @@ export const GainLossBarChart: React.FC<GainLossBarChartProps> = ({
     if (active && payload && payload.length) {
       const { name, value } = payload[0].payload;
       return (
-        <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-lg">
-          <p className="font-semibold text-gray-900">{name}</p>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-3 shadow-lg">
+          <p className="font-semibold text-gray-900 dark:text-gray-100">{name}</p>
           <p className={`font-bold ${value >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
             {valueFormatter(value)}
           </p>
@@ -64,18 +64,18 @@ export const GainLossBarChart: React.FC<GainLossBarChartProps> = ({
             data={sortedData}
             margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
           >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
             <XAxis 
               dataKey="name" 
               angle={-45}
               textAnchor="end"
               interval={0}
               height={60}
-              tick={{ fontSize: 12, fill: '#64748b' }}
+              tick={{ fontSize: 12, fill: '#94a3b8' }}
               axisLine={{ stroke: '#e2e8f0' }}
             />
             <YAxis 
-              tick={{ fontSize: 12, fill: '#64748b' }}
+              tick={{ fontSize: 12, fill: '#94a3b8' }}
               axisLine={{ stroke: '#e2e8f0' }}
               tickFormatter={(val) => valueFormatter(val)}
             />

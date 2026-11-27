@@ -20,19 +20,19 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ score, history, report
   const { t, locale } = useTranslation();
 
   const getScoreColor = (s: number) => {
-    if (s >= 80) return 'text-success-700 stroke-success-500';
+    if (s >= 80) return 'text-success-700 dark:text-success-400 stroke-success-500';
     if (s >= 60) return 'text-brand-teal stroke-brand-teal';
-    if (s >= 40) return 'text-yellow-600 stroke-brand-amber';
-    return 'text-danger-700 stroke-danger-500';
+    if (s >= 40) return 'text-yellow-600 dark:text-brand-amber stroke-brand-amber';
+    return 'text-danger-700 dark:text-danger-400 stroke-danger-500';
   };
   const scoreColor = getScoreColor(score.overallScore);
 
   const getRecommendationBadge = (rec: ValueInvestingScore['recommendation']) => {
     const badges = {
-      'strong-buy': 'bg-success-100 text-success-800 border-success-300',
-      'buy': 'bg-primary-100 text-primary-800 border-primary-300',
-      'hold': 'bg-yellow-100 text-yellow-800 border-yellow-300',
-      'avoid': 'bg-danger-100 text-danger-800 border-danger-300',
+      'strong-buy': 'bg-success-100 dark:bg-success-500/20 text-success-800 dark:text-success-300 border-success-300 dark:border-success-700',
+      'buy': 'bg-primary-100 text-primary-800 border-primary-300 dark:border-primary-700',
+      'hold': 'bg-yellow-100 dark:bg-brand-amber/20 text-yellow-800 border-yellow-300 dark:border-brand-amber/50',
+      'avoid': 'bg-danger-100 dark:bg-danger-500/20 text-danger-800 dark:text-danger-300 border-danger-300 dark:border-danger-700',
     };
 
     const labelKeys = {
@@ -83,8 +83,8 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ score, history, report
       <div className="space-y-6">
         {/* Header: anello score + raccomandazione */}
         <div className="text-center border-b pb-6">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('score.title')}</h3>
-          <p className="text-gray-600 mb-4">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('score.title')}</h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
             {score.companyName} ({score.symbol})
           </p>
 
@@ -97,7 +97,7 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ score, history, report
               role="img"
               aria-label={t('score.ringLabel', { score: score.overallScore })}
             >
-              <circle cx={55} cy={55} r={RING_R} fill="none" stroke="#e5e7eb" strokeWidth={10} />
+              <circle cx={55} cy={55} r={RING_R} fill="none" strokeWidth={10} className="stroke-gray-200 dark:stroke-gray-700" />
               <circle
                 cx={55}
                 cy={55}
@@ -118,7 +118,7 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ score, history, report
             <div>{getRecommendationBadge(score.recommendation)}</div>
           </div>
 
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
             {t('score.criteriaMet', { passed: passedCount, total: totalCount })}
             {naCount > 0 && ` ${t('score.naExcluded', { count: naCount })}`}
           </div>
@@ -126,11 +126,11 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ score, history, report
           {/* As of reportDate + warning dati vecchi */}
           {reportDate && (
             <div className="mt-3 flex items-center justify-center gap-2 flex-wrap">
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 dark:text-gray-400">
                 {t('score.asOf', { date: new Date(reportDate).toLocaleDateString(locale) })}
               </span>
               {isStale && (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-amber/20 text-yellow-800 border border-brand-amber">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-amber/20 dark:bg-brand-amber/30 text-yellow-800 border border-brand-amber dark:border-brand-amber/60">
                   <AlertTriangle className="w-3.5 h-3.5" />
                   {t('score.staleWarning')}
                 </span>
@@ -141,7 +141,7 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ score, history, report
           {/* Sparkline trend 10y */}
           {trendData.length >= 2 && (
             <div className="mt-4">
-              <p className="text-xs text-gray-500 mb-1 text-left">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 text-left">
                 {trendUsesRoe ? t('score.trend10y') : t('score.trendEps')}
               </p>
               <div style={{ width: '100%', height: 64 }}>
@@ -164,7 +164,7 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ score, history, report
 
           {/* Badge provenance compatto */}
           {hasProvenance && (
-            <p className="mt-3 text-xs text-gray-500">
+            <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
               {t('score.provenanceBadge', {
                 api: provCounts.api,
                 derived: provCounts.derived,
@@ -177,23 +177,23 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ score, history, report
 
         {/* Criteri dettagliati */}
         <div className="space-y-3">
-          <h4 className="font-semibold text-gray-900">{t('score.criteriaTitle')}</h4>
+          <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('score.criteriaTitle')}</h4>
           {score.criteria.map((criterion, index) => (
             <div
               key={index}
               className={`flex items-start gap-3 p-3 rounded-lg ${
                 criterion.status === 'pass'
-                  ? 'bg-success-50'
+                  ? 'bg-success-50 dark:bg-success-500/10'
                   : criterion.status === 'na'
-                    ? 'bg-gray-50'
-                    : 'bg-danger-50'
+                    ? 'bg-gray-50 dark:bg-gray-800/60'
+                    : 'bg-danger-50 dark:bg-danger-500/10'
               }`}
             >
               <div className="flex-shrink-0 mt-0.5">
                 {criterion.status === 'pass' ? (
                   <CheckCircle2 className="w-5 h-5 text-success-600" />
                 ) : criterion.status === 'na' ? (
-                  <MinusCircle className="w-5 h-5 text-gray-400" />
+                  <MinusCircle className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                 ) : (
                   <XCircle className="w-5 h-5 text-danger-600" />
                 )}
@@ -201,14 +201,14 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ score, history, report
 
               <div className="flex-1 min-w-0">
                 {/* name è una chiave i18n (criteria.*) — fallback alla stringa stessa se manca */}
-                <div className="font-medium text-gray-900">{t(criterion.name)}</div>
-                <div className="text-sm text-gray-600 mt-1">
+                <div className="font-medium text-gray-900 dark:text-gray-100">{t(criterion.name)}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                   {t('score.value')} <span className="font-semibold">{criterion.value}</span> |{' '}
                   {t('score.benchmark')} <span className="font-semibold">{criterion.benchmark}</span>
                 </div>
               </div>
 
-              <div className="flex-shrink-0 text-xs text-gray-500">
+              <div className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">
                 {t('score.weight', { weight: criterion.weight })}
               </div>
             </div>
@@ -218,10 +218,10 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ score, history, report
         {/* Note aggiuntive */}
         {score.notes.length > 0 && (
           <div className="border-t pt-4">
-            <h4 className="font-semibold text-gray-900 mb-2">{t('score.notes')}</h4>
+            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">{t('score.notes')}</h4>
             <ul className="space-y-1">
               {score.notes.map((note, index) => (
-                <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
+                <li key={index} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
                   <span className="text-brand-teal mt-1">•</span>
                   <span>{t(note)}</span>
                 </li>
@@ -231,7 +231,7 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ score, history, report
         )}
 
         {/* Disclaimer */}
-        <div className="border-t pt-4 text-xs text-gray-500 italic">{t('score.disclaimer')}</div>
+        <div className="border-t pt-4 text-xs text-gray-500 dark:text-gray-400 italic">{t('score.disclaimer')}</div>
       </div>
     </Card>
   );

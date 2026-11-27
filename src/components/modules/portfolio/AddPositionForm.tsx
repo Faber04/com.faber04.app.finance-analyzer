@@ -194,13 +194,13 @@ export const AddPositionForm: React.FC<AddPositionFormProps> = ({
         {/* Riga 3: Settore e Data */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="w-full">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t("portfolio.sectorLabel")}
             </label>
             <select
               value={form.sector}
               onChange={handleChange("sector")}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-900"
             >
               <option value="">{t("portfolio.sectorSelect")}</option>
               {SECTOR_KEYS.map((key) => (
@@ -221,7 +221,7 @@ export const AddPositionForm: React.FC<AddPositionFormProps> = ({
 
         {/* Note */}
         <div className="w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             {t("portfolio.notesLabel")}
           </label>
           <textarea
@@ -229,12 +229,12 @@ export const AddPositionForm: React.FC<AddPositionFormProps> = ({
             onChange={handleChange("notes")}
             placeholder={t("portfolio.notesPlaceholder")}
             rows={3}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
           />
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
+        <div className="flex justify-end gap-3 pt-2 border-t border-gray-100 dark:border-gray-800">
           <Button type="button" variant="secondary" onClick={handleCancel}>
             {t("portfolio.cancel")}
           </Button>

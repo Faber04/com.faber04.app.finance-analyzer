@@ -13,10 +13,10 @@ export interface ScreenerResult {
 type SortKey = 'symbol' | 'overallScore' | 'pe' | 'pb' | 'roe' | 'debtToEquity';
 
 const recommendationStyles: Record<ValueInvestingScore['recommendation'], string> = {
-  'strong-buy': 'bg-success-100 text-success-800',
-  buy: 'bg-green-100 text-green-800',
-  hold: 'bg-yellow-100 text-yellow-800',
-  avoid: 'bg-danger-100 text-danger-700',
+  'strong-buy': 'bg-success-100 dark:bg-success-500/20 text-success-800 dark:text-success-300',
+  buy: 'bg-green-100 dark:bg-success-500/20 text-green-800 dark:text-success-300',
+  hold: 'bg-yellow-100 dark:bg-brand-amber/20 text-yellow-800 dark:text-brand-amber',
+  avoid: 'bg-danger-100 dark:bg-danger-500/20 text-danger-700 dark:text-danger-400',
 };
 
 const recommendationKeys: Record<ValueInvestingScore['recommendation'], string> = {
@@ -88,7 +88,7 @@ export const ScreenerComparisonTable: React.FC<ScreenerComparisonTableProps> = (
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="border-b-2 border-gray-200 text-left text-gray-600">
+            <tr className="border-b-2 border-gray-200 dark:border-gray-700 text-left text-gray-600 dark:text-gray-400">
               <th className="py-3 px-2 font-semibold">{t('screener.colCompany')}</th>
               <th className="py-3 px-2 font-semibold">{t('screener.colPrice')}</th>
               {columns.map((col) => (
@@ -108,14 +108,14 @@ export const ScreenerComparisonTable: React.FC<ScreenerComparisonTableProps> = (
           </thead>
           <tbody>
             {sorted.map((r) => (
-              <tr key={r.financials.symbol} className="border-b border-gray-100 hover:bg-gray-50">
+              <tr key={r.financials.symbol} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/60">
                 <td className="py-3 px-2">
-                  <div className="font-bold text-gray-900">{r.financials.symbol}</div>
-                  <div className="text-xs text-gray-500">{r.financials.companyName}</div>
+                  <div className="font-bold text-gray-900 dark:text-gray-100">{r.financials.symbol}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">{r.financials.companyName}</div>
                 </td>
-                <td className="py-3 px-2 text-gray-700">{formatPrice(r.financials.currentPrice)}</td>
+                <td className="py-3 px-2 text-gray-700 dark:text-gray-300">{formatPrice(r.financials.currentPrice)}</td>
                 <td className="py-3 px-2">
-                  <span className="inline-flex items-center gap-1 font-bold text-gray-900">
+                  <span className="inline-flex items-center gap-1 font-bold text-gray-900 dark:text-gray-100">
                     {r.score.overallScore === bestScore && (
                       <Trophy className="w-4 h-4 text-yellow-500" />
                     )}

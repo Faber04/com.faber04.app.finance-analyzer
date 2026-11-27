@@ -23,8 +23,8 @@ export const JournalPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('journal.title')}</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('journal.title')}</h1>
+          <p className="text-gray-600 dark:text-gray-400">
             {t('journal.subtitle')}
           </p>
         </div>

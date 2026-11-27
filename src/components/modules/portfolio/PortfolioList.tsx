@@ -74,7 +74,7 @@ export const PortfolioList: React.FC = () => {
       )}
 
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-gray-900">{t("portfolio.listTitle")}</h2>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t("portfolio.listTitle")}</h2>
         <Button
           variant="secondary"
           onClick={handleRefreshPrices}
@@ -90,14 +90,14 @@ export const PortfolioList: React.FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="!p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary-50 rounded-lg">
-              <DollarSign size={20} className="text-primary-600" />
+            <div className="p-2 bg-primary-50 dark:bg-primary-900/40 rounded-lg">
+              <DollarSign size={20} className="text-primary-600 dark:text-primary-400" />
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wide">
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 {t("portfolio.totalValue")}
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
                 {formatCurrency(totalValue)}
               </p>
             </div>
@@ -106,14 +106,14 @@ export const PortfolioList: React.FC = () => {
 
         <Card className="!p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-gray-50 rounded-lg">
-              <DollarSign size={20} className="text-gray-500" />
+            <div className="p-2 bg-gray-50 dark:bg-gray-800/60 rounded-lg">
+              <DollarSign size={20} className="text-gray-500 dark:text-gray-400" />
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wide">
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 {t("portfolio.totalCost")}
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
                 {formatCurrency(totalCost)}
               </p>
             </div>
@@ -125,7 +125,7 @@ export const PortfolioList: React.FC = () => {
         >
           <div className="flex items-center gap-3">
             <div
-              className={`p-2 rounded-lg ${isPositive ? "bg-success-50" : "bg-danger-50"}`}
+              className={`p-2 rounded-lg ${isPositive ? "bg-success-50 dark:bg-success-500/10" : "bg-danger-50 dark:bg-danger-500/10"}`}
             >
               {isPositive ? (
                 <TrendingUp size={20} className="text-success-600" />
@@ -134,11 +134,11 @@ export const PortfolioList: React.FC = () => {
               )}
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wide">
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 {t("portfolio.gainLoss")}
               </p>
               <p
-                className={`text-lg font-bold ${isPositive ? "text-success-700" : "text-danger-700"}`}
+                className={`text-lg font-bold ${isPositive ? "text-success-700 dark:text-success-400" : "text-danger-700 dark:text-danger-400"}`}
               >
                 {formatCurrency(totalGainLoss, 2, true)}
               </p>
@@ -151,7 +151,7 @@ export const PortfolioList: React.FC = () => {
         >
           <div className="flex items-center gap-3">
             <div
-              className={`p-2 rounded-lg ${isPositive ? "bg-success-50" : "bg-danger-50"}`}
+              className={`p-2 rounded-lg ${isPositive ? "bg-success-50 dark:bg-success-500/10" : "bg-danger-50 dark:bg-danger-500/10"}`}
             >
               {isPositive ? (
                 <TrendingUp size={20} className="text-success-600" />
@@ -160,11 +160,11 @@ export const PortfolioList: React.FC = () => {
               )}
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wide">
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 {t("portfolio.returnPct")}
               </p>
               <p
-                className={`text-lg font-bold ${isPositive ? "text-success-700" : "text-danger-700"}`}
+                className={`text-lg font-bold ${isPositive ? "text-success-700 dark:text-success-400" : "text-danger-700 dark:text-danger-400"}`}
               >
                 {formatPercentage(totalGainLossPercent)}
               </p>
@@ -175,7 +175,7 @@ export const PortfolioList: React.FC = () => {
 
       {/* Lista posizioni */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-800">
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
           {t("portfolio.positionsCount", { count: positions.length })}
         </h2>
         {positions.map((position) => (

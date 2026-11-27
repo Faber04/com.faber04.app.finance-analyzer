@@ -79,26 +79,26 @@ export const FinancialsPanel: React.FC<FinancialsPanelProps> = ({ value, onChang
       <div className="space-y-5">
         {FIELD_GROUPS.map((group) => (
           <div key={group.sectionKey}>
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">{t(group.sectionKey)}</h4>
+            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{t(group.sectionKey)}</h4>
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs text-gray-500 border-b border-gray-200">
+                  <tr className="text-left text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 dark:border-gray-700">
                     <th className="py-1.5 pr-4 font-medium">{t('analyze.colField')}</th>
                     <th className="py-1.5 pr-4 font-medium">{t('analyze.colValue')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {group.fields.map((field) => (
-                    <tr key={field.name} className="border-b border-gray-100">
-                      <td className="py-1.5 pr-4 text-gray-700 whitespace-nowrap">{t(field.labelKey)}</td>
+                    <tr key={field.name} className="border-b border-gray-100 dark:border-gray-800">
+                      <td className="py-1.5 pr-4 text-gray-700 dark:text-gray-300 whitespace-nowrap">{t(field.labelKey)}</td>
                       <td className="py-1.5 pr-4">
                         <input
                           type={field.type}
                           step={field.type === 'number' ? '0.01' : undefined}
                           value={(value[field.name] as string | number | undefined) ?? ''}
                           onChange={(e) => handleChange(field.name, e.target.value, field.type)}
-                          className="w-40 px-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                          className="w-40 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                         />
                       </td>
                     </tr>

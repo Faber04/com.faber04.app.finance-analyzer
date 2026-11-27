@@ -46,21 +46,21 @@ export const ApiKeySettings: React.FC = () => {
   };
 
   return (
-    <Card className={`mb-6 border-blue-200 ${isSaved ? 'bg-green-50/30' : 'bg-blue-50/50'}`}>
+    <Card className={`mb-6 border-blue-200 dark:border-blue-700 ${isSaved ? 'bg-green-50 dark:bg-success-500/10/30' : 'bg-blue-50 dark:bg-blue-500/10/50'}`}>
       <div className="flex items-start gap-4">
-        <div className="p-3 bg-blue-100 rounded-lg shrink-0">
-          <Key className="text-blue-600" size={24} />
+        <div className="p-3 bg-blue-100 dark:bg-blue-500/20 rounded-lg shrink-0">
+          <Key className="text-blue-600 dark:text-blue-400" size={24} />
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
             {t('settings.apiTitle')}
           </h3>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
             {t('settings.apiSubtitle')}
           </p>
 
           {hasEnvKey ? (
-            <div className="text-sm font-medium text-green-700 bg-green-100 p-3 rounded-md">
+            <div className="text-sm font-medium text-green-700 dark:text-success-400 bg-green-100 dark:bg-success-500/20 p-3 rounded-md">
               {t('settings.apiEnvDetected')}
             </div>
           ) : (

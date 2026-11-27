@@ -105,11 +105,11 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
         {/* riga 2: Tipo e Data */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t('journal.entryTypeLabel')}
             </label>
             <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               value={formData.type}
               onChange={(e) => handleChange('type', e.target.value)}
             >
@@ -129,8 +129,8 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
 
         {/* Dettagli Trade (se applicabile) */}
         {isTrade && (
-          <div className="p-4 bg-gray-50 rounded-lg border border-gray-100 space-y-4">
-            <h4 className="text-sm font-bold text-gray-800">{t('journal.tradeDetails')}</h4>
+          <div className="p-4 bg-gray-50 dark:bg-gray-800/60 rounded-lg border border-gray-100 dark:border-gray-800 space-y-4">
+            <h4 className="text-sm font-bold text-gray-800 dark:text-gray-200">{t('journal.tradeDetails')}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Input
                 label={t('journal.priceLabel')}
@@ -175,19 +175,19 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
 
         {/* Thesis */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             {t('journal.thesisLabel')}
-            <span className="text-gray-400 font-normal ml-2">{t('journal.thesisHint')}</span>
+            <span className="text-gray-400 dark:text-gray-500 font-normal ml-2">{t('journal.thesisHint')}</span>
           </label>
           <textarea
             className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[120px] ${
-              errors.thesis ? 'border-red-500' : 'border-gray-300'
+              errors.thesis ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
             }`}
             placeholder={t('journal.thesisPlaceholder')}
             value={formData.thesis}
             onChange={(e) => handleChange('thesis', e.target.value)}
           />
-          {errors.thesis && <p className="mt-1 text-sm text-red-600">{errors.thesis}</p>}
+          {errors.thesis && <p className="mt-1 text-sm text-red-600 dark:text-danger-400">{errors.thesis}</p>}
         </div>
 
         {/* Tags */}
@@ -200,15 +200,15 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
         />
 
         {/* Retrospettiva */}
-        <div className="p-4 bg-blue-50/30 rounded-lg border border-blue-100 space-y-4">
-             <h4 className="text-sm font-bold text-gray-800">{t('journal.retroTitle')}</h4>
+        <div className="p-4 bg-blue-50 dark:bg-blue-500/10/30 rounded-lg border border-blue-100 space-y-4">
+             <h4 className="text-sm font-bold text-gray-800 dark:text-gray-200">{t('journal.retroTitle')}</h4>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       {t('journal.outcomeLabel')}
                     </label>
                     <select
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       value={formData.outcome || ''}
                       onChange={(e) => handleChange('outcome', e.target.value || undefined)}
                     >
@@ -220,11 +220,11 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
                   </div>
              </div>
              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   {t('journal.lessonsLabel')}
                 </label>
                 <textarea
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[80px]"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[80px]"
                   placeholder={t('journal.lessonsPlaceholder')}
                   value={formData.lessonsLearned}
                   onChange={(e) => handleChange('lessonsLearned', e.target.value)}
@@ -233,7 +233,7 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
         </div>
 
         {/* Azioni */}
-        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100">
+        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-800">
           <Button type="button" variant="secondary" onClick={onCancel}>
             {t('journal.cancel')}
           </Button>

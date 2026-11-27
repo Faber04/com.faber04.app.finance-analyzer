@@ -12,15 +12,15 @@ interface EmptyStateProps {
 // Empty state con CTA: mai aree bianche (PR5)
 export const EmptyState: React.FC<EmptyStateProps> = ({ icon: Icon, title, text, tip, action }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white dark:bg-gray-900 rounded-card shadow-soft dark:shadow-card dark:border dark:border-gray-800 p-6 transition-colors duration-200">
       <div className="text-center py-12">
-        <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Icon size={32} className="text-primary-400" />
+        <div className="w-16 h-16 bg-primary-50 dark:bg-primary-900/40 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Icon size={32} className="text-primary-400 dark:text-primary-300" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-700 mb-2">{title}</h3>
-        <p className="text-gray-500 text-sm max-w-sm mx-auto">{text}</p>
+        <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">{title}</h3>
+        <p className="text-gray-500 dark:text-gray-400 text-sm max-w-sm mx-auto">{text}</p>
         {tip && (
-          <p className="mt-4 text-xs text-gray-500 bg-gray-50 rounded-lg max-w-sm mx-auto p-3 text-left">
+          <p className="mt-4 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/70 rounded-lg max-w-sm mx-auto p-3 text-left">
             {tip}
           </p>
         )}

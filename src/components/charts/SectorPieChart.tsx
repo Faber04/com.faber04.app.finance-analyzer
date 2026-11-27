@@ -62,10 +62,10 @@ export const SectorPieChart: React.FC<SectorPieChartProps> = ({
     if (active && payload && payload.length) {
       const { name, value, percent } = payload[0].payload;
       return (
-        <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-lg">
-          <p className="font-semibold text-gray-900">{name}</p>
-          <p className="text-gray-700">{valueFormatter(value)}</p>
-          <p className="text-gray-500 text-sm">
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-3 shadow-lg">
+          <p className="font-semibold text-gray-900 dark:text-gray-100">{name}</p>
+          <p className="text-gray-700 dark:text-gray-300">{valueFormatter(value)}</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             {t('charts.ofTotal', { percent: percent.toFixed(1) })}
           </p>
         </div>
@@ -106,22 +106,22 @@ export const SectorPieChart: React.FC<SectorPieChartProps> = ({
           {processedData.map((item, index) => (
             <div
               key={item.name}
-              className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50"
+              className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/60"
             >
               <div className="flex items-center gap-3">
                 <div
                   className="w-3 h-3 rounded-full shrink-0"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 />
-                <span className="text-sm font-medium text-gray-700 truncate max-w-[150px]">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate max-w-[150px]">
                   {item.name}
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-sm font-semibold text-gray-900">
+                <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                   {item.percent.toFixed(1)}%
                 </span>
-                <span className="text-xs text-gray-400 block">
+                <span className="text-xs text-gray-400 dark:text-gray-500 block">
                   {valueFormatter(item.value)}
                 </span>
               </div>

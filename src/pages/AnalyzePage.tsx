@@ -19,7 +19,6 @@ import { calculateFinancialRatios, analyzeValueInvesting, DEFAULT_CRITERIA } fro
 import { useTranslation } from '@/i18n';
 import {
   CompanyFinancials,
-  CriterionConfig,
   FieldProvenance,
   HistoricalMetrics,
 } from '@/types';
@@ -71,7 +70,6 @@ export const AnalyzePage: React.FC = () => {
   const [draft, setDraft] = useState<CompanyFinancials | null>(null);
   const [draftHistory, setDraftHistory] = useState<HistoricalMetrics[] | undefined>(undefined);
   const [draftProvenance, setDraftProvenance] = useState<FieldProvenance | null>(null);
-  const [criteria, setCriteria] = useState<CriterionConfig[]>(DEFAULT_CRITERIA);
   const [showResults, setShowResults] = useState(false);
 
   // Stato del Compare mode (screener multi-azienda dentro Analyze)
@@ -99,7 +97,8 @@ export const AnalyzePage: React.FC = () => {
 
   const handleAnalyze = () => {
     if (!draft) return;
-    setAnalysis(draft, draftHistory, draftProvenance ?? undefined, criteria);
+    // criteri fissi Graham/Buffett (DEFAULT_CRITERIA di default in analyzeValueInvesting)
+    setAnalysis(draft, draftHistory, draftProvenance ?? undefined);
     setShowResults(true);
   };
 
@@ -156,7 +155,7 @@ export const AnalyzePage: React.FC = () => {
       <TickerSearch onDataLoaded={handleDataLoaded} onSearchingChange={setIsSearching} />
 
       {/* Tab Single | Compare */}
-      <div className="flex gap-2 border-b border-gray-200" role="tablist" aria-label={t('analyze.tabsLabel')}>
+      <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700 dark:border-gray-700" role="tablist" aria-label={t('analyze.tabsLabel')}>
         {tabs.map((tabItem) => {
           const Icon = tabItem.icon;
           const isActive = tab === tabItem.id;
@@ -170,8 +169,8 @@ export const AnalyzePage: React.FC = () => {
               className={`
                 flex items-center gap-2 px-4 py-2 -mb-px border-b-2 text-sm font-semibold transition-colors
                 ${isActive
-                  ? 'border-primary-600 text-primary-700'
-                  : 'border-transparent text-gray-500 hover:text-gray-800 hover:border-gray-300'}
+                  ? 'border-primary-600 text-primary-700 dark:text-primary-300'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-800 hover:border-gray-300 dark:hover:border-gray-600'}
               `}
             >
               <Icon className="w-4 h-4" />
@@ -204,23 +203,16 @@ export const AnalyzePage: React.FC = () => {
                 value={draft}
                 onChange={(patch) => setDraft((prev) => (prev ? { ...prev, ...patch } : prev))}
               />
-              <CriteriaPanel value={criteria} onChange={setCriteria} />
-              <div className="flex justify-end gap-3">
-                <Button variant="secondary" onClick={handleNewSearch} type="button">
-                  <span className="flex items-center gap-2">
-                    <RotateCcw className="w-4 h-4" /> {t('form.newSearch')}
-                  </span>
-                </Button>
-                <Button onClick={handleAnalyze} type="button" size="lg">
-                  <span className="flex items-center gap-2">
-                    <Play className="w-4 h-4" /> {t('form.analyze')}
-                  </span>
-                </Button>
-              </div>
+              <CriteriaPanel value={DEFAULT_CRITERIA} />
             </>
           )}
 
-          <div className="ui-anim-fade-slide" data-state={hasVisibleAnalysis && !showAnalysisSkeleton ? 'open' : 'closed'}>
+          {/* Risultati: occupano spazio solo quando visibili, così i pulsanti non lasciano buchi */}
+          <div
+            className="ui-anim-fade-slide"
+            data-state={hasVisibleAnalysis && !showAnalysisSkeleton ? 'open' : 'closed'}
+            hidden={!hasVisibleAnalysis || showAnalysisSkeleton}
+          >
             {currentRatios && <RatiosDisplay ratios={currentRatios} />}
           </div>
 
@@ -228,6 +220,7 @@ export const AnalyzePage: React.FC = () => {
             className="ui-anim-fade-slide"
             data-state={hasVisibleAnalysis && !showAnalysisSkeleton ? 'open' : 'closed'}
             style={{ transitionDelay: hasVisibleAnalysis ? '80ms' : '0ms' }}
+            hidden={!hasVisibleAnalysis || showAnalysisSkeleton}
           >
             {currentScore && (
               <VerdictCard
@@ -238,6 +231,22 @@ export const AnalyzePage: React.FC = () => {
               />
             )}
           </div>
+
+          {/* Azioni: sotto i pannelli prima dell'analisi, sotto la VerdictCard dopo l'analisi */}
+          {draft && (
+            <div className="flex justify-end gap-3">
+              <Button variant="secondary" onClick={handleNewSearch} type="button">
+                <span className="flex items-center gap-2">
+                  <RotateCcw className="w-4 h-4" /> {t('form.newSearch')}
+                </span>
+              </Button>
+              <Button onClick={handleAnalyze} type="button" size="lg">
+                <span className="flex items-center gap-2">
+                  <Play className="w-4 h-4" /> {t('form.analyze')}
+                </span>
+              </Button>
+            </div>
+          )}
         </>
       )}
 

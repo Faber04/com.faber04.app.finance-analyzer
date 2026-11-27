@@ -4,8 +4,25 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  // PR8: tema light/dark via classe .dark su <html>
+  darkMode: 'class',
   theme: {
     extend: {
+      // PR8: tipografia system (SF Pro su macOS)
+      fontFamily: {
+        sans: ['system-ui', '-apple-system', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+      },
+      // PR8: radius e ombre soft stile macOS
+      borderRadius: {
+        'card': '0.75rem',
+      },
+      boxShadow: {
+        'soft': '0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04)',
+        'card': '0 4px 16px -2px rgb(0 0 0 / 0.08)',
+      },
+      transitionDuration: {
+        'fast': '150ms',
+      },
       colors: {
         // Brand token (PR6, riordino Cockpit) — applicati come ultimo strato sui punti chiave
         brand: {

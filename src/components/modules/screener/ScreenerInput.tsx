@@ -54,7 +54,7 @@ export const ScreenerInput: React.FC<ScreenerInputProps> = ({
             onChange={(e) => setCurrentInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={t('screener.placeholder')}
-            className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             disabled={symbols.length >= 6}
           />
           <Button
@@ -74,12 +74,12 @@ export const ScreenerInput: React.FC<ScreenerInputProps> = ({
             {symbols.map((symbol) => (
               <span
                 key={symbol}
-                className="inline-flex items-center gap-1 bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm font-semibold"
+                className="inline-flex items-center gap-1 bg-primary-100 dark:bg-primary-900/50 text-primary-800 dark:text-primary-300 px-3 py-1 rounded-full text-sm font-semibold"
               >
                 {symbol}
                 <button
                   onClick={() => removeSymbol(symbol)}
-                  className="text-primary-600 hover:text-primary-800"
+                  className="text-primary-600 dark:text-primary-400 hover:text-primary-800"
                   aria-label={t('screener.remove', { symbol })}
                   type="button"
                 >
@@ -106,7 +106,7 @@ export const ScreenerInput: React.FC<ScreenerInputProps> = ({
               </span>
             )}
           </Button>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-500 dark:text-gray-400">
             {t('screener.count', { count: symbols.length })}
           </span>
         </div>

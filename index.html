@@ -1,6 +1,16 @@
 <!doctype html>
 <html lang="it">
   <head>
+    <script>
+      // PR8: applica il tema prima del primo paint (no flash) — fa:v1:theme, default = preferenza di sistema
+      (function () {
+        try {
+          var saved = localStorage.getItem('fa:v1:theme');
+          var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          if (theme === 'dark') document.documentElement.classList.add('dark');
+        } catch (e) { /* no storage: default light */ }
+      })();
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="%BASE_URL%apple-touch-icon.png" />

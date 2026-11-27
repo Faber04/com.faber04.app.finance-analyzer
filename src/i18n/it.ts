@@ -10,6 +10,9 @@ export const it: Dictionary = {
   'nav.settingsLink': 'Impostazioni',
   'nav.mobileMenu': 'Apri/chiudi menu mobile',
   'nav.language': 'Lingua',
+  'theme.toggle': 'Cambia tema',
+  'theme.light': 'Passa al tema chiaro',
+  'theme.dark': 'Passa al tema scuro',
 
   // Pagina Analyze (home)
   'analyze.heroTitle': 'Analyze',
@@ -337,8 +340,7 @@ export const it: Dictionary = {
   'analyze.dataPanelTitle': 'Dati finanziari',
   'analyze.dataPanelSubtitle': 'Modificabili — le modifiche si applicano quando clicchi Analizza',
   'analyze.criteriaPanelTitle': 'Criteri di valutazione',
-  'analyze.criteriaPanelSubtitle': 'Soglie e pesi — la somma dei pesi deve essere 100',
-  'analyze.weightsWarning': 'La somma dei pesi è {sum}, non 100',
+  'analyze.criteriaPanelSubtitle': 'Criteri fissi di Graham/Buffett — solo lettura, pesi somma 100',
   'analyze.colField': 'Campo',
   'analyze.colValue': 'Valore',
   'analyze.colBenchmark': 'Soglia',

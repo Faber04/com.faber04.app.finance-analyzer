@@ -2,12 +2,12 @@ import React from 'react';
 
 // Blocchi skeleton per gli stati di loading (PR5)
 export const Skeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <div className={`animate-pulse bg-gray-200 rounded ${className}`} aria-hidden="true" />
+  <div className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded ${className}`} aria-hidden="true" />
 );
 
 // Card skeleton che imita un pannello risultati (ratio/score)
 export const SkeletonCard: React.FC<{ rows?: number }> = ({ rows = 4 }) => (
-  <div className="bg-white rounded-lg shadow-md p-6 space-y-4" aria-label="loading">
+  <div className="bg-white dark:bg-gray-900 rounded-card shadow-soft dark:border dark:border-gray-800 p-6 space-y-4" aria-label="loading">
     <Skeleton className="h-6 w-1/3" />
     <Skeleton className="h-4 w-2/3" />
     {Array.from({ length: rows }).map((_, i) => (

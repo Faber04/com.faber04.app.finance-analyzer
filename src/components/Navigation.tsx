@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { TrendingUp, Search, Briefcase, BookOpen, Settings, Menu, X } from "lucide-react";
 import { LanguageSelector } from "./LanguageSelector";
+import { ThemeToggle } from "./ThemeToggle";
 import { useTranslation } from "@/i18n";
 
 export const Navigation: React.FC = () => {
@@ -21,12 +22,12 @@ export const Navigation: React.FC = () => {
 
   const settingsLinkClasses = `p-2 rounded-lg transition-colors ${
     isSettingsActive
-      ? "bg-primary-100 text-primary-700"
-      : "text-gray-600 hover:bg-gray-100"
+      ? "bg-primary-100 text-primary-700 dark:bg-primary-900/60 dark:text-primary-300"
+      : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
   }`;
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-md shadow-soft dark:shadow-none dark:border-b dark:border-gray-800 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
@@ -53,8 +54,8 @@ export const Navigation: React.FC = () => {
                       flex items-center gap-2 px-4 py-2 rounded-lg transition-colors
                       ${
                         isActive
-                          ? "bg-primary-100 text-primary-700 font-semibold"
-                          : "text-gray-600 hover:bg-gray-100"
+                          ? "bg-primary-100 text-primary-700 font-semibold dark:bg-primary-900/60 dark:text-primary-300"
+                          : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                       }
                     `}
                   >
@@ -65,9 +66,10 @@ export const Navigation: React.FC = () => {
               })}
             </div>
 
-            {/* Lingua + settings sempre visibili (desktop) */}
-            <div className="hidden md:flex items-center gap-2 pl-3 border-l border-gray-200">
+            {/* Lingua + tema + settings sempre visibili (desktop) */}
+            <div className="hidden md:flex items-center gap-2 pl-3 border-l border-gray-200 dark:border-gray-700">
               <LanguageSelector />
+              <ThemeToggle />
               <Link
                 to="/settings"
                 className={settingsLinkClasses}
@@ -82,7 +84,7 @@ export const Navigation: React.FC = () => {
             <div className="md:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
                 aria-label={t("nav.mobileMenu")}
               >
                 {isMobileMenuOpen ? (
@@ -93,7 +95,7 @@ export const Navigation: React.FC = () => {
               </button>
 
               {isMobileMenuOpen && (
-                <div className="absolute top-16 left-0 right-0 bg-white shadow-lg border-t z-50">
+                <div className="absolute top-16 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg border-t dark:border-gray-800 z-50">
                   <div className="px-4 py-2 space-y-1">
                     {navItems.map((item) => {
                       const Icon = item.icon;
@@ -108,8 +110,8 @@ export const Navigation: React.FC = () => {
                             flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
                             ${
                               isActive
-                                ? "bg-primary-100 text-primary-700 font-semibold"
-                                : "text-gray-600 hover:bg-gray-100"
+                                ? "bg-primary-100 text-primary-700 font-semibold dark:bg-primary-900/60 dark:text-primary-300"
+                                : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                             }
                           `}
                         >
@@ -118,16 +120,19 @@ export const Navigation: React.FC = () => {
                         </Link>
                       );
                     })}
-                    <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 mt-1">
+                    <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-800 mt-1">
                       <LanguageSelector />
-                      <Link
-                        to="/settings"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-2 text-sm text-gray-600"
-                      >
+                      <div className="flex items-center gap-3">
+                        <ThemeToggle />
+                        <Link
+                          to="/settings"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"
+                        >
                         <Settings className="w-5 h-5" />
                         {t("nav.settingsLink")}
                       </Link>
+                      </div>
                     </div>
                   </div>
                 </div>

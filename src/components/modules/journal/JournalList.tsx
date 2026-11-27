@@ -77,14 +77,14 @@ export const JournalList: React.FC<JournalListProps> = ({ onAddEntry }) => {
 
       {filteredEntries.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-500">{t('journal.noResults')}</p>
+          <p className="text-gray-500 dark:text-gray-400">{t('journal.noResults')}</p>
           <button
             onClick={() => {
               setSearchTerm('');
               setTypeFilter('all');
               setTagFilter('');
             }}
-            className="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium"
+            className="mt-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 text-sm font-medium"
           >
             {t('journal.resetFilters')}
           </button>
