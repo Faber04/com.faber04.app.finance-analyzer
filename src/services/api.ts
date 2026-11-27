@@ -12,7 +12,7 @@ export const getFmpApiKey = (): string => {
     return envKey;
   }
 
-  throw new Error("API Key di Financial Modeling Prep mancante! Inseriscila nelle impostazioni o configura VITE_FMP_API_KEY nel file .env.");
+  throw new Error('Missing Financial Modeling Prep API key. Set VITE_FMP_API_KEY in a .env.local file or store FMP_API_KEY in the browser localStorage.');
 };
 
 export const saveFmpApiKey = (key: string): void => {
@@ -59,17 +59,17 @@ export async function fetchFromFmp<T>(endpoint: string): Promise<T> {
   try {
     response = await fetch(url);
   } catch {
-    throw new FmpApiError('network', 'Connessione assente o DNS non raggiungibile. Verifica di essere online.');
+    throw new FmpApiError('network', 'No connection or unreachable DNS. Check that you are online.');
   }
 
   if (!response.ok) {
     if (response.status === 401 || response.status === 403) {
-      throw new FmpApiError('invalid-key', "API Key FMP non valida o mancante. Verifica le impostazioni.", response.status);
+      throw new FmpApiError('invalid-key', 'Invalid or missing FMP API key.', response.status);
     }
     if (response.status === 429) {
-      throw new FmpApiError('rate-limit', 'Rate limit API superato. Attendi qualche istante e riprova.', response.status);
+      throw new FmpApiError('rate-limit', 'API rate limit reached. Wait a moment, then retry.', response.status);
     }
-    throw new FmpApiError('server', `Errore dal server API (Status: ${response.status})`, response.status);
+    throw new FmpApiError('server', `API server error (status ${response.status})`, response.status);
   }
 
   return response.json();

@@ -1,151 +1,126 @@
-# 💰 Finance Analyzer
+# Finance Analyzer — The Value Investor's Cockpit
 
-Una webapp professionale per analizzare investimenti, capire i bilanci delle aziende e applicare i principi di Value Investing di Benjamin Graham e Warren Buffett.
+A professional web app to analyze investments, read company financials and apply the value investing principles of Benjamin Graham and Warren Buffett — from raw data to a clear verdict, in one cockpit.
 
-**🚀 Live Demo**: [https://www.faber04.com/app/finance-analyzer/](https://www.faber04.com/app/finance-analyzer/)  
-**Versione Corrente**: `v0.4.0-rc.1` (Screener Multi-Azienda - Release Candidate)  
-**Stato Progetto**: ✅ **Applicazione completa, deployata e online** - pronta per il testing finale prima del rilascio stabile
+**Live Demo**: [https://www.faber04.com/app/finance-analyzer/](https://www.faber04.com/app/finance-analyzer/)
+**Current Version**: `v0.4.0-rc.1`
+**Status**: deployed and online, light/dark glass UI, EN/IT
 
-## 🎯 Caratteristiche Implementate
+## What it does
 
-### ✅ Analisi Fondamentale Automatica
+### Analyze — single company
+- Type a ticker in the hero and the app auto-fills the latest financials from Financial Modeling Prep (FMP), with per-field provenance and 10-year history.
+- All fundamental data lives in **one editable panel** — fix a number by hand if you disagree with the source.
+- Fixed **Graham/Buffett criteria** (read-only) drive the analysis.
+- Press **Analyze** and get ratios, a **Value Score (0–100)** with a recommendation (Strong Buy / Buy / Hold / Avoid), a score ring, a 10-year sparkline and a stale-data warning when the report is old.
 
-- **Auto-Fill via API**: Inserisci il simbolo e l'app recupera automaticamente gli ultimi 5 anni di bilanci da Financial Modeling Prep (FMP).
-- **Calcolo Ratio**: P/E, P/B, PS, ROE, ROA, Debt/Equity, Current Ratio.
-- **Value Score**: Sistema di scoring (0-100) basato sui criteri Graham/Buffett con raccomandazione finale.
-- **Reset Intelligente**: Il form si resetta automaticamente ad ogni nuovo accesso per garantire un'analisi pulita.
+### Compare — multi-company screener
+- Add up to **6 tickers** and run the screener: sortable comparison table (score, P/E, P/B, ROE, D/E, recommendation) with a trophy for the best score.
 
-### ✅ Portfolio Tracker
+### Track — portfolio
+- Add positions and monitor them: real-time gain/loss via quote refresh, sector allocation donut, gain/loss bar chart and performance chart (Recharts).
 
-- **Gestione Posizioni**: Aggiungi e monitora le tue posizioni azionarie.
-- **Performance Real-time**: Calcolo automatico di gain/loss (euro e %) grazie al refresh dei prezzi via API.
-- **Visualizzazione Dati**: Donut chart allocazione settoriale, grafico a barre gain/loss e grafici portfolio con Recharts.
-- **Gestione Completa**: Creazione, modifica ed eliminazione posizioni con form validato e modal di edit.
+### Reflect — investment journal
+- Write your thesis **before** you buy, tag it, filter and search entries, and review outcomes and lessons learned.
 
-### ✅ Investment Journal
+### Design
+- macOS-style design system: glass cards over a mesh gradient, **light/dark theme** (persisted), fully responsive with a solid mobile menu.
+- **i18n EN/IT** with English default; empty / error / loading states on every screen.
 
-- **Diario Decisionale**: Documenta la tua thesis prima dell'acquisto.
-- **Tag System**: Organizza le tue note per categorie.
-- **Filtri e Ricerca**: Ricerca per simbolo/nome e filtri per tipo/tag.
-- **Retrospettiva**: Analizza l'esito dei tuoi investimenti e le lezioni apprese.
+## Quick start
 
-### ✅ Screener Multi-Azienda
+### Prerequisites
+- Node.js 18+
 
-- **Comparazione**: Confronta fino a 6 aziende fianco a fianco con un'unica analisi.
-- **Value Score Comparato**: Score 0-100, P/E, P/B, ROE e Debt/Equity in un'unica tabella ordinabile.
-- **Best in Class**: Trofeo assegnato automaticamente all'azienda con il miglior Value Score.
-
-### ✅ Navigazione e Impostazioni
-
-- **Menu Mobile**: Hamburger menu responsive per dispositivi mobili.
-- **Routing Produzione**: HashRouter per compatibilita con hosting senza fallback server-side.
-- **Settings Page**: Pagina dedicata alle impostazioni e alle integrazioni API.
-
-### ✅ Dashboard & Analisi Recenti
-
-- **Analisi Recenti**: Storico persistente (localStorage) delle ultime 10 aziende analizzate, con score e raccomandazione visibili subito in homepage.
-- **Overview Statistiche**: Visualizzazione immediata di valore totale, gain/loss e note del portfolio.
-- **Charts**: Grafici interattivi con Recharts per una migliore comprensione del rischio e del rendimento.
-
-## 🚀 Quick Start
-
-### Prerequisiti
-
-- Node.js (versione 18 o superiore)
-- npm o yarn
-
-### Installazione Locale
-
+### Local setup
 ```bash
-# 1. Clona/scarica il progetto
-git clone https://github.com/Faber04/com.faber04.finance-analyzer.git
-cd com.faber04.finance-analyzer
-
-# 2. Installa le dipendenze
+git clone https://github.com/Faber04/com.faber04.app.finance-analyzer.git
+cd com.faber04.app.finance-analyzer
 npm install
-
-# 3. Configura le variabili di ambiente
-echo "VITE_FMP_API_KEY=tua_api_key_qui" > .env.local
-
-# 4. Avvia il server di sviluppo
+echo "VITE_FMP_API_KEY=your_fmp_key" > .env.local
 npm run dev
 ```
 
-### Configurazione API Key
-L'applicazione richiede una API Key di **Financial Modeling Prep**. Puoi configurarla in due modi:
-1. **Nell'App**: Vai nella pagina **Impostazioni** e configura l'integrazione API (i dati vengono salvati nel browser).
-2. **File Environment**: Crea un file `.env.local` nella cartella `finance-analyzer/` con: `VITE_FMP_API_KEY=tua_api_key`.
+### API key
+The app needs a **Financial Modeling Prep** API key. Set `VITE_FMP_API_KEY` in `.env.local` (recommended) or store `FMP_API_KEY` in the browser's localStorage.
 
-### Nota Routing in Produzione
+### Production routing
+The app is published in a subfolder (`/app/finance-analyzer/`) and uses HashRouter:
+- `https://www.faber04.com/app/finance-analyzer/#/`
+- `.../#/portfolio`
+- `.../#/journal`
 
-L'app e pubblicata in sottocartella (`/app/finance-analyzer/`) e usa HashRouter. Le route in produzione hanno formato:
-- `https://www.faber04.com/app/finance-analyzer/#/analysis`
-- `https://www.faber04.com/app/finance-analyzer/#/portfolio`
-
-## 📁 Struttura del Progetto
+## Project structure
 
 ```text
 src/
-	components/
-		common/                         # Card, Button, Input, componenti riutilizzabili
-		modules/
-			fundamental-analysis/         # Input dati, ratios, value score
-			portfolio/                    # Lista posizioni, form, modal, allocazione
-			journal/                      # Form entry, lista, filtri, card
-		charts/                         # Grafici dashboard e portfolio (Recharts)
-		Navigation.tsx                  # Navbar + menu mobile
-	pages/
-		DashboardPage.tsx
-		AnalysisPage.tsx
-		PortfolioPage.tsx
-		JournalPage.tsx
-		SettingsPage.tsx
-	services/                         # API client + integrazione FMP
-	store.ts                          # Zustand global state + persistence
-	types/                            # TypeScript domain models
-	utils/                            # Calcoli finanziari e formatter
+  components/
+    common/                    # Card, Button, Input, EmptyState, ErrorState, Skeleton
+    modules/
+      analyze/                 # Hero ticker search, editable FinancialsPanel, CriteriaPanel
+      fundamental-analysis/    # RatiosDisplay, VerdictCard (score ring + sparkline)
+      screener/                # ScreenerInput, ScreenerComparisonTable
+      portfolio/               # Positions, forms, charts
+      journal/                 # Entries, filters, cards
+    charts/                    # Recharts wrappers (theme-aware via CSS vars)
+    Navigation.tsx, LanguageSelector.tsx, ThemeToggle.tsx
+  pages/                       # AnalyzePage, PortfolioPage, JournalPage
+  i18n/                        # en/it dictionaries + parity tests
+  services/                    # FMP API client with error taxonomy
+  store.ts                     # Zustand store + localStorage persistence
+  utils/                       # financial-calculations (ratios, value score)
 ```
 
-## 🧮 Criteri di Valutazione (Scoring)
+## Scoring criteria (Value Score v2)
 
-L'app analizza le aziende secondo i pesi definiti in `financial-calculations.ts`:
+Companies are scored in `src/utils/financial-calculations.ts` — weighted Graham/Buffett criteria, sum 100. Criteria with missing data are marked N/A and excluded from the total, so a missing number never passes or fails a test:
 
-| Criterio | Benchmark | Peso |
-|----------|-----------|------|
-| P/E Ratio | < 15 | 15% |
-| P/B Ratio | < 1.5 | 10% |
-| ROE | ≥ 15% | 15% |
-| Net Profit Margin | ≥ 10% | 10% |
-| Debt/Equity | < 0.5 | 20% |
-| Current Ratio | ≥ 1.5 | 15% |
-| EPS Positivo | > 0 | 15% |
+| Criterion | Benchmark | Weight |
+|-----------|-----------|--------|
+| EPS | > 0 | 10% |
+| P/E | < 15 | 10% |
+| P/B | < 1.5 | 5% |
+| P/S | < 3 | 5% |
+| ROE | ≥ 15% | 10% |
+| ROE 10y trend | ≥ 10% in each of the last 10 years | 10% |
+| Net margin | ≥ 10% | 5% |
+| Debt/Equity | < 0.5 | 10% |
+| Current ratio | ≥ 1.5 | 5% |
+| Graham Number | price < √(22.5·EPS·BVPS) | 10% |
+| NCAV net-net | price < ⅔·NCAV per share | 10% |
+| Margin of safety vs DCF | price < 70% of FMP DCF | 10% |
 
-## 🛠️ Stack Tecnologico
+## Tech stack
 
 - **React 18** + **TypeScript**
-- **Vite**: Build tool e dev server
-- **Zustand**: State management
-- **Tailwind CSS**: Styling moderno e responsivo
-- **Recharts**: Visualizzazioni dati
-- **Lucide React**: Icone
-- **Financial Modeling Prep (FMP)**: API provider
+- **Vite** build tool & dev server
+- **Tailwind CSS** design system (brand tokens: navy `#0a0f1c`, teal `#0ea5e9`, amber `#fbbf24`)
+- **Zustand** state management with persistence
+- **Recharts** charts
+- **Lucide React** icons
+- **Financial Modeling Prep (FMP)** data provider
 
-## 🗺️ Roadmap 
+## Quality
 
-- **0.5.0**: Export PDF (analisi e portfolio) + storico export.
-- **0.6.0**: Dark mode + miglioramenti mobile + accessibilita base.
-- **0.7.0**: PWA installabile + alert + centro notifiche.
-- **0.8.0**: Backtesting MVP con metriche chiave.
-- **1.0.0**: Stabilizzazione finale, test end-to-end e documentazione release.
+- `npm test` — 43 tests (calculations, i18n parity, FMP client)
+- `npm run lint` — ESLint, zero warnings
+- `npm run build` — production build
 
-## ⚠️ Disclaimer
+## Roadmap
 
-**Questa app è solo per scopi educativi.** Non costituisce consulenza finanziaria. I dati forniti potrebbero non essere accurati al 100%. Consulta sempre un professionista prima di investire il tuo denaro.
+- **0.5.0**: PDF export (analysis + portfolio)
+- **0.6.0**: installable PWA + price alerts + notification center
+- **0.7.0**: backtesting MVP with key metrics
+- **1.0.0**: final stabilization, end-to-end tests, release docs
 
-## 📝 License
+## Disclaimer
 
-MIT - Libero utilizzo per scopi educativi e personali.
+**This app is for educational purposes only.** It is not financial advice. Data may not be 100% accurate. Always consult a professional before investing.
+
+## License
+
+MIT — free for educational and personal use.
 
 ---
 
-**Sviluppato da @Faber04** 📈
+Built by [@Faber04](https://github.com/Faber04)

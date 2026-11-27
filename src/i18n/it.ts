@@ -308,6 +308,7 @@ export const it: Dictionary = {
   'errors.notFound': 'Ticker "{symbol}" non trovato. Controlla la grafia.',
   'errors.network': 'Nessuna connessione. Verifica di essere online e riprova.',
   'errors.server': 'Errore del server API (status {status}). Riprova tra poco.',
+  'errors.invalidSymbol': 'Simbolo non valido.',
   'errors.generic': 'Errore imprevisto: {message}',
   'screener.errorTitle': 'Alcuni ticker non sono stati analizzati',
   'form.autofillErrorTitle': 'Auto-fill non riuscito',

@@ -307,6 +307,7 @@ export const en: Dictionary = {
   'errors.notFound': 'Ticker "{symbol}" not found. Check the spelling.',
   'errors.network': 'No connection. Check you are online, then retry.',
   'errors.server': 'API server error (status {status}). Retry in a moment.',
+  'errors.invalidSymbol': 'Invalid ticker symbol.',
   'errors.generic': 'Unexpected error: {message}',
   'screener.errorTitle': 'Some tickers could not be analyzed',
   'form.autofillErrorTitle': 'Auto-fill failed',

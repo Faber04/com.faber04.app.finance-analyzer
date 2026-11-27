@@ -20,6 +20,8 @@ export function errorToKey(err: unknown, symbol?: string): TranslatedError {
         return { key: 'errors.network' };
       case 'server':
         return { key: 'errors.server', vars: { status: err.status ?? '?' } };
+      case 'unknown':
+        return { key: 'errors.invalidSymbol' };
       default:
         return { key: 'errors.generic', vars: { message: err.message } };
     }

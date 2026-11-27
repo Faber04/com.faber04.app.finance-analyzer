@@ -44,7 +44,7 @@ export async function getCompanyFinancials(symbol: string): Promise<CompanyFinan
   const sym = symbol.toUpperCase().trim();
 
   if (!sym) {
-    throw new FmpApiError('unknown', "Simbolo non valido.");
+    throw new FmpApiError('unknown', 'Invalid ticker symbol.');
   }
 
   const [profileR, incomeR, balanceR, metricsR, quoteR] = await Promise.allSettled([
@@ -64,7 +64,7 @@ export async function getCompanyFinancials(symbol: string): Promise<CompanyFinan
     if (hardFailure && hardFailure.status === 'rejected') throw hardFailure.reason;
     throw new FmpApiError(
       'not-found',
-      `Ticker ${sym} non trovato. Verifica che esista o che sia una stock valida.`
+      `Ticker ${sym} not found. Check that it exists and is a valid stock.`
     );
   }
 
