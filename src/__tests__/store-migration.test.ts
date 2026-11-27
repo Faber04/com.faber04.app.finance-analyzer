@@ -19,12 +19,11 @@ const LEGACY_KEY = 'com.faber04.finance-analyzer-storage';
 const NEW_KEY = 'fa:v1:app';
 
 describe('migrazione localStorage legacy → fa:v1:app', () => {
-  it('copia portfolio/journal/recenti nella nuova chiave versionata e rimuove la vecchia', async () => {
+  it('copia portfolio/journal nella nuova chiave versionata e rimuove la vecchia', async () => {
     mem[LEGACY_KEY] = JSON.stringify({
       state: {
         portfolio: { positions: [{ id: 'p1', symbol: 'AAPL' }], totalValue: 0, totalCost: 0, totalGainLoss: 0, totalGainLossPercent: 0 },
         journalEntries: [{ id: 'j1' }],
-        recentAnalyses: [{ id: 'a1' }],
       },
       version: 0,
     });
@@ -37,7 +36,6 @@ describe('migrazione localStorage legacy → fa:v1:app', () => {
     expect(parsed.version).toBe(1);
     expect(parsed.state.portfolio.positions[0].symbol).toBe('AAPL');
     expect(parsed.state.journalEntries[0].id).toBe('j1');
-    expect(parsed.state.recentAnalyses[0].id).toBe('a1');
     expect(mem[LEGACY_KEY]).toBeUndefined(); // chiave vecchia rimossa
   });
 

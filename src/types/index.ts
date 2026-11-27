@@ -139,18 +139,6 @@ export interface CompanyFinancialsResult {
   history: HistoricalMetrics[];
 }
 
-// Storico analisi recenti
-export interface RecentAnalysis {
-  id: string;
-  symbol: string;
-  companyName: string;
-  sector?: string;
-  currentPrice: number;
-  overallScore: number;
-  recommendation: 'strong-buy' | 'buy' | 'hold' | 'avoid';
-  analyzedAt: string; // ISO date
-}
-
 // Investment Journal
 export interface JournalEntry {
   id: string;
@@ -182,9 +170,6 @@ export interface AppState {
   currentProvenance: FieldProvenance | null;
   currentHistory: HistoricalMetrics[] | null;
 
-  // Storico analisi recenti
-  recentAnalyses: RecentAnalysis[];
-  
   // Portfolio
   portfolio: Portfolio;
   

@@ -25,12 +25,6 @@ export const it: Dictionary = {
   'analyze.provenanceTitle': 'Provenance dati',
   'analyze.provenanceSubtitle': 'Origine di ogni numero: ogni valore è risalibile',
   'analyze.compareNew': 'Nuovo confronto',
-  'analyze.recentTitle': 'Analisi recenti',
-  'analyze.recentSubtitle': 'Ultime aziende analizzate (max 10)',
-  'analyze.recentEmpty': 'Nessuna analisi ancora: cerca un ticker qui sopra per iniziare.',
-  'analyze.recentRemove': 'Rimuovi dall\'elenco',
-  'analyze.recentRemoveLabel': 'Rimuovi analisi di {company}',
-  'analyze.recentScore': 'Score:',
 
   // Screener (modo Compare dentro Analyze)
   'screener.title': 'Screener Multi-Azienda',
@@ -298,8 +292,6 @@ export const it: Dictionary = {
   'journal.cardEdit': 'Modifica',
   'journal.cardDelete': 'Elimina',
   'journal.cardDeleteConfirm': 'Sei sicuro di voler eliminare questa nota per {symbol}?',
-  'journal.linkedAnalysis': 'Analizzato il {date} · Score {score}/100',
-  'journal.linkedAnalysisTitle': 'Analisi collegata nella home Analyze',
 
   // Impostazioni
   'settings.title': 'Impostazioni',

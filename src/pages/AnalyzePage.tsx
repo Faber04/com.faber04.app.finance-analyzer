@@ -9,7 +9,6 @@ import {
 } from '@/components/modules/screener';
 import {
   TickerSearch,
-  RecentAnalyses,
   AnalysisSkeleton,
   FinancialsPanel,
   CriteriaPanel,
@@ -270,8 +269,6 @@ export const AnalyzePage: React.FC = () => {
         </>
       )}
 
-      {/* Analisi recenti — righe di servizio in fondo alla home */}
-      <RecentAnalyses />
     </div>
   );
 };

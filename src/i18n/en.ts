@@ -25,12 +25,6 @@ export const en: Dictionary = {
   'analyze.provenanceTitle': 'Data provenance',
   'analyze.provenanceSubtitle': 'Source of every number: every value is traceable',
   'analyze.compareNew': 'New comparison',
-  'analyze.recentTitle': 'Recent analyses',
-  'analyze.recentSubtitle': 'Last companies analyzed (max 10)',
-  'analyze.recentEmpty': 'No analyses yet: search a ticker above to get started.',
-  'analyze.recentRemove': 'Remove from list',
-  'analyze.recentRemoveLabel': 'Remove {company} analysis',
-  'analyze.recentScore': 'Score:',
 
   // Screener (Compare mode inside Analyze)
   'screener.title': 'Multi-Company Screener',
@@ -298,8 +292,6 @@ export const en: Dictionary = {
   'journal.cardEdit': 'Edit',
   'journal.cardDelete': 'Delete',
   'journal.cardDeleteConfirm': 'Are you sure you want to delete this note for {symbol}?',
-  'journal.linkedAnalysis': 'Analyzed on {date} · Score {score}/100',
-  'journal.linkedAnalysisTitle': 'Linked analysis in the Analyze home',
 
   // Settings page
   'settings.title': 'Settings',
