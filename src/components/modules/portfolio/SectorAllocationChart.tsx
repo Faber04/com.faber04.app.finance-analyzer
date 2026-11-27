@@ -2,6 +2,7 @@ import React from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { Card } from "@/components/common";
 import { PortfolioPosition } from "@/types";
+import { useTranslation } from "@/i18n";
 import { formatCurrency } from "@/utils/financial-calculations";
 
 // Palette di colori per i settori
@@ -32,11 +33,21 @@ interface SectorAllocationChartProps {
 export const SectorAllocationChart: React.FC<SectorAllocationChartProps> = ({
   positions,
 }) => {
+  const { t } = useTranslation();
+
   if (positions.length === 0) return null;
+
+  // Traduce il settore se è una chiave nota (sector.*), altrimenti mostra il valore salvato (dati legacy)
+  const sectorLabel = (sector?: string): string => {
+    if (!sector) return t("portfolio.unclassified");
+    const key = `sector.${sector.toLowerCase()}`;
+    const translated = t(key);
+    return translated === key ? sector : translated;
+  };
 
   // Raggruppa posizioni per settore e calcola il valore totale per settore
   const sectorMap = positions.reduce<Record<string, number>>((acc, pos) => {
-    const sectorName = pos.sector ?? "Non classificato";
+    const sectorName = sectorLabel(pos.sector);
     const value = pos.shares * pos.currentPrice;
     acc[sectorName] = (acc[sectorName] ?? 0) + value;
     return acc;
@@ -67,7 +78,7 @@ export const SectorAllocationChart: React.FC<SectorAllocationChartProps> = ({
           <p className="font-semibold text-gray-900">{name}</p>
           <p className="text-gray-700">{formatCurrency(value)}</p>
           <p className="text-gray-500 text-sm">
-            {percent.toFixed(1)}% del portfolio
+            {t("portfolio.ofPortfolio", { percent: percent.toFixed(1) })}
           </p>
         </div>
       );
@@ -77,8 +88,8 @@ export const SectorAllocationChart: React.FC<SectorAllocationChartProps> = ({
 
   return (
     <Card
-      title="Allocazione per Settore"
-      subtitle="Distribuzione del valore del portfolio per settore"
+      title={t("portfolio.sectorChartTitle")}
+      subtitle={t("portfolio.sectorChartSubtitle")}
     >
       <div className="flex flex-col lg:flex-row items-center gap-6">
         {/* Grafico a torta */}

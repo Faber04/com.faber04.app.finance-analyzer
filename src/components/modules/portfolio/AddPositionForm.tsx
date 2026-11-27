@@ -2,22 +2,23 @@ import React, { useState } from "react";
 import { PlusCircle } from "lucide-react";
 import { Card, Button, Input } from "@/components/common";
 import { useAppStore } from "@/store";
+import { useTranslation } from "@/i18n";
 import { PortfolioPosition } from "@/types";
 
-// Settori comuni per investimenti value
-const SECTORS = [
-  "Tecnologia",
-  "Salute",
-  "Finanza",
-  "Energia",
-  "Beni di Consumo",
-  "Industriale",
-  "Comunicazione",
-  "Immobiliare",
-  "Utilità",
-  "Materiali",
-  "Altro",
-];
+// Settori comuni per investimenti value (chiavi tradotte via sector.*)
+const SECTOR_KEYS = [
+  "technology",
+  "health",
+  "financials",
+  "energy",
+  "consumer",
+  "industrials",
+  "communication",
+  "realestate",
+  "utilities",
+  "materials",
+  "other",
+] as const;
 
 interface FormState {
   symbol: string;
@@ -49,6 +50,7 @@ export const AddPositionForm: React.FC<AddPositionFormProps> = ({
   onSuccess,
 }) => {
   const { addPosition } = useAppStore();
+  const { t } = useTranslation();
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<Partial<FormState>>({});
   const [isOpen, setIsOpen] = useState(false);
@@ -71,17 +73,17 @@ export const AddPositionForm: React.FC<AddPositionFormProps> = ({
     const newErrors: Partial<FormState> = {};
 
     if (!form.symbol.trim())
-      newErrors.symbol = "Il simbolo è obbligatorio (es. AAPL)";
+      newErrors.symbol = t("portfolio.errSymbol");
     if (!form.companyName.trim())
-      newErrors.companyName = "Il nome azienda è obbligatorio";
+      newErrors.companyName = t("portfolio.errCompany");
     if (!form.shares || Number(form.shares) <= 0)
-      newErrors.shares = "Inserisci un numero di azioni valido";
+      newErrors.shares = t("portfolio.errShares");
     if (!form.avgCostPerShare || Number(form.avgCostPerShare) <= 0)
-      newErrors.avgCostPerShare = "Inserisci un prezzo medio valido";
+      newErrors.avgCostPerShare = t("portfolio.errAvgCost");
     if (!form.currentPrice || Number(form.currentPrice) <= 0)
-      newErrors.currentPrice = "Inserisci il prezzo corrente";
+      newErrors.currentPrice = t("portfolio.errCurrentPrice");
     if (!form.purchaseDate)
-      newErrors.purchaseDate = "La data di acquisto è obbligatoria";
+      newErrors.purchaseDate = t("portfolio.errDate");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -122,30 +124,30 @@ export const AddPositionForm: React.FC<AddPositionFormProps> = ({
         className="flex items-center gap-2"
       >
         <PlusCircle size={18} />
-        Aggiungi Posizione
+        {t("portfolio.addButton")}
       </Button>
     );
   }
 
   return (
     <Card
-      title="Nuova Posizione"
-      subtitle="Aggiungi un titolo al tuo portfolio"
+      title={t("portfolio.formTitle")}
+      subtitle={t("portfolio.formSubtitle")}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Riga 1: Simbolo e Azienda */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
-            label="Simbolo (Ticker) *"
-            placeholder="Es. AAPL, MSFT, KO"
+            label={t("portfolio.symbolLabel")}
+            placeholder={t("portfolio.symbolPlaceholder")}
             value={form.symbol}
             onChange={handleChange("symbol")}
             error={errors.symbol}
-            helperText="Il codice del titolo in borsa"
+            helperText={t("portfolio.symbolHelper")}
           />
           <Input
-            label="Nome Azienda *"
-            placeholder="Es. Apple Inc."
+            label={t("portfolio.companyLabel")}
+            placeholder={t("portfolio.companyPlaceholder")}
             value={form.companyName}
             onChange={handleChange("companyName")}
             error={errors.companyName}
@@ -155,37 +157,37 @@ export const AddPositionForm: React.FC<AddPositionFormProps> = ({
         {/* Riga 2: Azioni e Prezzi */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Input
-            label="Numero Azioni *"
+            label={t("portfolio.sharesLabel")}
             type="number"
             min="0.001"
             step="0.001"
-            placeholder="Es. 10"
+            placeholder={t("portfolio.sharesPlaceholder")}
             value={form.shares}
             onChange={handleChange("shares")}
             error={errors.shares}
-            helperText="Quante azioni possiedi"
+            helperText={t("portfolio.sharesHelper")}
           />
           <Input
-            label="Prezzo Medio Acquisto *"
+            label={t("portfolio.avgCostLabel")}
             type="number"
             min="0.01"
             step="0.01"
-            placeholder="Es. 150.00"
+            placeholder={t("portfolio.avgCostPlaceholder")}
             value={form.avgCostPerShare}
             onChange={handleChange("avgCostPerShare")}
             error={errors.avgCostPerShare}
-            helperText="Prezzo medio pagato per azione"
+            helperText={t("portfolio.avgCostHelper")}
           />
           <Input
-            label="Prezzo Corrente *"
+            label={t("portfolio.currentPriceLabel")}
             type="number"
             min="0.01"
             step="0.01"
-            placeholder="Es. 180.00"
+            placeholder={t("portfolio.currentPricePlaceholder")}
             value={form.currentPrice}
             onChange={handleChange("currentPrice")}
             error={errors.currentPrice}
-            helperText="Prezzo di mercato attuale"
+            helperText={t("portfolio.currentPriceHelper")}
           />
         </div>
 
@@ -193,23 +195,23 @@ export const AddPositionForm: React.FC<AddPositionFormProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="w-full">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Settore
+              {t("portfolio.sectorLabel")}
             </label>
             <select
               value={form.sector}
               onChange={handleChange("sector")}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
             >
-              <option value="">-- Seleziona settore --</option>
-              {SECTORS.map((s) => (
-                <option key={s} value={s}>
-                  {s}
+              <option value="">{t("portfolio.sectorSelect")}</option>
+              {SECTOR_KEYS.map((key) => (
+                <option key={key} value={key}>
+                  {t(`sector.${key}`)}
                 </option>
               ))}
             </select>
           </div>
           <Input
-            label="Data di Acquisto *"
+            label={t("portfolio.dateLabel")}
             type="date"
             value={form.purchaseDate}
             onChange={handleChange("purchaseDate")}
@@ -220,12 +222,12 @@ export const AddPositionForm: React.FC<AddPositionFormProps> = ({
         {/* Note */}
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Note (opzionale)
+            {t("portfolio.notesLabel")}
           </label>
           <textarea
             value={form.notes}
             onChange={handleChange("notes")}
-            placeholder="La tua tesi di investimento, motivazioni, obiettivi..."
+            placeholder={t("portfolio.notesPlaceholder")}
             rows={3}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
           />
@@ -234,11 +236,11 @@ export const AddPositionForm: React.FC<AddPositionFormProps> = ({
         {/* Actions */}
         <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
           <Button type="button" variant="secondary" onClick={handleCancel}>
-            Annulla
+            {t("portfolio.cancel")}
           </Button>
           <Button type="submit" className="flex items-center gap-2">
             <PlusCircle size={16} />
-            Aggiungi al Portfolio
+            {t("portfolio.submit")}
           </Button>
         </div>
       </form>

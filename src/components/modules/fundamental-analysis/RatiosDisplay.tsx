@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from '@/components/common';
 import { FinancialRatios } from '@/types';
+import { useTranslation } from '@/i18n';
 
 interface RatiosDisplayProps {
   ratios: FinancialRatios;
@@ -11,6 +12,8 @@ const fmt = (v: number | null | undefined, suffix = ''): string =>
   v === null || v === undefined || !isFinite(v) ? 'N/A' : `${v.toFixed(2)}${suffix}`;
 
 export const RatiosDisplay: React.FC<RatiosDisplayProps> = ({ ratios }) => {
+  const { t } = useTranslation();
+
   const getRatioColor = (good: boolean | null) => {
     if (good === null) return 'text-gray-400';
     return good ? 'text-success-700' : 'text-danger-700';
@@ -18,71 +21,71 @@ export const RatiosDisplay: React.FC<RatiosDisplayProps> = ({ ratios }) => {
 
   const ratioGroups = [
     {
-      title: 'Valutazione',
+      title: t('ratios.valuation'),
       metrics: [
         {
-          label: 'P/E Ratio',
+          label: t('ratios.pe'),
           value: fmt(ratios.pe),
           good: ratios.pe === null ? null : ratios.pe < 15,
-          info: 'Prezzo / Utili. Ideale < 15 (N/A se EPS ≤ 0)'
+          info: t('ratios.peInfo')
         },
         {
-          label: 'P/B Ratio',
+          label: t('ratios.pb'),
           value: fmt(ratios.pb),
           good: ratios.pb === null ? null : ratios.pb < 1.5,
-          info: 'Prezzo / Valore Contabile. Ideale < 1.5'
+          info: t('ratios.pbInfo')
         },
         {
-          label: 'P/S Ratio',
+          label: t('ratios.ps'),
           value: fmt(ratios.ps),
           good: ratios.ps === null ? null : ratios.ps < 3,
-          info: 'Prezzo / Vendite (da market cap). Ideale < 3'
+          info: t('ratios.psInfo')
         },
       ],
     },
     {
-      title: 'Profittabilità',
+      title: t('ratios.profitability'),
       metrics: [
         {
-          label: 'ROE',
+          label: t('ratios.roe'),
           value: fmt(ratios.roe, '%'),
           good: ratios.roe === null ? null : ratios.roe >= 15,
-          info: 'Return on Equity. Ideale ≥ 15%'
+          info: t('ratios.roeInfo')
         },
         {
-          label: 'ROA',
+          label: t('ratios.roa'),
           value: fmt(ratios.roa, '%'),
           good: ratios.roa === null ? null : ratios.roa >= 5,
-          info: 'Return on Assets. Ideale ≥ 5%'
+          info: t('ratios.roaInfo')
         },
         {
-          label: 'Margine Netto',
+          label: t('ratios.netMargin'),
           value: fmt(ratios.netProfitMargin, '%'),
           good: ratios.netProfitMargin === null ? null : ratios.netProfitMargin >= 10,
-          info: 'Net Profit Margin. Ideale ≥ 10%'
+          info: t('ratios.netMarginInfo')
         },
       ],
     },
     {
-      title: 'Solidità Finanziaria',
+      title: t('ratios.solidity'),
       metrics: [
         {
-          label: 'Debt/Equity',
+          label: t('ratios.de'),
           value: fmt(ratios.debtToEquity),
           good: ratios.debtToEquity === null ? null : ratios.debtToEquity < 0.5,
-          info: 'Debito / Patrimonio. Ideale < 0.5 (N/A se patrimonio ≤ 0)'
+          info: t('ratios.deInfo')
         },
         {
-          label: 'Current Ratio',
+          label: t('ratios.current'),
           value: fmt(ratios.currentRatio),
           good: ratios.currentRatio === null ? null : ratios.currentRatio >= 1.5,
-          info: 'Attività correnti / Passività correnti. Ideale ≥ 1.5'
+          info: t('ratios.currentInfo')
         },
         {
-          label: 'Quick Ratio',
+          label: t('ratios.quick'),
           value: fmt(ratios.quickRatio),
           good: ratios.quickRatio === null ? null : ratios.quickRatio >= 1,
-          info: 'Liquidità immediata (usa inventario reale). Ideale ≥ 1'
+          info: t('ratios.quickInfo')
         },
       ],
     },
@@ -90,26 +93,26 @@ export const RatiosDisplay: React.FC<RatiosDisplayProps> = ({ ratios }) => {
 
   if (ratios.dividendYield !== undefined && ratios.dividendYield !== null) {
     ratioGroups.push({
-      title: 'Dividendi',
+      title: t('ratios.dividends'),
       metrics: [
         {
-          label: 'Dividend Yield',
+          label: t('ratios.divYield'),
           value: fmt(ratios.dividendYield, '%'),
           good: ratios.dividendYield >= 2,
-          info: 'Rendimento da dividendo. Ideale ≥ 2%'
+          info: t('ratios.divYieldInfo')
         },
         {
-          label: 'Payout Ratio',
+          label: t('ratios.payout'),
           value: fmt(ratios.payoutRatio, '%'),
           good: ratios.payoutRatio !== null && ratios.payoutRatio !== undefined ? ratios.payoutRatio < 60 : null,
-          info: '% utili distribuiti. Ideale < 60%'
+          info: t('ratios.payoutInfo')
         },
       ],
     });
   }
 
   return (
-    <Card title="Ratio Finanziari" subtitle="Indicatori chiave per la valutazione">
+    <Card title={t('ratios.title')} subtitle={t('ratios.subtitle')}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {ratioGroups.map((group) => (
           <div key={group.title} className="space-y-3">

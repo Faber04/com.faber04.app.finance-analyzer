@@ -2,18 +2,20 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { TrendingUp, Search, Briefcase, BookOpen, Settings, Menu, X } from "lucide-react";
 import { LanguageSelector } from "./LanguageSelector";
-
-// Navigazione primaria a 3 voci: racconta il ciclo analyze / track / reflect.
-// Settings è raggiungibile solo da icona, non da voce di menu (PR3 — riordino Cockpit).
-const navItems = [
-  { path: "/", label: "Analyze", icon: Search },
-  { path: "/portfolio", label: "Portfolio", icon: Briefcase },
-  { path: "/journal", label: "Journal", icon: BookOpen },
-];
+import { useTranslation } from "@/i18n";
 
 export const Navigation: React.FC = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useTranslation();
+
+  // Navigazione primaria a 3 voci: racconta il ciclo analyze / track / reflect.
+  // Settings è raggiungibile solo da icona, non da voce di menu (PR3 — riordino Cockpit).
+  const navItems = [
+    { path: "/", label: t("nav.analyze"), icon: Search },
+    { path: "/portfolio", label: t("nav.portfolio"), icon: Briefcase },
+    { path: "/journal", label: t("nav.journal"), icon: BookOpen },
+  ];
 
   const isSettingsActive = location.pathname === "/settings";
 
@@ -69,8 +71,8 @@ export const Navigation: React.FC = () => {
               <Link
                 to="/settings"
                 className={settingsLinkClasses}
-                title="Impostazioni"
-                aria-label="Impostazioni"
+                title={t("nav.settings")}
+                aria-label={t("nav.settings")}
               >
                 <Settings className="w-5 h-5" />
               </Link>
@@ -81,7 +83,7 @@ export const Navigation: React.FC = () => {
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-                aria-label="Toggle mobile menu"
+                aria-label={t("nav.mobileMenu")}
               >
                 {isMobileMenuOpen ? (
                   <X className="w-6 h-6" />
@@ -124,7 +126,7 @@ export const Navigation: React.FC = () => {
                         className="flex items-center gap-2 text-sm text-gray-600"
                       >
                         <Settings className="w-5 h-5" />
-                        Impostazioni
+                        {t("nav.settingsLink")}
                       </Link>
                     </div>
                   </div>

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Card, Button } from "@/components/common";
 import { useAppStore } from "@/store";
+import { useTranslation } from "@/i18n";
 import { PortfolioPosition } from "@/types";
 import {
   formatCurrency,
@@ -20,6 +21,7 @@ import { EditPositionModal } from "./EditPositionModal";
 
 export const PortfolioList: React.FC = () => {
   const { portfolio, removePosition, updatePortfolioPrice } = useAppStore();
+  const { t } = useTranslation();
   const [positionToEdit, setPositionToEdit] =
     useState<PortfolioPosition | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -34,7 +36,7 @@ export const PortfolioList: React.FC = () => {
         updatePortfolioPrice(sym, price);
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Errore durante l'aggiornamento dei prezzi.";
+      const message = err instanceof Error ? err.message : t("portfolio.refreshError");
       alert(message);
     } finally {
       setIsRefreshing(false);
@@ -51,7 +53,7 @@ export const PortfolioList: React.FC = () => {
   const isPositive = totalGainLoss >= 0;
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Sei sicuro di voler eliminare questa posizione?")) {
+    if (window.confirm(t("portfolio.deleteConfirm"))) {
       removePosition(id);
     }
   };
@@ -65,11 +67,10 @@ export const PortfolioList: React.FC = () => {
             <Briefcase size={32} className="text-primary-400" />
           </div>
           <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            Portfolio vuoto
+            {t("portfolio.emptyTitle")}
           </h3>
           <p className="text-gray-500 text-sm max-w-sm mx-auto">
-            Non hai ancora aggiunto nessuna posizione. Usa il pulsante "Aggiungi
-            Posizione" per iniziare!
+            {t("portfolio.emptyText")}
           </p>
           <div className="mt-6 p-4 bg-blue-50 rounded-lg max-w-sm mx-auto text-left">
             <div className="flex gap-2">
@@ -78,9 +79,7 @@ export const PortfolioList: React.FC = () => {
                 className="text-blue-500 mt-0.5 shrink-0"
               />
               <p className="text-xs text-blue-700">
-                <strong>Suggerimento:</strong> Inserisci le posizioni che hai
-                già in portafoglio. Il sistema calcolerà automaticamente
-                gain/loss e allocazione per settore.
+                <strong>{t("portfolio.emptyTipStrong")}</strong> {t("portfolio.emptyTip")}
               </p>
             </div>
           </div>
@@ -94,15 +93,15 @@ export const PortfolioList: React.FC = () => {
     <div className="space-y-6">
       
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-gray-900">Il Tuo Portfolio</h2>
-        <Button 
-          variant="secondary" 
-          onClick={handleRefreshPrices} 
+        <h2 className="text-xl font-bold text-gray-900">{t("portfolio.listTitle")}</h2>
+        <Button
+          variant="secondary"
+          onClick={handleRefreshPrices}
           disabled={isRefreshing || positions.length === 0}
           className="flex items-center gap-2"
         >
           <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
-          {isRefreshing ? 'Aggiornamento...' : 'Aggiorna Prezzi'}
+          {isRefreshing ? t("portfolio.refreshing") : t("portfolio.refresh")}
         </Button>
       </div>
 
@@ -115,7 +114,7 @@ export const PortfolioList: React.FC = () => {
             </div>
             <div>
               <p className="text-xs text-gray-500 uppercase tracking-wide">
-                Valore Portfolio
+                {t("portfolio.totalValue")}
               </p>
               <p className="text-lg font-bold text-gray-900">
                 {formatCurrency(totalValue)}
@@ -131,7 +130,7 @@ export const PortfolioList: React.FC = () => {
             </div>
             <div>
               <p className="text-xs text-gray-500 uppercase tracking-wide">
-                Costo Totale
+                {t("portfolio.totalCost")}
               </p>
               <p className="text-lg font-bold text-gray-900">
                 {formatCurrency(totalCost)}
@@ -155,7 +154,7 @@ export const PortfolioList: React.FC = () => {
             </div>
             <div>
               <p className="text-xs text-gray-500 uppercase tracking-wide">
-                Gain/Loss
+                {t("portfolio.gainLoss")}
               </p>
               <p
                 className={`text-lg font-bold ${isPositive ? "text-success-700" : "text-danger-700"}`}
@@ -181,7 +180,7 @@ export const PortfolioList: React.FC = () => {
             </div>
             <div>
               <p className="text-xs text-gray-500 uppercase tracking-wide">
-                Rendimento %
+                {t("portfolio.returnPct")}
               </p>
               <p
                 className={`text-lg font-bold ${isPositive ? "text-success-700" : "text-danger-700"}`}
@@ -196,7 +195,7 @@ export const PortfolioList: React.FC = () => {
       {/* Lista posizioni */}
       <div className="space-y-4">
         <h2 className="text-lg font-semibold text-gray-800">
-          Posizioni ({positions.length})
+          {t("portfolio.positionsCount", { count: positions.length })}
         </h2>
         {positions.map((position) => (
           <PositionCard

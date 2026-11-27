@@ -16,6 +16,7 @@ import { toFullFinancials } from '@/components/modules/analyze/toFullFinancials'
 import { getCompanyFinancials } from '@/services';
 import { calculateFinancialRatios, analyzeValueInvesting } from '@/utils/financial-calculations';
 import { ProvenanceSource } from '@/types';
+import { useTranslation } from '@/i18n';
 import { AlertCircle, CheckCircle2, Search, Layers } from 'lucide-react';
 
 type AnalyzeTab = 'single' | 'compare';
@@ -27,14 +28,10 @@ const provenanceStyles: Record<ProvenanceSource, string> = {
   manual: 'bg-gray-100 text-gray-700 border-gray-300',
 };
 
-const tabs: { id: AnalyzeTab; label: string; icon: typeof Search }[] = [
-  { id: 'single', label: 'Single', icon: Search },
-  { id: 'compare', label: 'Compare (≤6)', icon: Layers },
-];
-
 // Home "cockpit": hero search ticker + tab Single | Compare + analisi recenti
 export const AnalyzePage: React.FC = () => {
   const { currentAnalysis, currentRatios, currentScore, currentProvenance } = useAppStore();
+  const { t } = useTranslation();
   const [tab, setTab] = useState<AnalyzeTab>('single');
   const [isInputCollapsed, setIsInputCollapsed] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -99,22 +96,27 @@ export const AnalyzePage: React.FC = () => {
     setScreenerErrors([]);
   };
 
+  const tabs: { id: AnalyzeTab; label: string; icon: typeof Search }[] = [
+    { id: 'single', label: t('analyze.tabSingle'), icon: Search },
+    { id: 'compare', label: t('analyze.tabCompare'), icon: Layers },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Hero search — il gesto principale dell'app */}
       <TickerSearch onAnalyzed={handleAnalysisSuccess} />
 
       {/* Tab Single | Compare */}
-      <div className="flex gap-2 border-b border-gray-200" role="tablist" aria-label="Modalità di analisi">
-        {tabs.map((t) => {
-          const Icon = t.icon;
-          const isActive = tab === t.id;
+      <div className="flex gap-2 border-b border-gray-200" role="tablist" aria-label={t('analyze.tabsLabel')}>
+        {tabs.map((tabItem) => {
+          const Icon = tabItem.icon;
+          const isActive = tab === tabItem.id;
           return (
             <button
-              key={t.id}
+              key={tabItem.id}
               role="tab"
               aria-selected={isActive}
-              onClick={() => setTab(t.id)}
+              onClick={() => setTab(tabItem.id)}
               type="button"
               className={`
                 flex items-center gap-2 px-4 py-2 -mb-px border-b-2 text-sm font-semibold transition-colors
@@ -124,7 +126,7 @@ export const AnalyzePage: React.FC = () => {
               `}
             >
               <Icon className="w-4 h-4" />
-              {t.label}
+              {tabItem.label}
             </button>
           );
         })}
@@ -151,7 +153,7 @@ export const AnalyzePage: React.FC = () => {
           </div>
 
           {hasVisibleAnalysis && currentProvenance && (
-            <Card title="Provenance dati" subtitle="Origine di ogni numero: ogni valore è risalibile">
+            <Card title={t('analyze.provenanceTitle')} subtitle={t('analyze.provenanceSubtitle')}>
               <div className="flex flex-wrap gap-2">
                 {Object.entries(currentProvenance).map(([field, source]) => (
                   <span
@@ -191,7 +193,7 @@ export const AnalyzePage: React.FC = () => {
               <div className="mt-4 flex justify-end">
                 <Button variant="secondary" onClick={handleScreenerReset} type="button">
                   <span className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4" /> Nuovo confronto
+                    <CheckCircle2 className="w-4 h-4" /> {t('analyze.compareNew')}
                   </span>
                 </Button>
               </div>

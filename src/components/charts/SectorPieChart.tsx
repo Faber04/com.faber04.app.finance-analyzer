@@ -1,6 +1,7 @@
 import React from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { Card } from "@/components/common";
+import { useTranslation } from "@/i18n";
 
 const COLORS = [
   "#4F46E5", // indigo
@@ -38,6 +39,8 @@ export const SectorPieChart: React.FC<SectorPieChartProps> = ({
   data,
   valueFormatter = (val) => val.toString(),
 }) => {
+  const { t } = useTranslation();
+
   if (data.length === 0) return null;
 
   const total = data.reduce((acc, curr) => acc + curr.value, 0);
@@ -63,7 +66,7 @@ export const SectorPieChart: React.FC<SectorPieChartProps> = ({
           <p className="font-semibold text-gray-900">{name}</p>
           <p className="text-gray-700">{valueFormatter(value)}</p>
           <p className="text-gray-500 text-sm">
-            {percent.toFixed(1)}% del totale
+            {t('charts.ofTotal', { percent: percent.toFixed(1) })}
           </p>
         </div>
       );

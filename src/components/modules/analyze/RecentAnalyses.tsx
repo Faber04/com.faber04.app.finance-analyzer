@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from '@/components/common';
 import { useAppStore } from '@/store';
+import { useTranslation } from '@/i18n';
 import { X } from 'lucide-react';
 
 // Mappa colori per raccomandazione
@@ -14,12 +15,13 @@ const RECOMMENDATION_STYLES: Record<string, { label: string; color: string; bg: 
 // Analisi recenti in fondo alla home Analyze: righe di servizio, max 10 (gestite dallo store)
 export const RecentAnalyses: React.FC = () => {
   const { recentAnalyses, removeRecentAnalysis } = useAppStore();
+  const { t, locale } = useTranslation();
 
   return (
-    <Card title="Analisi recenti" subtitle="Ultime aziende analizzate (max 10)">
+    <Card title={t('analyze.recentTitle')} subtitle={t('analyze.recentSubtitle')}>
       {recentAnalyses.length === 0 ? (
         <p className="text-gray-500 italic">
-          Nessuna analisi ancora: cerca un ticker qui sopra per iniziare.
+          {t('analyze.recentEmpty')}
         </p>
       ) : (
         <ul className="space-y-2">
@@ -27,7 +29,7 @@ export const RecentAnalyses: React.FC = () => {
             const rec =
               RECOMMENDATION_STYLES[analysis.recommendation] ??
               RECOMMENDATION_STYLES['hold'];
-            const date = new Date(analysis.analyzedAt).toLocaleDateString('it-IT', {
+            const date = new Date(analysis.analyzedAt).toLocaleDateString(locale, {
               day: '2-digit',
               month: 'short',
               year: 'numeric',
@@ -55,7 +57,7 @@ export const RecentAnalyses: React.FC = () => {
                   <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
                     <span>${analysis.currentPrice.toFixed(2)}</span>
                     <span>
-                      Score:{' '}
+                      {t('analyze.recentScore')}{' '}
                       <strong className="text-gray-700">{analysis.overallScore}/100</strong>
                     </span>
                     {analysis.sector && <span>{analysis.sector}</span>}
@@ -67,8 +69,8 @@ export const RecentAnalyses: React.FC = () => {
                 <button
                   onClick={() => removeRecentAnalysis(analysis.id)}
                   className="flex-shrink-0 p-1.5 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                  title="Rimuovi dall'elenco"
-                  aria-label={`Rimuovi analisi di ${analysis.companyName}`}
+                  title={t('analyze.recentRemove')}
+                  aria-label={t('analyze.recentRemoveLabel', { company: analysis.companyName })}
                 >
                   <X className="w-4 h-4" />
                 </button>

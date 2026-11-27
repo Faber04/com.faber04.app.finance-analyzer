@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/common';
 import { useAppStore } from '@/store';
+import { useTranslation } from '@/i18n';
 import { JournalEntry } from '@/types';
 import { formatCurrency } from '@/utils/financial-calculations';
 import { Trash2, Edit2, TrendingUp, TrendingDown, BookOpen, ChevronDown, ChevronUp, LineChart } from 'lucide-react';
@@ -18,6 +19,7 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { recentAnalyses } = useAppStore();
+  const { t, locale } = useTranslation();
 
   // Flight log: collega la entry all'analisi recente dello stesso symbol (analizzato → comprato → esito)
   const linkedAnalysis = recentAnalyses.find(
@@ -50,7 +52,7 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
   };
 
   const handleDelete = () => {
-    if (window.confirm('Sei sicuro di voler eliminare questa nota per ' + entry.symbol + '?')) {
+    if (window.confirm(t('journal.cardDeleteConfirm', { symbol: entry.symbol }))) {
       onDelete(entry.id);
     }
   };
@@ -71,35 +73,36 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
           {linkedAnalysis && (
             <span
               className="mt-1 inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-primary-50 text-primary-700 border border-primary-200"
-              title="Analisi collegata nella home Analyze"
+              title={t('journal.linkedAnalysisTitle')}
             >
               <LineChart className="w-3.5 h-3.5" />
-              Analizzato il{' '}
-              {new Date(linkedAnalysis.analyzedAt).toLocaleDateString('it-IT', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-              })}{' '}
-              · Score {linkedAnalysis.overallScore}/100
+              {t('journal.linkedAnalysis', {
+                date: new Date(linkedAnalysis.analyzedAt).toLocaleDateString(locale, {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                }),
+                score: linkedAnalysis.overallScore,
+              })}
             </span>
           )}
         </div>
         <div className="flex flex-col items-end">
           <span className="text-sm text-gray-500 mb-2">
-            {new Date(entry.date).toLocaleDateString()}
+            {new Date(entry.date).toLocaleDateString(locale)}
           </span>
           <div className="flex space-x-2">
             <button
               onClick={() => onEdit(entry)}
               className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-              title="Modifica"
+              title={t('journal.cardEdit')}
             >
               <Edit2 className="w-4 h-4" />
             </button>
             <button
               onClick={handleDelete}
               className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-              title="Elimina"
+              title={t('journal.cardDelete')}
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -111,18 +114,18 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
       {(entry.type === 'buy' || entry.type === 'sell') && entry.pricePerShare && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 p-3 bg-gray-50 rounded-lg">
           <div>
-            <p className="text-xs text-gray-500 mb-1">Prezzo Azione</p>
+            <p className="text-xs text-gray-500 mb-1">{t('journal.cardSharePrice')}</p>
             <p className="font-semibold text-gray-900">{formatCurrency(entry.pricePerShare)}</p>
           </div>
           {entry.shares && (
             <div>
-              <p className="text-xs text-gray-500 mb-1">Quantità</p>
+              <p className="text-xs text-gray-500 mb-1">{t('journal.cardQuantity')}</p>
               <p className="font-semibold text-gray-900">{entry.shares}</p>
             </div>
           )}
           {entry.targetPrice && (
             <div>
-              <p className="text-xs text-gray-500 mb-1">Target Price</p>
+              <p className="text-xs text-gray-500 mb-1">{t('journal.cardTarget')}</p>
               <p className="font-semibold px-2 py-0.5 bg-green-100 text-green-700 rounded inline-block text-sm">
                 {formatCurrency(entry.targetPrice)}
               </p>
@@ -130,7 +133,7 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
           )}
           {entry.stopLoss && (
             <div>
-              <p className="text-xs text-gray-500 mb-1">Stop Loss</p>
+              <p className="text-xs text-gray-500 mb-1">{t('journal.cardStop')}</p>
               <p className="font-semibold px-2 py-0.5 bg-red-100 text-red-700 rounded inline-block text-sm">
                 {formatCurrency(entry.stopLoss)}
               </p>
@@ -141,7 +144,7 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
 
       {/* Thesis */}
       <div className="mb-4">
-        <h4 className="text-sm font-semibold text-gray-700 mb-2">Tesi di Investimento</h4>
+        <h4 className="text-sm font-semibold text-gray-700 mb-2">{t('journal.cardThesis')}</h4>
         <p className="text-gray-600 text-sm whitespace-pre-wrap">{entry.thesis}</p>
       </div>
 
@@ -164,14 +167,14 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
             className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors w-full"
           >
             {isExpanded ? <ChevronUp className="w-4 h-4 mr-1" /> : <ChevronDown className="w-4 h-4 mr-1" />}
-            Retrospettiva
+            {t('journal.cardRetro')}
           </button>
-          
+
           {isExpanded && (
             <div className="mt-3 p-3 bg-blue-50/50 rounded-lg space-y-3">
               {entry.outcome && (
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Risultato Finale</p>
+                  <p className="text-xs text-gray-500 mb-1">{t('journal.cardOutcome')}</p>
                   <p className={`font-semibold capitalize text-sm ${getOutcomeColor(entry.outcome)}`}>
                     {entry.outcome}
                   </p>
@@ -179,7 +182,7 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
               )}
               {entry.lessonsLearned && (
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Lezioni Apprese</p>
+                  <p className="text-xs text-gray-500 mb-1">{t('journal.cardLessons')}</p>
                   <p className="text-gray-700 text-sm italic whitespace-pre-wrap">"{entry.lessonsLearned}"</p>
                 </div>
               )}

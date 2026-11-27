@@ -1,41 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Globe } from 'lucide-react';
+import { useTranslation, Lang } from '@/i18n';
 
-// Chiave versionata come da piano Cockpit (PR4 la userà per i dizionari i18n)
-const LANG_KEY = 'fa:v1:lang';
-
-export type Lang = 'it' | 'en';
-
-// PR3: la UI è ancora in italiano, quindi il default resta 'it'.
-// PR4 (i18n): il default diventerà 'en' e questo selettore piloterà i dizionari in src/i18n/.
-const getInitialLang = (): Lang => {
-  try {
-    return localStorage.getItem(LANG_KEY) === 'en' ? 'en' : 'it';
-  } catch {
-    return 'it';
-  }
-};
-
+// Selettore lingua in nav: default EN, preferenza persistita su fa:v1:lang (PR4 i18n)
 export const LanguageSelector: React.FC = () => {
-  const [lang, setLang] = useState<Lang>(getInitialLang);
-
-  const select = (next: Lang) => {
-    setLang(next);
-    try {
-      localStorage.setItem(LANG_KEY, next);
-    } catch {
-      // localStorage non disponibile: la preferenza vive solo in memoria
-    }
-  };
+  const { lang, setLang, t } = useTranslation();
 
   return (
-    <div className="flex items-center gap-1" role="group" aria-label="Lingua / Language">
+    <div className="flex items-center gap-1" role="group" aria-label={t('nav.language')}>
       <Globe className="w-4 h-4 text-gray-400 mr-1" />
-      {(['it', 'en'] as const).map((l) => (
+      {(['it', 'en'] as Lang[]).map((l) => (
         <button
           key={l}
           type="button"
-          onClick={() => select(l)}
+          onClick={() => setLang(l)}
           aria-pressed={lang === l}
           className={`
             px-2 py-1 rounded-md text-xs font-semibold transition-colors

@@ -2,6 +2,7 @@ import React from "react";
 import { TrendingUp, TrendingDown, Trash2, Edit2 } from "lucide-react";
 import { Card } from "@/components/common";
 import { PortfolioPosition } from "@/types";
+import { useTranslation } from "@/i18n";
 import {
   formatCurrency,
   formatPercentage,
@@ -23,6 +24,15 @@ export const PositionCard: React.FC<PositionCardProps> = ({
   const gainLoss = currentValue - costBasis;
   const gainLossPercent = costBasis !== 0 ? (gainLoss / costBasis) * 100 : 0;
   const isPositive = gainLoss >= 0;
+  const { t, locale } = useTranslation();
+
+  // Traduce il settore se è una chiave nota (sector.*), altrimenti mostra il valore salvato (dati legacy)
+  const sectorLabel = (sector?: string): string => {
+    if (!sector) return '';
+    const key = `sector.${sector.toLowerCase()}`;
+    const translated = t(key);
+    return translated === key ? sector : translated;
+  };
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-200">
@@ -35,7 +45,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
             </div>
             {position.sector && (
               <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                {position.sector}
+                {sectorLabel(position.sector)}
               </span>
             )}
           </div>
@@ -43,8 +53,9 @@ export const PositionCard: React.FC<PositionCardProps> = ({
             {position.companyName}
           </p>
           <p className="text-xs text-gray-400 mt-0.5">
-            Acquistato il{" "}
-            {new Date(position.purchaseDate).toLocaleDateString("it-IT")}
+            {t("portfolio.purchasedOn", {
+              date: new Date(position.purchaseDate).toLocaleDateString(locale),
+            })}
           </p>
         </div>
 
@@ -53,14 +64,14 @@ export const PositionCard: React.FC<PositionCardProps> = ({
           <button
             onClick={() => onEdit(position)}
             className="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-            title="Modifica posizione"
+            title={t("portfolio.editTitle")}
           >
             <Edit2 size={16} />
           </button>
           <button
             onClick={() => onDelete(position.id)}
             className="p-1.5 text-gray-400 hover:text-danger-600 hover:bg-danger-50 rounded-lg transition-colors"
-            title="Elimina posizione"
+            title={t("portfolio.deleteTitle")}
           >
             <Trash2 size={16} />
           </button>
@@ -71,7 +82,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-100">
         <div>
           <p className="text-xs text-gray-500 uppercase tracking-wide">
-            Azioni
+            {t("portfolio.shares")}
           </p>
           <p className="text-gray-900 font-semibold mt-0.5">
             {position.shares}
@@ -79,7 +90,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
         </div>
         <div>
           <p className="text-xs text-gray-500 uppercase tracking-wide">
-            Prezzo Corrente
+            {t("portfolio.currentPrice")}
           </p>
           <p className="text-gray-900 font-semibold mt-0.5">
             {formatCurrency(position.currentPrice)}
@@ -87,7 +98,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
         </div>
         <div>
           <p className="text-xs text-gray-500 uppercase tracking-wide">
-            Costo Medio
+            {t("portfolio.avgCost")}
           </p>
           <p className="text-gray-900 font-semibold mt-0.5">
             {formatCurrency(position.avgCostPerShare)}
@@ -95,7 +106,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
         </div>
         <div>
           <p className="text-xs text-gray-500 uppercase tracking-wide">
-            Valore Totale
+            {t("portfolio.totalValue")}
           </p>
           <p className="text-gray-900 font-bold mt-0.5">
             {formatCurrency(currentValue)}
@@ -118,7 +129,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
           <span
             className={`text-sm font-medium ${isPositive ? "text-success-700" : "text-danger-700"}`}
           >
-            {isPositive ? "Guadagno" : "Perdita"}
+            {isPositive ? t("portfolio.gain") : t("portfolio.loss")}
           </span>
         </div>
         <div className="text-right">

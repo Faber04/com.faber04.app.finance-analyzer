@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useAppStore } from '@/store';
+import { useTranslation } from '@/i18n';
 import { JournalEntryCard } from './JournalEntryCard';
 import { JournalFilters } from './JournalFilters';
 import { EditJournalModal } from './EditJournalModal';
@@ -8,6 +9,7 @@ import { FileText } from 'lucide-react';
 
 export const JournalList: React.FC = () => {
   const { journalEntries, updateJournalEntry, removeJournalEntry } = useAppStore();
+  const { t } = useTranslation();
   
   // Filter states
   const [searchTerm, setSearchTerm] = useState('');
@@ -42,9 +44,9 @@ export const JournalList: React.FC = () => {
     return (
       <div className="text-center py-12 bg-white rounded-lg border border-dashed border-gray-300">
         <FileText className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-        <h3 className="text-lg font-medium text-gray-900 mb-1">Nessuna nota nel journal</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-1">{t('journal.emptyTitle')}</h3>
         <p className="text-gray-500 max-w-sm mx-auto">
-          Inizia a documentare le tue decisioni di investimento, le tesi e le retrospettive.
+          {t('journal.emptyText')}
         </p>
       </div>
     );
@@ -63,8 +65,8 @@ export const JournalList: React.FC = () => {
 
       {filteredEntries.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-500">Nessuna nota trovata con questi filtri.</p>
-          <button 
+          <p className="text-gray-500">{t('journal.noResults')}</p>
+          <button
             onClick={() => {
               setSearchTerm('');
               setTypeFilter('all');
@@ -72,7 +74,7 @@ export const JournalList: React.FC = () => {
             }}
             className="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium"
           >
-            Azzera filtri
+            {t('journal.resetFilters')}
           </button>
         </div>
       ) : (

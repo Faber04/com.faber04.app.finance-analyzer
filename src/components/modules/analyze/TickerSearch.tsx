@@ -3,6 +3,7 @@ import { Search, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/common';
 import { useAppStore } from '@/store';
 import { getCompanyFinancials } from '@/services';
+import { useTranslation } from '@/i18n';
 import { toFullFinancials } from './toFullFinancials';
 
 interface TickerSearchProps {
@@ -12,6 +13,7 @@ interface TickerSearchProps {
 // Hero search della home Analyze: un ticker -> auto-fill FMP + Value Score in un gesto
 export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed }) => {
   const { setAnalysis } = useAppStore();
+  const { t } = useTranslation();
   const [symbol, setSymbol] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +33,7 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed }) => {
       setError(
         err instanceof Error
           ? err.message
-          : "Errore durante l'analisi. Verifica il ticker e l'API key."
+          : t('analyze.heroErrorFallback')
       );
     } finally {
       setIsLoading(false);
@@ -47,9 +49,9 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed }) => {
 
   return (
     <div className="bg-gradient-to-r from-primary-600 to-primary-800 rounded-lg p-6 sm:p-8 text-white">
-      <h1 className="text-3xl font-bold mb-2">Analyze</h1>
+      <h1 className="text-3xl font-bold mb-2">{t('analyze.heroTitle')}</h1>
       <p className="text-primary-100 mb-6">
-        Inserisci un ticker: l'app recupera i dati di bilancio e calcola il Value Score secondo i criteri Graham/Buffett
+        {t('analyze.heroSubtitle')}
       </p>
       <div className="flex flex-col sm:flex-row gap-3">
         <input
@@ -57,8 +59,8 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed }) => {
           value={symbol}
           onChange={(e) => setSymbol(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ticker (es. AAPL)"
-          aria-label="Ticker da analizzare"
+          placeholder={t('analyze.heroPlaceholder')}
+          aria-label={t('analyze.heroAria')}
           className="flex-1 rounded-lg border-0 px-4 py-3 text-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/60"
         />
         <Button
@@ -70,11 +72,11 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed }) => {
         >
           {isLoading ? (
             <span className="flex items-center gap-2">
-              <Loader2 className="w-5 h-5 animate-spin" /> Analisi in corso...
+              <Loader2 className="w-5 h-5 animate-spin" /> {t('analyze.heroSearching')}
             </span>
           ) : (
             <span className="flex items-center gap-2">
-              <Search className="w-5 h-5" /> Analizza
+              <Search className="w-5 h-5" /> {t('analyze.heroButton')}
             </span>
           )}
         </Button>

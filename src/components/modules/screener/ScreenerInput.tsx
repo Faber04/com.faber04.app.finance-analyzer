@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Button } from '@/components/common';
+import { useTranslation } from '@/i18n';
 import { Plus, X, Search, Loader2 } from 'lucide-react';
 
 interface ScreenerInputProps {
@@ -11,6 +12,7 @@ export const ScreenerInput: React.FC<ScreenerInputProps> = ({
   onScreenerRun,
   isLoading,
 }) => {
+  const { t } = useTranslation();
   const [symbols, setSymbols] = useState<string[]>([]);
   const [currentInput, setCurrentInput] = useState('');
 
@@ -41,8 +43,8 @@ export const ScreenerInput: React.FC<ScreenerInputProps> = ({
 
   return (
     <Card
-      title="Screener Multi-Azienda"
-      subtitle="Confronta fino a 6 aziende secondo i criteri Graham/Buffett"
+      title={t('screener.title')}
+      subtitle={t('screener.subtitle')}
     >
       <div className="flex flex-col gap-4">
         <div className="flex gap-2">
@@ -51,7 +53,7 @@ export const ScreenerInput: React.FC<ScreenerInputProps> = ({
             value={currentInput}
             onChange={(e) => setCurrentInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Inserisci un ticker (es. AAPL) e premi Invio"
+            placeholder={t('screener.placeholder')}
             className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             disabled={symbols.length >= 6}
           />
@@ -62,7 +64,7 @@ export const ScreenerInput: React.FC<ScreenerInputProps> = ({
             type="button"
           >
             <span className="flex items-center gap-1">
-              <Plus className="w-4 h-4" /> Aggiungi
+              <Plus className="w-4 h-4" /> {t('screener.add')}
             </span>
           </Button>
         </div>
@@ -78,7 +80,7 @@ export const ScreenerInput: React.FC<ScreenerInputProps> = ({
                 <button
                   onClick={() => removeSymbol(symbol)}
                   className="text-primary-600 hover:text-primary-800"
-                  aria-label={`Rimuovi ${symbol}`}
+                  aria-label={t('screener.remove', { symbol })}
                   type="button"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -96,16 +98,16 @@ export const ScreenerInput: React.FC<ScreenerInputProps> = ({
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin" /> Analisi in corso...
+                <Loader2 className="w-4 h-4 animate-spin" /> {t('screener.running')}
               </span>
             ) : (
               <span className="flex items-center gap-2">
-                <Search className="w-4 h-4" /> Avvia Screener
+                <Search className="w-4 h-4" /> {t('screener.run')}
               </span>
             )}
           </Button>
           <span className="text-sm text-gray-500">
-            {symbols.length}/6 aziende selezionate
+            {t('screener.count', { count: symbols.length })}
           </span>
         </div>
       </div>

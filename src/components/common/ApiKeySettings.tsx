@@ -4,8 +4,10 @@ import { Input } from './Input';
 import { Button } from './Button';
 import { Key } from 'lucide-react';
 import { saveFmpApiKey, getFmpApiKey, removeFmpApiKey } from '@/services';
+import { useTranslation } from '@/i18n';
 
 export const ApiKeySettings: React.FC = () => {
+  const { t } = useTranslation();
   const [apiKey, setApiKey] = useState('');
   const [isSaved, setIsSaved] = useState(false);
   const [hasEnvKey, setHasEnvKey] = useState(false);
@@ -32,7 +34,7 @@ export const ApiKeySettings: React.FC = () => {
       saveFmpApiKey(apiKey);
       setIsSaved(true);
       setHasEnvKey(false);
-      alert('API Key salvata con successo nel browser!');
+      alert(t('settings.apiSavedAlert'));
     }
   };
 
@@ -40,7 +42,7 @@ export const ApiKeySettings: React.FC = () => {
     removeFmpApiKey();
     setApiKey('');
     setIsSaved(false);
-    alert('API Key rimossa dal browser.');
+    alert(t('settings.apiRemovedAlert'));
   };
 
   return (
@@ -51,39 +53,38 @@ export const ApiKeySettings: React.FC = () => {
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-gray-900 mb-1">
-            Financial Modeling Prep API Key
+            {t('settings.apiTitle')}
           </h3>
           <p className="text-sm text-gray-600 mb-4">
-            Per ottenere i dati finanziari in tempo reale, inserisci la tua API Key di FMP. 
-            La chiave verrà salvata in modo sicuro nel localStorage del browser.
+            {t('settings.apiSubtitle')}
           </p>
-          
+
           {hasEnvKey ? (
             <div className="text-sm font-medium text-green-700 bg-green-100 p-3 rounded-md">
-              ✓ API Key rilevata dal file di configurazione ambientale (.env).
+              {t('settings.apiEnvDetected')}
             </div>
           ) : (
             <div className="flex items-end gap-3 max-w-md">
               <div className="flex-1">
                 <Input
-                  label="Chiave API"
+                  label={t('settings.apiLabel')}
                   name="apiKey"
                   value={apiKey}
                   onChange={(e) => {
                     setApiKey(e.target.value);
                     if (isSaved) setIsSaved(false);
                   }}
-                  placeholder="Inserisci qui la chiave API..."
+                  placeholder={t('settings.apiPlaceholder')}
                   type="password"
                 />
               </div>
               {isSaved ? (
                 <Button onClick={handleRemove} variant="danger" className="shrink-0 mb-[2px]">
-                  Rimuovi
+                  {t('settings.apiRemove')}
                 </Button>
               ) : (
                 <Button onClick={handleSave} className="shrink-0 mb-[2px]">
-                  Salva
+                  {t('settings.apiSave')}
                 </Button>
               )}
             </div>

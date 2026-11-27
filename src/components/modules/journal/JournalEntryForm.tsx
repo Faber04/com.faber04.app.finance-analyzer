@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Input } from '@/components/common';
+import { useTranslation } from '@/i18n';
 import { JournalEntry } from '@/types';
 
 interface JournalEntryFormProps {
@@ -13,6 +14,7 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
   onSubmit,
   onCancel
 }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<Partial<JournalEntry>>({
     symbol: '',
     companyName: '',
@@ -40,13 +42,13 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.symbol) newErrors.symbol = 'Simbolo richiesto';
-    if (!formData.companyName) newErrors.companyName = 'Nome azienda richiesto';
-    if (!formData.date) newErrors.date = 'Data richiesta';
-    if (!formData.thesis) newErrors.thesis = 'Tesi di investimento richiesta';
-    
+    if (!formData.symbol) newErrors.symbol = t('journal.errSymbol');
+    if (!formData.companyName) newErrors.companyName = t('journal.errCompany');
+    if (!formData.date) newErrors.date = t('journal.errDate');
+    if (!formData.thesis) newErrors.thesis = t('journal.errThesis');
+
     if ((formData.type === 'buy' || formData.type === 'sell') && (!formData.pricePerShare || formData.pricePerShare <= 0)) {
-       newErrors.pricePerShare = 'Prezzo richiesto per buy/sell';
+       newErrors.pricePerShare = t('journal.errPrice');
     }
 
     setErrors(newErrors);
@@ -80,20 +82,20 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
   const isTrade = formData.type === 'buy' || formData.type === 'sell';
 
   return (
-    <Card title={initialData ? "Modifica Nota" : "Nuova Nota Journal"}>
+    <Card title={initialData ? t('journal.editTitle') : t('journal.newTitle')}>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* riga 1: Simbolo e Nome */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
-            label="Simbolo / Ticker *"
-            placeholder="es. AAPL"
+            label={t('journal.symbolLabel')}
+            placeholder={t('journal.symbolPlaceholder')}
             value={formData.symbol}
             onChange={(e) => handleChange('symbol', e.target.value.toUpperCase())}
             error={errors.symbol}
           />
           <Input
-            label="Nome Azienda *"
-            placeholder="es. Apple Inc."
+            label={t('journal.companyLabel')}
+            placeholder={t('journal.companyPlaceholder')}
             value={formData.companyName}
             onChange={(e) => handleChange('companyName', e.target.value)}
             error={errors.companyName}
@@ -104,20 +106,20 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tipo di Nota *
+              {t('journal.entryTypeLabel')}
             </label>
             <select
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               value={formData.type}
               onChange={(e) => handleChange('type', e.target.value)}
             >
-              <option value="note">Note Generali</option>
-              <option value="buy">Acquisto (Buy)</option>
-              <option value="sell">Vendita (Sell)</option>
+              <option value="note">{t('journal.entryNote')}</option>
+              <option value="buy">{t('journal.entryBuy')}</option>
+              <option value="sell">{t('journal.entrySell')}</option>
             </select>
           </div>
           <Input
-            label="Data *"
+            label={t('journal.dateLabel')}
             type="date"
             value={formData.date?.split('T')[0] || ''}
             onChange={(e) => handleChange('date', e.target.value)}
@@ -128,42 +130,42 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
         {/* Dettagli Trade (se applicabile) */}
         {isTrade && (
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-100 space-y-4">
-            <h4 className="text-sm font-bold text-gray-800">Dettagli Operazione</h4>
+            <h4 className="text-sm font-bold text-gray-800">{t('journal.tradeDetails')}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Input
-                label="Prezzo di carico *"
+                label={t('journal.priceLabel')}
                 type="number"
                 min="0"
                 step="0.01"
-                placeholder="0.00"
+                placeholder={t('journal.pricePlaceholder')}
                 value={formData.pricePerShare || ''}
                 onChange={(e) => handleChange('pricePerShare', parseFloat(e.target.value))}
                 error={errors.pricePerShare}
               />
               <Input
-                label="Quantità (Azioni)"
+                label={t('journal.sharesLabel')}
                 type="number"
                 min="0"
                 step="0.0001"
-                placeholder="0"
+                placeholder={t('journal.sharesPlaceholder')}
                 value={formData.shares || ''}
                 onChange={(e) => handleChange('shares', parseFloat(e.target.value))}
               />
               <Input
-                label="Target Price"
+                label={t('journal.targetLabel')}
                 type="number"
                 min="0"
                 step="0.01"
-                placeholder="0.00"
+                placeholder={t('journal.pricePlaceholder')}
                 value={formData.targetPrice || ''}
                 onChange={(e) => handleChange('targetPrice', parseFloat(e.target.value))}
               />
                  <Input
-                label="Stop Loss"
+                label={t('journal.stopLabel')}
                 type="number"
                 min="0"
                 step="0.01"
-                placeholder="0.00"
+                placeholder={t('journal.pricePlaceholder')}
                 value={formData.stopLoss || ''}
                 onChange={(e) => handleChange('stopLoss', parseFloat(e.target.value))}
               />
@@ -174,14 +176,14 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
         {/* Thesis */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Tesi di Investimento *
-            <span className="text-gray-400 font-normal ml-2">(Perché stai facendo questa operazione o analisi?)</span>
+            {t('journal.thesisLabel')}
+            <span className="text-gray-400 font-normal ml-2">{t('journal.thesisHint')}</span>
           </label>
           <textarea
             className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[120px] ${
               errors.thesis ? 'border-red-500' : 'border-gray-300'
             }`}
-            placeholder="Descrivi la tua analisi, tesi, catalizzatori o rischi..."
+            placeholder={t('journal.thesisPlaceholder')}
             value={formData.thesis}
             onChange={(e) => handleChange('thesis', e.target.value)}
           />
@@ -190,40 +192,40 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
 
         {/* Tags */}
         <Input
-          label="Tags"
-          placeholder="value, tech, dividendo (separati da virgola)"
+          label={t('journal.tagsLabel')}
+          placeholder={t('journal.tagsPlaceholder')}
           value={tagsInput}
           onChange={handleTagsChange}
-          helperText="Aggiungi tags per ritrovare facilmente le tue note"
+          helperText={t('journal.tagsHelper')}
         />
 
         {/* Retrospettiva */}
         <div className="p-4 bg-blue-50/30 rounded-lg border border-blue-100 space-y-4">
-             <h4 className="text-sm font-bold text-gray-800">Retrospettiva (Opzionale)</h4>
+             <h4 className="text-sm font-bold text-gray-800">{t('journal.retroTitle')}</h4>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Risultato Finale
+                      {t('journal.outcomeLabel')}
                     </label>
                     <select
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       value={formData.outcome || ''}
                       onChange={(e) => handleChange('outcome', e.target.value || undefined)}
                     >
-                      <option value="">Nessuno / In corso</option>
-                      <option value="success">Successo (Gain / Tesi confermata)</option>
-                      <option value="failure">Fallimento (Loss / Tesi errata)</option>
-                      <option value="learning">Lezione (Pari o esperienza formativa)</option>
+                      <option value="">{t('journal.outcomeNone')}</option>
+                      <option value="success">{t('journal.outcomeSuccess')}</option>
+                      <option value="failure">{t('journal.outcomeFailure')}</option>
+                      <option value="learning">{t('journal.outcomeLearning')}</option>
                     </select>
                   </div>
              </div>
              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Lezioni Apprese
+                  {t('journal.lessonsLabel')}
                 </label>
                 <textarea
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[80px]"
-                  placeholder="Cosa hai imparato da questo trade / analisi? Cosa faresti diversamente?"
+                  placeholder={t('journal.lessonsPlaceholder')}
                   value={formData.lessonsLearned}
                   onChange={(e) => handleChange('lessonsLearned', e.target.value)}
                 />
@@ -233,10 +235,10 @@ export const JournalEntryForm: React.FC<JournalEntryFormProps> = ({
         {/* Azioni */}
         <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100">
           <Button type="button" variant="secondary" onClick={onCancel}>
-            Annulla
+            {t('journal.cancel')}
           </Button>
           <Button type="submit" variant="primary">
-            {initialData ? 'Salva Modifiche' : 'Salva Nota'}
+            {initialData ? t('journal.saveEdit') : t('journal.saveNew')}
           </Button>
         </div>
       </form>

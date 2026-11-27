@@ -1,22 +1,24 @@
 import React, { useState } from 'react';
 import { Settings, Puzzle, Globe } from 'lucide-react';
 import { ApiKeySettings, Card } from '@/components/common';
+import { useTranslation } from '@/i18n';
 
 type Tab = 'general' | 'integrations';
 
 export const SettingsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('integrations');
+  const { t } = useTranslation();
 
   const tabs = [
-    { id: 'general', label: 'Generali', icon: Settings },
-    { id: 'integrations', label: 'Integrazioni API', icon: Puzzle },
+    { id: 'general', label: t('settings.tabGeneral'), icon: Settings },
+    { id: 'integrations', label: t('settings.tabIntegrations'), icon: Puzzle },
   ];
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex items-center gap-3 mb-8">
         <Settings className="w-8 h-8 text-primary-600" />
-        <h1 className="text-3xl font-bold text-gray-900">Impostazioni</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('settings.title')}</h1>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8">
@@ -50,11 +52,11 @@ export const SettingsPage: React.FC = () => {
         <main className="flex-1 min-w-0">
           {activeTab === 'general' && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-800 border-b pb-4">Impostazioni Generali</h2>
+              <h2 className="text-xl font-semibold text-gray-800 border-b pb-4">{t('settings.tabGeneral')}</h2>
               <Card>
                 <div className="text-center py-12">
                   <Globe className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500">Nessuna impostazione generale configurabile al momento.</p>
+                  <p className="text-gray-500">{t('settings.generalEmpty')}</p>
                 </div>
               </Card>
             </div>
@@ -62,7 +64,7 @@ export const SettingsPage: React.FC = () => {
 
           {activeTab === 'integrations' && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-800 border-b pb-4">Integrazioni API</h2>
+              <h2 className="text-xl font-semibold text-gray-800 border-b pb-4">{t('settings.tabIntegrations')}</h2>
               <ApiKeySettings />
             </div>
           )}

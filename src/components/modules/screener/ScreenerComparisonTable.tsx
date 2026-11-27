@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/common';
 import { CompanyFinancials, FinancialRatios, ValueInvestingScore } from '@/types';
+import { useTranslation } from '@/i18n';
 import { ArrowUpDown, Trophy } from 'lucide-react';
 
 export interface ScreenerResult {
@@ -18,11 +19,11 @@ const recommendationStyles: Record<ValueInvestingScore['recommendation'], string
   avoid: 'bg-danger-100 text-danger-700',
 };
 
-const recommendationLabels: Record<ValueInvestingScore['recommendation'], string> = {
-  'strong-buy': 'Strong Buy',
-  buy: 'Buy',
-  hold: 'Hold',
-  avoid: 'Avoid',
+const recommendationKeys: Record<ValueInvestingScore['recommendation'], string> = {
+  'strong-buy': 'screener.recStrongBuy',
+  buy: 'screener.recBuy',
+  hold: 'screener.recHold',
+  avoid: 'screener.recAvoid',
 };
 
 const safeValue = (val: number | null | undefined): string =>
@@ -38,6 +39,7 @@ interface ScreenerComparisonTableProps {
 export const ScreenerComparisonTable: React.FC<ScreenerComparisonTableProps> = ({
   results,
 }) => {
+  const { t } = useTranslation();
   const [sortKey, setSortKey] = useState<SortKey>('overallScore');
   const [sortAsc, setSortAsc] = useState(false);
 
@@ -71,24 +73,24 @@ export const ScreenerComparisonTable: React.FC<ScreenerComparisonTableProps> = (
   const bestScore = Math.max(...results.map((r) => r.score.overallScore));
 
   const columns: { key: SortKey; label: string; className?: string }[] = [
-    { key: 'overallScore', label: 'Value Score' },
-    { key: 'pe', label: 'P/E' },
-    { key: 'pb', label: 'P/B' },
-    { key: 'roe', label: 'ROE %' },
-    { key: 'debtToEquity', label: 'D/E' },
+    { key: 'overallScore', label: t('screener.colScore') },
+    { key: 'pe', label: t('screener.colPe') },
+    { key: 'pb', label: t('screener.colPb') },
+    { key: 'roe', label: t('screener.colRoe') },
+    { key: 'debtToEquity', label: t('screener.colDe') },
   ];
 
   return (
     <Card
-      title="Confronto Aziende"
-      subtitle="Clicca sulle intestazioni per ordinare"
+      title={t('screener.tableTitle')}
+      subtitle={t('screener.tableSubtitle')}
     >
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
             <tr className="border-b-2 border-gray-200 text-left text-gray-600">
-              <th className="py-3 px-2 font-semibold">Azienda</th>
-              <th className="py-3 px-2 font-semibold">Prezzo</th>
+              <th className="py-3 px-2 font-semibold">{t('screener.colCompany')}</th>
+              <th className="py-3 px-2 font-semibold">{t('screener.colPrice')}</th>
               {columns.map((col) => (
                 <th key={col.key} className="py-3 px-2 font-semibold">
                   <button
@@ -101,7 +103,7 @@ export const ScreenerComparisonTable: React.FC<ScreenerComparisonTableProps> = (
                   </button>
                 </th>
               ))}
-              <th className="py-3 px-2 font-semibold">Raccomandazione</th>
+              <th className="py-3 px-2 font-semibold">{t('screener.colRec')}</th>
             </tr>
           </thead>
           <tbody>
@@ -128,7 +130,7 @@ export const ScreenerComparisonTable: React.FC<ScreenerComparisonTableProps> = (
                   <span
                     className={`px-2.5 py-1 rounded-full text-xs font-semibold ${recommendationStyles[r.score.recommendation]}`}
                   >
-                    {recommendationLabels[r.score.recommendation]}
+                    {t(recommendationKeys[r.score.recommendation])}
                   </span>
                 </td>
               </tr>

@@ -2,21 +2,22 @@ import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Button, Input } from "@/components/common";
 import { useAppStore } from "@/store";
+import { useTranslation } from "@/i18n";
 import { PortfolioPosition } from "@/types";
 
-const SECTORS = [
-  "Tecnologia",
-  "Salute",
-  "Finanza",
-  "Energia",
-  "Beni di Consumo",
-  "Industriale",
-  "Comunicazione",
-  "Immobiliare",
-  "Utilità",
-  "Materiali",
-  "Altro",
-];
+const SECTOR_KEYS = [
+  "technology",
+  "health",
+  "financials",
+  "energy",
+  "consumer",
+  "industrials",
+  "communication",
+  "realestate",
+  "utilities",
+  "materials",
+  "other",
+] as const;
 
 interface EditPositionModalProps {
   position: PortfolioPosition | null;
@@ -28,6 +29,7 @@ export const EditPositionModal: React.FC<EditPositionModalProps> = ({
   onClose,
 }) => {
   const { updatePosition } = useAppStore();
+  const { t } = useTranslation();
 
   const [form, setForm] = useState({
     shares: "",
@@ -68,11 +70,11 @@ export const EditPositionModal: React.FC<EditPositionModalProps> = ({
   const validate = (): boolean => {
     const newErrors: Partial<typeof form> = {};
     if (!form.shares || Number(form.shares) <= 0)
-      newErrors.shares = "Numero azioni non valido";
+      newErrors.shares = t("portfolio.errSharesShort");
     if (!form.avgCostPerShare || Number(form.avgCostPerShare) <= 0)
-      newErrors.avgCostPerShare = "Prezzo medio non valido";
+      newErrors.avgCostPerShare = t("portfolio.errAvgCostShort");
     if (!form.currentPrice || Number(form.currentPrice) <= 0)
-      newErrors.currentPrice = "Prezzo corrente non valido";
+      newErrors.currentPrice = t("portfolio.errPriceShort");
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -97,7 +99,7 @@ export const EditPositionModal: React.FC<EditPositionModalProps> = ({
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div>
             <h3 className="text-lg font-bold text-gray-900">
-              Modifica Posizione
+              {t("portfolio.editModalTitle")}
             </h3>
             <p className="text-sm text-gray-500">
               {position.symbol} — {position.companyName}
@@ -115,7 +117,7 @@ export const EditPositionModal: React.FC<EditPositionModalProps> = ({
         <div className="p-6 space-y-4">
           <div className="grid grid-cols-3 gap-4">
             <Input
-              label="Azioni *"
+              label={t("portfolio.editShares")}
               type="number"
               min="0.001"
               step="0.001"
@@ -124,7 +126,7 @@ export const EditPositionModal: React.FC<EditPositionModalProps> = ({
               error={errors.shares}
             />
             <Input
-              label="Costo Medio *"
+              label={t("portfolio.editAvgCost")}
               type="number"
               min="0.01"
               step="0.01"
@@ -133,30 +135,30 @@ export const EditPositionModal: React.FC<EditPositionModalProps> = ({
               error={errors.avgCostPerShare}
             />
             <Input
-              label="Prezzo Attuale *"
+              label={t("portfolio.editCurrentPrice")}
               type="number"
               min="0.01"
               step="0.01"
               value={form.currentPrice}
               onChange={handleChange("currentPrice")}
               error={errors.currentPrice}
-              helperText="Aggiornalo per vedere il gain/loss"
+              helperText={t("portfolio.editPriceHelper")}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Settore
+              {t("portfolio.sectorLabel")}
             </label>
             <select
               value={form.sector}
               onChange={handleChange("sector")}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
             >
-              <option value="">-- Seleziona settore --</option>
-              {SECTORS.map((s) => (
-                <option key={s} value={s}>
-                  {s}
+              <option value="">{t("portfolio.sectorSelect")}</option>
+              {SECTOR_KEYS.map((key) => (
+                <option key={key} value={key}>
+                  {t(`sector.${key}`)}
                 </option>
               ))}
             </select>
@@ -164,7 +166,7 @@ export const EditPositionModal: React.FC<EditPositionModalProps> = ({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Note
+              {t("portfolio.notes")}
             </label>
             <textarea
               value={form.notes}
@@ -178,9 +180,9 @@ export const EditPositionModal: React.FC<EditPositionModalProps> = ({
         {/* Footer */}
         <div className="flex justify-end gap-3 p-6 border-t border-gray-100">
           <Button variant="secondary" onClick={onClose}>
-            Annulla
+            {t("portfolio.cancel")}
           </Button>
-          <Button onClick={handleSave}>Salva Modifiche</Button>
+          <Button onClick={handleSave}>{t("portfolio.saveChanges")}</Button>
         </div>
       </div>
     </div>

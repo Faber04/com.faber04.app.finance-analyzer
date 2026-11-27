@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from '@/components/common';
 import { ValueInvestingScore } from '@/types';
+import { useTranslation } from '@/i18n';
 import { CheckCircle2, MinusCircle, XCircle } from 'lucide-react';
 
 interface ValueScoreDisplayProps {
@@ -8,6 +9,8 @@ interface ValueScoreDisplayProps {
 }
 
 export const ValueScoreDisplay: React.FC<ValueScoreDisplayProps> = ({ score }) => {
+  const { t } = useTranslation();
+
   const getScoreColor = (s: number) => {
     if (s >= 80) return 'text-success-700';
     if (s >= 60) return 'text-primary-600';
@@ -23,16 +26,16 @@ export const ValueScoreDisplay: React.FC<ValueScoreDisplayProps> = ({ score }) =
       'avoid': 'bg-danger-100 text-danger-800 border-danger-300',
     };
     
-    const labels = {
-      'strong-buy': 'STRONG BUY 🚀',
-      'buy': 'BUY 👍',
-      'hold': 'HOLD ⏸️',
-      'avoid': 'AVOID ⚠️',
-    };
+    const labelKeys = {
+      'strong-buy': 'score.recStrongBuy',
+      'buy': 'score.recBuy',
+      'hold': 'score.recHold',
+      'avoid': 'score.recAvoid',
+    } as const;
 
     return (
       <span className={`px-4 py-2 rounded-lg font-bold text-lg border-2 ${badges[rec]}`}>
-        {labels[rec]}
+        {t(labelKeys[rec])}
       </span>
     );
   };
@@ -47,19 +50,19 @@ export const ValueScoreDisplay: React.FC<ValueScoreDisplayProps> = ({ score }) =
         {/* Header con score e raccomandazione */}
         <div className="text-center border-b pb-6">
           <h3 className="text-2xl font-bold text-gray-900 mb-2">
-            Analisi Value Investing
+            {t('score.title')}
           </h3>
           <p className="text-gray-600 mb-4">
             {score.companyName} ({score.symbol})
           </p>
-          
+
           <div className="flex items-center justify-center gap-8 mb-4">
             <div>
               <div className={`text-5xl font-bold ${getScoreColor(score.overallScore)}`}>
                 {score.overallScore}
               </div>
               <div className="text-sm text-gray-600 mt-1">
-                Score su 100
+                {t('score.outOf')}
               </div>
             </div>
             
@@ -69,14 +72,14 @@ export const ValueScoreDisplay: React.FC<ValueScoreDisplayProps> = ({ score }) =
           </div>
 
           <div className="text-sm text-gray-600">
-            Criteri soddisfatti: {passedCount} su {totalCount}
-            {naCount > 0 && ` (${naCount} N/A esclusi dal totale)`}
+            {t('score.criteriaMet', { passed: passedCount, total: totalCount })}
+            {naCount > 0 && ` ${t('score.naExcluded', { count: naCount })}`}
           </div>
         </div>
 
         {/* Criteri dettagliati */}
         <div className="space-y-3">
-          <h4 className="font-semibold text-gray-900">Criteri di Valutazione</h4>
+          <h4 className="font-semibold text-gray-900">{t('score.criteriaTitle')}</h4>
           {score.criteria.map((criterion, index) => (
             <div
               key={index}
@@ -103,13 +106,13 @@ export const ValueScoreDisplay: React.FC<ValueScoreDisplayProps> = ({ score }) =
                   {criterion.name}
                 </div>
                 <div className="text-sm text-gray-600 mt-1">
-                  Valore: <span className="font-semibold">{criterion.value}</span> | 
-                  Obiettivo: <span className="font-semibold">{criterion.benchmark}</span>
+                  {t('score.value')} <span className="font-semibold">{criterion.value}</span> |{' '}
+                  {t('score.benchmark')} <span className="font-semibold">{criterion.benchmark}</span>
                 </div>
               </div>
-              
+
               <div className="flex-shrink-0 text-xs text-gray-500">
-                Peso: {criterion.weight}%
+                {t('score.weight', { weight: criterion.weight })}
               </div>
             </div>
           ))}
@@ -118,7 +121,7 @@ export const ValueScoreDisplay: React.FC<ValueScoreDisplayProps> = ({ score }) =
         {/* Note aggiuntive */}
         {score.notes.length > 0 && (
           <div className="border-t pt-4">
-            <h4 className="font-semibold text-gray-900 mb-2">Note</h4>
+            <h4 className="font-semibold text-gray-900 mb-2">{t('score.notes')}</h4>
             <ul className="space-y-1">
               {score.notes.map((note, index) => (
                 <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
@@ -132,8 +135,7 @@ export const ValueScoreDisplay: React.FC<ValueScoreDisplayProps> = ({ score }) =
 
         {/* Disclaimer */}
         <div className="border-t pt-4 text-xs text-gray-500 italic">
-          ⚠️ Questa analisi è basata sui criteri di Graham e Buffett. 
-          Non costituisce consulenza finanziaria. Fai sempre le tue ricerche approfondite.
+          {t('score.disclaimer')}
         </div>
       </div>
     </Card>

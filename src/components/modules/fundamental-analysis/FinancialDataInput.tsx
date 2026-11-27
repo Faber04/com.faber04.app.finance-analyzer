@@ -3,6 +3,7 @@ import { Card, Input, Button } from '@/components/common';
 import { CompanyFinancials, FieldProvenance, HistoricalMetrics } from '@/types';
 import { useAppStore } from '@/store';
 import { getCompanyFinancials } from '@/services';
+import { useTranslation } from '@/i18n';
 
 interface FinancialDataInputProps {
   isCollapsed?: boolean;
@@ -16,7 +17,8 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
   onAnalysisSuccess,
 }) => {
   const { setAnalysis, setLoading } = useAppStore();
-  
+  const { t } = useTranslation();
+
   const [formData, setFormData] = useState<Partial<CompanyFinancials>>({
     symbol: '',
     companyName: '',
@@ -51,7 +53,7 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
 
   const handleAutofill = async () => {
     if (!formData.symbol) {
-      alert("Inserisci il simbolo prima di autocompletare dai dati API.");
+      alert(t('form.alertSymbol'));
       return;
     }
     
@@ -84,7 +86,7 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
         currency:            data.currency ?? prev.currency,
       }));
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Errore durante l'autocompletamento. Verifica il simbolo e l'API Key.";
+      const message = err instanceof Error ? err.message : t('form.alertAutofillFallback');
       alert(message);
     } finally {
       setIsApiLoading(false);
@@ -108,7 +110,7 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
     
     // Validazione base
     if (!formData.symbol || !formData.companyName) {
-      alert('Inserisci almeno il simbolo e il nome dell\'azienda');
+      alert(t('form.alertRequired'));
       setLoading(false);
       return;
     }
@@ -125,9 +127,9 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
     <div className="space-y-6">
       <Card>
         <div className="mb-4">
-          <h3 className="text-xl font-bold text-gray-900">Inserisci i Dati Fondamentali</h3>
+          <h3 className="text-xl font-bold text-gray-900">{t('form.title')}</h3>
           <p className="text-sm text-gray-600 mt-1">
-            Compila i campi con i dati dal bilancio dell'azienda
+            {t('form.subtitle')}
           </p>
         </div>
 
@@ -139,142 +141,142 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
             <div className="flex gap-2 items-end">
               <div className="flex-1">
                 <Input
-                  label="Simbolo (Ticker)"
+                  label={t('form.symbol')}
                   name="symbol"
                   value={formData.symbol}
                   onChange={handleChange}
-                  placeholder="es. AAPL"
+                  placeholder={t('form.symbolPlaceholder')}
                   required
                 />
               </div>
-              <Button 
-                type="button" 
-                variant="secondary" 
-                className="mb-[2px] shrink-0" 
+              <Button
+                type="button"
+                variant="secondary"
+                className="mb-[2px] shrink-0"
                 onClick={handleAutofill}
                 disabled={isApiLoading}
               >
-                {isApiLoading ? 'Wait...' : 'Auto-Fill'}
+                {isApiLoading ? t('form.autofillWait') : t('form.autofill')}
               </Button>
             </div>
             <Input
-              label="Nome Azienda"
+              label={t('form.companyName')}
               name="companyName"
               value={formData.companyName}
               onChange={handleChange}
-              placeholder="es. Apple Inc."
+              placeholder={t('form.companyNamePlaceholder')}
               required
             />
             <Input
-              label="Settore"
+              label={t('form.sector')}
               name="sector"
               value={formData.sector}
               onChange={handleChange}
-              placeholder="es. Technology"
+              placeholder={t('form.sectorPlaceholder')}
             />
           </div>
 
         {/* Dati di Conto Economico */}
         <div className="border-t pt-4 mt-4">
-          <h4 className="font-semibold text-gray-900 mb-3">Conto Economico</h4>
+          <h4 className="font-semibold text-gray-900 mb-3">{t('form.income')}</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label="Ricavi (Revenue)"
+              label={t('form.revenue')}
               name="revenue"
               type="number"
               step="0.01"
               value={formData.revenue}
               onChange={handleChange}
-              helperText="In milioni"
+              helperText={t('form.millions')}
             />
             <Input
-              label="Utile Netto (Net Income)"
+              label={t('form.netIncome')}
               name="netIncome"
               type="number"
               step="0.01"
               value={formData.netIncome}
               onChange={handleChange}
-              helperText="In milioni"
+              helperText={t('form.millions')}
             />
           </div>
         </div>
 
         {/* Dati di Stato Patrimoniale */}
         <div className="border-t pt-4 mt-4">
-          <h4 className="font-semibold text-gray-900 mb-3">Stato Patrimoniale</h4>
+          <h4 className="font-semibold text-gray-900 mb-3">{t('form.balance')}</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label="Totale Attività"
+              label={t('form.totalAssets')}
               name="totalAssets"
               type="number"
               step="0.01"
               value={formData.totalAssets}
               onChange={handleChange}
-              helperText="In milioni"
+              helperText={t('form.millions')}
             />
             <Input
-              label="Totale Passività"
+              label={t('form.totalLiabilities')}
               name="totalLiabilities"
               type="number"
               step="0.01"
               value={formData.totalLiabilities}
               onChange={handleChange}
-              helperText="In milioni"
+              helperText={t('form.millions')}
             />
             <Input
-              label="Patrimonio Netto"
+              label={t('form.equity')}
               name="shareholdersEquity"
               type="number"
               step="0.01"
               value={formData.shareholdersEquity}
               onChange={handleChange}
-              helperText="In milioni"
+              helperText={t('form.millions')}
             />
             <Input
-              label="Debiti a Lungo Termine"
+              label={t('form.longTermDebt')}
               name="longTermDebt"
               type="number"
               step="0.01"
               value={formData.longTermDebt}
               onChange={handleChange}
-              helperText="In milioni"
+              helperText={t('form.millions')}
             />
             <Input
-              label="Attività Correnti"
+              label={t('form.currentAssets')}
               name="currentAssets"
               type="number"
               step="0.01"
               value={formData.currentAssets}
               onChange={handleChange}
-              helperText="In milioni"
+              helperText={t('form.millions')}
             />
             <Input
-              label="Passività Correnti"
+              label={t('form.currentLiabilities')}
               name="currentLiabilities"
               type="number"
               step="0.01"
               value={formData.currentLiabilities}
               onChange={handleChange}
-              helperText="In milioni"
+              helperText={t('form.millions')}
             />
             <Input
-              label="Inventario (Inventory)"
+              label={t('form.inventory')}
               name="inventory"
               type="number"
               step="0.01"
               value={formData.inventory}
               onChange={handleChange}
-              helperText="In milioni — serve per il Quick Ratio"
+              helperText={t('form.inventoryHelper')}
             />
           </div>
         </div>
 
         {/* Dati per azione */}
         <div className="border-t pt-4 mt-4">
-          <h4 className="font-semibold text-gray-900 mb-3">Dati per Azione</h4>
+          <h4 className="font-semibold text-gray-900 mb-3">{t('form.perShare')}</h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Input
-              label="EPS (Earnings Per Share)"
+              label={t('form.eps')}
               name="eps"
               type="number"
               step="0.01"
@@ -282,7 +284,7 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
               onChange={handleChange}
             />
             <Input
-              label="Book Value Per Share"
+              label={t('form.bvps')}
               name="bookValuePerShare"
               type="number"
               step="0.01"
@@ -290,7 +292,7 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
               onChange={handleChange}
             />
             <Input
-              label="Dividendo per Azione"
+              label={t('form.dps')}
               name="dividendPerShare"
               type="number"
               step="0.01"
@@ -302,10 +304,10 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
 
         {/* Dati di mercato */}
         <div className="border-t pt-4 mt-4">
-          <h4 className="font-semibold text-gray-900 mb-3">Dati di Mercato</h4>
+          <h4 className="font-semibold text-gray-900 mb-3">{t('form.market')}</h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Input
-              label="Prezzo Corrente"
+              label={t('form.currentPrice')}
               name="currentPrice"
               type="number"
               step="0.01"
@@ -314,41 +316,41 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
               required
             />
             <Input
-              label="Azioni in Circolazione"
+              label={t('form.shares')}
               name="sharesOutstanding"
               type="number"
               step="1"
               value={formData.sharesOutstanding}
               onChange={handleChange}
-              helperText="In milioni"
+              helperText={t('form.sharesHelper')}
             />
             <Input
-              label="Market Cap"
+              label={t('form.marketCap')}
               name="marketCap"
               type="number"
               step="0.01"
               value={formData.marketCap}
               onChange={handleChange}
-              helperText="In milioni — se presente il P/S si calcula da qui"
+              helperText={t('form.marketCapHelper')}
             />
             <Input
-              label="DCF per azione"
+              label={t('form.dcf')}
               name="dcf"
               type="number"
               step="0.01"
               value={formData.dcf}
               onChange={handleChange}
-              helperText="Da FMP profile — per il margin of safety"
+              helperText={t('form.dcfHelper')}
             />
             <Input
-              label="Valuta"
+              label={t('form.currency')}
               name="currency"
               value={formData.currency}
               onChange={handleChange}
-              placeholder="es. USD"
+              placeholder={t('form.currencyPlaceholder')}
             />
             <Input
-              label="Data Report"
+              label={t('form.reportDate')}
               name="reportDate"
               type="date"
               value={formData.reportDate}
@@ -359,7 +361,7 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
 
         <div className="flex justify-end pt-4">
           <Button type="submit" size="lg">
-            Analizza
+            {t('form.analyze')}
           </Button>
         </div>
       </form>
@@ -369,9 +371,9 @@ export const FinancialDataInput: React.FC<FinancialDataInputProps> = ({
         <div className="ui-anim-fade-slide mt-4" data-state={isCollapsed ? 'open' : 'closed'}>
           {isCollapsed && (
             <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <span>Analisi completata. Avvia una nuova ricerca per inserire nuovi dati.</span>
+              <span>{t('form.collapsedMsg')}</span>
               <Button type="button" variant="secondary" size="sm" onClick={onStartNewSearch}>
-                Nuova Ricerca
+                {t('form.newSearch')}
               </Button>
             </div>
           )}
