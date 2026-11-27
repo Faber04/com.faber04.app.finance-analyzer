@@ -31,8 +31,8 @@ export const Navigation: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2">
-              <TrendingUp className="w-8 h-8 text-primary-600" />
-              <span className="text-xl font-bold text-gray-900">
+              <TrendingUp className="w-8 h-8 text-brand-teal" />
+              <span className="text-xl font-bold text-brand-navy">
                 Finance Analyzer
               </span>
             </Link>

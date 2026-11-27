@@ -335,4 +335,12 @@ export const it: Dictionary = {
   'portfolio.emptyCta': 'Aggiungi la prima posizione',
   'portfolio.refreshErrorTitle': 'Aggiornamento prezzi non riuscito',
   'journal.emptyCta': 'Scrivi la prima nota',
+
+  // Verdict card (PR6)
+  'score.asOf': 'Dati al {date}',
+  'score.staleWarning': 'Dati più vecchi di 12 mesi — aggiorna dall\'API per un verdetto attuale',
+  'score.trend10y': 'Trend 10 anni (ROE %)',
+  'score.trendEps': 'Trend 10 anni (EPS)',
+  'score.provenanceBadge': 'Dati: {api} da API · {derived} derivati · {missing} mancanti · {manual} manuali',
+  'score.ringLabel': 'Value Score {score} su 100',
 };

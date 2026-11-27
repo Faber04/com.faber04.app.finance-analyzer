@@ -52,7 +52,7 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed, onSearch
   };
 
   return (
-    <div className="bg-gradient-to-r from-primary-600 to-primary-800 rounded-lg p-6 sm:p-8 text-white">
+    <div className="bg-gradient-to-r from-brand-navy via-[#0c2a4a] to-primary-700 rounded-lg p-6 sm:p-8 text-white">
       <h1 className="text-3xl font-bold mb-2">{t('analyze.heroTitle')}</h1>
       <p className="text-primary-100 mb-6">
         {t('analyze.heroSubtitle')}
@@ -72,7 +72,7 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed, onSearch
           disabled={!symbol.trim() || isLoading}
           size="lg"
           type="button"
-          className="bg-white text-primary-700 hover:bg-primary-50 shrink-0"
+          className="bg-white text-brand-navy hover:bg-primary-50 shrink-0"
         >
           {isLoading ? (
             <span className="flex items-center gap-2">

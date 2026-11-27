@@ -7,6 +7,12 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Brand token (PR6, riordino Cockpit) — applicati come ultimo strato sui punti chiave
+        brand: {
+          navy: '#0a0f1c',
+          teal: '#0ea5e9',
+          amber: '#fbbf24',
+        },
         primary: {
           50: '#f0f9ff',
           100: '#e0f2fe',

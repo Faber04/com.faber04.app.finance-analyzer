@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Card, Button, ErrorState } from '@/components/common';
+import { Button, ErrorState } from '@/components/common';
 import { useAppStore } from '@/store';
 import {
   FinancialDataInput,
   RatiosDisplay,
-  ValueScoreDisplay,
+  VerdictCard,
 } from '@/components/modules/fundamental-analysis';
 import {
   ScreenerInput,
@@ -15,22 +15,14 @@ import { TickerSearch, RecentAnalyses, AnalysisSkeleton } from '@/components/mod
 import { toFullFinancials } from '@/components/modules/analyze/toFullFinancials';
 import { getCompanyFinancials } from '@/services';
 import { calculateFinancialRatios, analyzeValueInvesting } from '@/utils/financial-calculations';
-import { ProvenanceSource } from '@/types';
 import { useTranslation } from '@/i18n';
 import { CheckCircle2, Search, Layers } from 'lucide-react';
 
 type AnalyzeTab = 'single' | 'compare';
 
-const provenanceStyles: Record<ProvenanceSource, string> = {
-  api: 'bg-success-100 text-success-800 border-success-300',
-  derived: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-  missing: 'bg-danger-100 text-danger-700 border-danger-300',
-  manual: 'bg-gray-100 text-gray-700 border-gray-300',
-};
-
 // Home "cockpit": hero search ticker + tab Single | Compare + analisi recenti
 export const AnalyzePage: React.FC = () => {
-  const { currentAnalysis, currentRatios, currentScore, currentProvenance, isLoading } = useAppStore();
+  const { currentAnalysis, currentRatios, currentScore, currentProvenance, currentHistory, isLoading } = useAppStore();
   const { t } = useTranslation();
   const [tab, setTab] = useState<AnalyzeTab>('single');
   const [isInputCollapsed, setIsInputCollapsed] = useState(false);
@@ -157,24 +149,15 @@ export const AnalyzePage: React.FC = () => {
             data-state={hasVisibleAnalysis && !showAnalysisSkeleton ? 'open' : 'closed'}
             style={{ transitionDelay: hasVisibleAnalysis ? '80ms' : '0ms' }}
           >
-            {currentScore && <ValueScoreDisplay score={currentScore} />}
+            {currentScore && (
+              <VerdictCard
+                score={currentScore}
+                history={currentHistory}
+                reportDate={currentAnalysis?.reportDate}
+                provenance={currentProvenance}
+              />
+            )}
           </div>
-
-          {hasVisibleAnalysis && !showAnalysisSkeleton && currentProvenance && (
-            <Card title={t('analyze.provenanceTitle')} subtitle={t('analyze.provenanceSubtitle')}>
-              <div className="flex flex-wrap gap-2">
-                {Object.entries(currentProvenance).map(([field, source]) => (
-                  <span
-                    key={field}
-                    className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${provenanceStyles[source]}`}
-                    title={`Fonte del campo ${field}`}
-                  >
-                    {field}: {source}
-                  </span>
-                ))}
-              </div>
-            </Card>
-          )}
         </>
       )}
 
