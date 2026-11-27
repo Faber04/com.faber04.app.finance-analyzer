@@ -41,18 +41,21 @@ body {
   margin: 0;
   min-height: 100vh;
   transition: background-color 200ms ease, color 200ms ease;
-  /* PR9: sfondo mesh — accenti blu in scala con l'hero sopra il chiaro */
+  /* PR9: sfondo mesh — gradiente di base saturo + aloni blu densi, per far risaltare il vetro */
   background-image:
-    radial-gradient(60rem 40rem at 85% -10%, rgba(56, 189, 248, 0.18), transparent 60%),
-    radial-gradient(50rem 36rem at -10% 110%, rgba(14, 165, 233, 0.12), transparent 60%);
+    linear-gradient(165deg, #e0f2fe 0%, #f0f9ff 45%, #dbeafe 100%),
+    radial-gradient(60rem 40rem at 85% -10%, rgba(14, 165, 233, 0.38), transparent 62%),
+    radial-gradient(50rem 36rem at -10% 110%, rgba(56, 189, 248, 0.42), transparent 62%),
+    radial-gradient(42rem 30rem at 55% 115%, rgba(125, 211, 252, 0.55), transparent 65%);
   background-attachment: fixed;
 }
 
 .dark body {
-  /* PR9: stesso mesh in dark, aloni più tenui sul navy */
+  /* PR9: stesso mesh in dark, aloni più marcati sul navy per evidenziare il vetro */
   background-image:
-    radial-gradient(60rem 40rem at 85% -10%, rgba(251, 191, 36, 0.08), transparent 60%),
-    radial-gradient(50rem 36rem at -10% 110%, rgba(14, 165, 233, 0.12), transparent 60%);
+    radial-gradient(60rem 40rem at 85% -10%, rgba(251, 191, 36, 0.13), transparent 62%),
+    radial-gradient(55rem 40rem at -10% 110%, rgba(14, 165, 233, 0.30), transparent 62%),
+    radial-gradient(45rem 32rem at 55% 115%, rgba(56, 189, 248, 0.18), transparent 65%);
   background-attachment: fixed;
 }
 
