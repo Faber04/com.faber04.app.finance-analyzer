@@ -200,7 +200,8 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ score, history, report
               </div>
 
               <div className="flex-1 min-w-0">
-                <div className="font-medium text-gray-900">{criterion.name}</div>
+                {/* name è una chiave i18n (criteria.*) — fallback alla stringa stessa se manca */}
+                <div className="font-medium text-gray-900">{t(criterion.name)}</div>
                 <div className="text-sm text-gray-600 mt-1">
                   {t('score.value')} <span className="font-semibold">{criterion.value}</span> |{' '}
                   {t('score.benchmark')} <span className="font-semibold">{criterion.benchmark}</span>
@@ -222,7 +223,7 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({ score, history, report
               {score.notes.map((note, index) => (
                 <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
                   <span className="text-brand-teal mt-1">•</span>
-                  <span>{note}</span>
+                  <span>{t(note)}</span>
                 </li>
               ))}
             </ul>

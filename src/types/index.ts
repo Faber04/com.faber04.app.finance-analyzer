@@ -83,6 +83,20 @@ export interface ScoreCriterion {
   weight: number;
 }
 
+// Config di un criterio di valutazione editabile dall'utente (PR7):
+// threshold null = derivato dai dati (Graham Number, NCAV, DCF), non editabile
+export type CriterionDirection = 'gt' | 'ge' | 'lt' | 'le';
+
+export interface CriterionConfig {
+  id: string;
+  nameKey: string; // chiave i18n per il nome (criteria.*)
+  weight: number;
+  threshold: number | null;
+  direction: CriterionDirection;
+  unit?: '%' | 'currency';
+  editable: boolean;
+}
+
 // Analisi Graham/Buffett (Value Score v2)
 export interface ValueInvestingScore {
   symbol: string;

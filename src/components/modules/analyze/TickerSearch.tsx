@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import { Search, Loader2 } from 'lucide-react';
+import { Download, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button, ErrorState, translateError } from '@/components/common';
-import { useAppStore } from '@/store';
 import { getCompanyFinancials } from '@/services';
 import { FmpApiError } from '@/services/api';
 import { useTranslation } from '@/i18n';
+import { CompanyFinancials, FieldProvenance, HistoricalMetrics } from '@/types';
 import { toFullFinancials } from './toFullFinancials';
 
 interface TickerSearchProps {
-  onAnalyzed?: () => void;
+  // PR7: l'hero CARICA i dati nel pannello (bozza editabile), non analizza
+  onDataLoaded: (data: CompanyFinancials, history: HistoricalMetrics[], provenance: FieldProvenance) => void;
   onSearchingChange?: (searching: boolean) => void;
 }
 
-// Hero search della home Analyze: un ticker -> auto-fill FMP + Value Score in un gesto
-export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed, onSearchingChange }) => {
-  const { setAnalysis } = useAppStore();
+// Hero della home Analyze: un ticker -> auto-fill FMP nel pannello dati (analisi on-demand)
+export const TickerSearch: React.FC<TickerSearchProps> = ({ onDataLoaded, onSearchingChange }) => {
   const { t } = useTranslation();
   const [symbol, setSymbol] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -30,9 +30,7 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed, onSearch
     setError(null);
     try {
       const result = await getCompanyFinancials(clean);
-      const financials = toFullFinancials(result.financials);
-      setAnalysis(financials, result.history, result.provenance);
-      onAnalyzed?.();
+      onDataLoaded(toFullFinancials(result.financials), result.history, result.provenance);
     } catch (err) {
       setError({
         message: translateError(t, err, clean),
@@ -55,7 +53,7 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed, onSearch
     <div className="bg-gradient-to-r from-brand-navy via-primary-900 to-primary-700 rounded-lg p-6 sm:p-8 text-white">
       <h1 className="text-3xl font-bold mb-2">{t('analyze.heroTitle')}</h1>
       <p className="text-primary-100 mb-6">
-        {t('analyze.heroSubtitle')}
+        {t('analyze.loadHint')}
       </p>
       <div className="flex flex-col sm:flex-row gap-3">
         <input
@@ -80,7 +78,7 @@ export const TickerSearch: React.FC<TickerSearchProps> = ({ onAnalyzed, onSearch
             </span>
           ) : (
             <span className="flex items-center gap-2">
-              <Search className="w-5 h-5" /> {t('analyze.heroButton')}
+              <Download className="w-5 h-5" /> {t('analyze.loadButton')}
             </span>
           )}
         </Button>

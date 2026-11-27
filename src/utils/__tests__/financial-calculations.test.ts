@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   analyzeValueInvesting,
+  DEFAULT_CRITERIA,
   calculateFinancialRatios,
   calculateHistoricalTrend,
   formatCurrency,
@@ -110,8 +111,8 @@ describe('analyzeValueInvesting — Value Score v2', () => {
       dcf: undefined,
     };
     const score = analyzeValueInvesting(data, calculateFinancialRatios(data));
-    const de = score.criteria.find(c => c.name === 'Debito sotto controllo');
-    const mos = score.criteria.find(c => c.name === 'Margin of safety vs DCF');
+    const de = score.criteria.find(c => c.name === 'criteria.de');
+    const mos = score.criteria.find(c => c.name === 'criteria.dcf');
     expect(de?.status).toBe('na');
     expect(mos?.status).toBe('na');
     // N/A attesi: D/E (equity 0), ROE (equity 0), MoS (no dcf), ROE 10y (no storico) → pesi 10+10+10+10 = 40
@@ -169,25 +170,25 @@ describe('analyzeValueInvesting — Value Score v2', () => {
   it('Graham Number: pass sotto √(22.5·EPS·BVPS), fail sopra, N/A con EPS ≤ 0', () => {
     // √(22.5·5·20) = √2250 ≈ 47.43
     const pass = analyzeValueInvesting(baseFinancials, calculateFinancialRatios(baseFinancials));
-    expect(pass.criteria.find(c => c.name === 'Graham Number')?.status).toBe('pass'); // 40 < 47.43
+    expect(pass.criteria.find(c => c.name === 'criteria.graham')?.status).toBe('pass'); // 40 < 47.43
 
     const fail = analyzeValueInvesting(
       { ...baseFinancials, currentPrice: 50 },
       calculateFinancialRatios({ ...baseFinancials, currentPrice: 50 })
     );
-    expect(fail.criteria.find(c => c.name === 'Graham Number')?.status).toBe('fail');
+    expect(fail.criteria.find(c => c.name === 'criteria.graham')?.status).toBe('fail');
 
     const na = analyzeValueInvesting(
       { ...baseFinancials, eps: -1 },
       calculateFinancialRatios({ ...baseFinancials, eps: -1 })
     );
-    expect(na.criteria.find(c => c.name === 'Graham Number')?.status).toBe('na');
+    expect(na.criteria.find(c => c.name === 'criteria.graham')?.status).toBe('na');
   });
 
   it('NCAV net-net: pass sotto ⅔·NCAV/share, N/A se shares mancanti', () => {
     // NCAV/share = (600-800)/20 = -10 → threshold negativo → prezzo mai sotto → fail
     const r = analyzeValueInvesting(baseFinancials, calculateFinancialRatios(baseFinancials));
-    expect(r.criteria.find(c => c.name === 'NCAV net-net')?.status).toBe('fail');
+    expect(r.criteria.find(c => c.name === 'criteria.ncav')?.status).toBe('fail');
 
     const deepNetNet: CompanyFinancials = {
       ...baseFinancials,
@@ -198,30 +199,30 @@ describe('analyzeValueInvesting — Value Score v2', () => {
     };
     // NCAV/share = 800/10 = 80 → ⅔·80 ≈ 53.33 > 10 → pass
     const r2 = analyzeValueInvesting(deepNetNet, calculateFinancialRatios(deepNetNet));
-    expect(r2.criteria.find(c => c.name === 'NCAV net-net')?.status).toBe('pass');
+    expect(r2.criteria.find(c => c.name === 'criteria.ncav')?.status).toBe('pass');
 
     const noShares = analyzeValueInvesting(
       { ...baseFinancials, sharesOutstanding: 0 },
       calculateFinancialRatios({ ...baseFinancials, sharesOutstanding: 0 })
     );
-    expect(noShares.criteria.find(c => c.name === 'NCAV net-net')?.status).toBe('na');
+    expect(noShares.criteria.find(c => c.name === 'criteria.ncav')?.status).toBe('na');
   });
 
   it('margin of safety vs DCF: pass se prezzo < 70% del DCF, N/A senza DCF', () => {
     const r = analyzeValueInvesting(baseFinancials, calculateFinancialRatios(baseFinancials));
-    expect(r.criteria.find(c => c.name === 'Margin of safety vs DCF')?.status).toBe('pass'); // 40 < 70
+    expect(r.criteria.find(c => c.name === 'criteria.dcf')?.status).toBe('pass'); // 40 < 70
 
     const fail = analyzeValueInvesting(
       { ...baseFinancials, currentPrice: 80 },
       calculateFinancialRatios({ ...baseFinancials, currentPrice: 80 })
     );
-    expect(fail.criteria.find(c => c.name === 'Margin of safety vs DCF')?.status).toBe('fail'); // 80 > 70
+    expect(fail.criteria.find(c => c.name === 'criteria.dcf')?.status).toBe('fail'); // 80 > 70
 
     const na = analyzeValueInvesting(
       { ...baseFinancials, dcf: undefined },
       calculateFinancialRatios({ ...baseFinancials, dcf: undefined })
     );
-    expect(na.criteria.find(c => c.name === 'Margin of safety vs DCF')?.status).toBe('na');
+    expect(na.criteria.find(c => c.name === 'criteria.dcf')?.status).toBe('na');
   });
 
   it('ROE costante 10y: pass/fail/na secondo lo storico', () => {
@@ -235,20 +236,20 @@ describe('analyzeValueInvesting — Value Score v2', () => {
       bookValuePerShare: 8,
     }));
     const s1 = analyzeValueInvesting(baseFinancials, calculateFinancialRatios(baseFinancials), hist10ok);
-    expect(s1.criteria.find(c => c.name === 'ROE costante 10 anni')?.status).toBe('pass');
+    expect(s1.criteria.find(c => c.name === 'criteria.roe10y')?.status).toBe('pass');
 
     const histOneLow = [...hist10ok];
     histOneLow[3] = { ...histOneLow[3], roe: 8 };
     const s2 = analyzeValueInvesting(baseFinancials, calculateFinancialRatios(baseFinancials), histOneLow);
-    expect(s2.criteria.find(c => c.name === 'ROE costante 10 anni')?.status).toBe('fail');
+    expect(s2.criteria.find(c => c.name === 'criteria.roe10y')?.status).toBe('fail');
 
     const hist5 = hist10ok.slice(0, 5);
     const s3 = analyzeValueInvesting(baseFinancials, calculateFinancialRatios(baseFinancials), hist5);
-    expect(s3.criteria.find(c => c.name === 'ROE costante 10 anni')?.status).toBe('na');
+    expect(s3.criteria.find(c => c.name === 'criteria.roe10y')?.status).toBe('na');
 
     // senza storico → N/A
     const s4 = analyzeValueInvesting(baseFinancials, calculateFinancialRatios(baseFinancials));
-    expect(s4.criteria.find(c => c.name === 'ROE costante 10 anni')?.status).toBe('na');
+    expect(s4.criteria.find(c => c.name === 'criteria.roe10y')?.status).toBe('na');
   });
 });
 
@@ -302,5 +303,48 @@ describe('formatCurrency — valuta dichiarata', () => {
   it('aggiunge il segno + quando richiesto', () => {
     expect(formatCurrency(10, 2, true, 'USD')).toMatch(/^\+/);
     expect(formatCurrency(-10, 2, true, 'USD')).not.toMatch(/^\+\s*-/);
+  });
+});
+
+describe('analyzeValueInvesting — criteri custom (PR7)', () => {
+  const base: CompanyFinancials = {
+    symbol: 'TEST', companyName: 'Test Co', revenue: 100, netIncome: 10,
+    totalAssets: 100, totalLiabilities: 40, shareholdersEquity: 60, longTermDebt: 10,
+    currentAssets: 50, currentLiabilities: 20, inventory: 10, eps: 2, bookValuePerShare: 6,
+    dividendPerShare: 0.5, currentPrice: 20, sharesOutstanding: 5, marketCap: 100,
+    dcf: 30, currency: 'USD', reportDate: '2025-12-31',
+  };
+
+  it('usa DEFAULT_CRITERIA di default (12 criteri, pesi somma 100)', () => {
+    const score = analyzeValueInvesting(base, calculateFinancialRatios(base));
+    expect(score.criteria).toHaveLength(12);
+    expect(score.criteria.reduce((s, c) => s + c.weight, 0)).toBe(100);
+  });
+
+  it('applica soglie custom passate dall\'utente', () => {
+    const ratios = calculateFinancialRatios(base); // pe = 10
+    const strict = analyzeValueInvesting(base, ratios, undefined, [
+      { id: 'pe', nameKey: 'criteria.pe', weight: 100, threshold: 5, direction: 'lt', editable: true },
+    ]);
+    expect(strict.criteria[0].status).toBe('fail'); // 10 non < 5
+    expect(strict.overallScore).toBe(0);
+
+    const loose = analyzeValueInvesting(base, ratios, undefined, [
+      { id: 'pe', nameKey: 'criteria.pe', weight: 100, threshold: 50, direction: 'lt', editable: true },
+    ]);
+    expect(loose.criteria[0].status).toBe('pass');
+    expect(loose.overallScore).toBe(100);
+  });
+
+  it('la soglia ROE 10y passa a calculateHistoricalTrend (minRoe custom)', () => {
+    const history: HistoricalMetrics[] = Array.from({ length: 10 }, (_, i) => ({
+      date: `${2015 + i}-12-31`, eps: 1, roe: 12, revenue: 1, netIncome: 1, dividendPerShare: 0, bookValuePerShare: 1,
+    }));
+    const def = analyzeValueInvesting(base, calculateFinancialRatios(base), history);
+    expect(def.criteria.find((c) => c.name === 'criteria.roe10y')?.status).toBe('pass'); // 12 >= 10
+
+    const strict = analyzeValueInvesting(base, calculateFinancialRatios(base), history,
+      DEFAULT_CRITERIA.map((c) => (c.id === 'roe10y' ? { ...c, threshold: 15 } : c)));
+    expect(strict.criteria.find((c) => c.name === 'criteria.roe10y')?.status).toBe('fail'); // 12 < 15
   });
 });

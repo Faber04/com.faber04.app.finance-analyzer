@@ -1,5 +1,7 @@
 import {
   CompanyFinancials,
+  CriterionConfig,
+  CriterionDirection,
   FinancialRatios,
   HistoricalMetrics,
   HistoricalTrend,
@@ -61,10 +63,37 @@ export const calculateFinancialRatios = (data: CompanyFinancials): FinancialRati
   };
 };
 
+// Soglie di default del Value Score v2 (PR7: editabili da UI, default = questi)
+export const DEFAULT_CRITERIA: CriterionConfig[] = [
+  { id: 'eps', nameKey: 'criteria.eps', weight: 10, threshold: 0, direction: 'gt', editable: true },
+  { id: 'pe', nameKey: 'criteria.pe', weight: 10, threshold: 15, direction: 'lt', editable: true },
+  { id: 'pb', nameKey: 'criteria.pb', weight: 5, threshold: 1.5, direction: 'lt', editable: true },
+  { id: 'ps', nameKey: 'criteria.ps', weight: 5, threshold: 3, direction: 'lt', editable: true },
+  { id: 'roe', nameKey: 'criteria.roe', weight: 10, threshold: 15, direction: 'ge', unit: '%', editable: true },
+  { id: 'roe10y', nameKey: 'criteria.roe10y', weight: 10, threshold: 10, direction: 'ge', unit: '%', editable: true },
+  { id: 'netMargin', nameKey: 'criteria.netMargin', weight: 5, threshold: 10, direction: 'ge', unit: '%', editable: true },
+  { id: 'de', nameKey: 'criteria.de', weight: 10, threshold: 0.5, direction: 'lt', editable: true },
+  { id: 'current', nameKey: 'criteria.current', weight: 5, threshold: 1.5, direction: 'ge', editable: true },
+  { id: 'graham', nameKey: 'criteria.graham', weight: 10, threshold: null, direction: 'lt', editable: false },
+  { id: 'ncav', nameKey: 'criteria.ncav', weight: 10, threshold: null, direction: 'lt', editable: false },
+  { id: 'dcf', nameKey: 'criteria.dcf', weight: 10, threshold: null, direction: 'lt', editable: false },
+];
+
+const DIRECTION_SYMBOL: Record<CriterionDirection, string> = { gt: '>', ge: '≥', lt: '<', le: '≤' };
+
+const compare = (value: number, direction: CriterionDirection, threshold: number): boolean => {
+  switch (direction) {
+    case 'gt': return value > threshold;
+    case 'ge': return value >= threshold;
+    case 'lt': return value < threshold;
+    case 'le': return value <= threshold;
+  }
+};
+
 /**
  * Calcola il trend multi-anno dallo storico (FMP limit=10).
  */
-export const calculateHistoricalTrend = (history: HistoricalMetrics[]): HistoricalTrend => {
+export const calculateHistoricalTrend = (history: HistoricalMetrics[], minRoe: number = 10): HistoricalTrend => {
   const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
   const years = sorted.length;
   const first = sorted[0];
@@ -81,7 +110,7 @@ export const calculateHistoricalTrend = (history: HistoricalMetrics[]): Historic
 
   const last10 = sorted.slice(-10);
   const roeConsistent10y =
-    last10.length >= 10 ? last10.every((h) => isValid(h.roe) && h.roe >= 10) : null;
+    last10.length >= 10 ? last10.every((h) => isValid(h.roe) && h.roe >= minRoe) : null;
 
   return { years, epsCagr, roeByYear, roeConsistent10y };
 };
@@ -97,15 +126,19 @@ const crit = (
 /**
  * Value Score v2 — criteri Graham/Buffett pesati (somma 100).
  * Gli N/A sono esclusi dal totale: un dato mancante non fa mai passare né fallire il criterio.
+ * PR7: `criteria` è configurabile (soglie/pesi editabili da UI); default = DEFAULT_CRITERIA.
  */
 export const analyzeValueInvesting = (
   data: CompanyFinancials,
   ratios: FinancialRatios,
-  historical?: HistoricalMetrics[]
+  historical?: HistoricalMetrics[],
+  criteria: CriterionConfig[] = DEFAULT_CRITERIA
 ): ValueInvestingScore => {
-  const trend = historical ? calculateHistoricalTrend(historical) : null;
+  const roe10yMin = criteria.find((c) => c.id === 'roe10y')?.threshold ?? 10;
+  const trend = historical ? calculateHistoricalTrend(historical, roe10yMin) : null;
   const currency = data.currency ?? 'USD';
   const price = isValid(data.currentPrice) ? data.currentPrice : null;
+  const fmtC = (v: number | null): string => (v === null ? 'N/A' : formatCurrency(v, 2, false, currency));
 
   // Graham Number: √(22.5 · EPS · BVPS), valido solo con EPS > 0 e BVPS > 0
   const grahamNumber =
@@ -120,114 +153,73 @@ export const analyzeValueInvesting = (
       : null;
   const ncavThreshold = ncavPerShare !== null ? (2 / 3) * ncavPerShare : null;
 
-  const criteria: ScoreCriterion[] = [
-    crit(
-      'EPS positivo',
-      10,
-      '> 0',
-      isValid(data.eps) ? formatCurrency(data.eps, 2, false, currency) : 'N/A',
-      !isValid(data.eps) ? 'na' : data.eps > 0 ? 'pass' : 'fail'
-    ),
-    crit(
-      'P/E ragionevole',
-      10,
-      '< 15',
-      ratios.pe !== null ? ratios.pe.toFixed(2) : 'N/A',
-      ratios.pe === null ? 'na' : ratios.pe < 15 ? 'pass' : 'fail'
-    ),
-    crit(
-      'P/B attraente',
-      5,
-      '< 1.5',
-      ratios.pb !== null ? ratios.pb.toFixed(2) : 'N/A',
-      ratios.pb === null ? 'na' : ratios.pb < 1.5 ? 'pass' : 'fail'
-    ),
-    crit(
-      'P/S attraente',
-      5,
-      '< 3',
-      ratios.ps !== null ? ratios.ps.toFixed(2) : 'N/A',
-      ratios.ps === null ? 'na' : ratios.ps < 3 ? 'pass' : 'fail'
-    ),
-    crit(
-      'ROE solido',
-      10,
-      '≥ 15%',
-      ratios.roe !== null ? `${ratios.roe.toFixed(2)}%` : 'N/A',
-      ratios.roe === null ? 'na' : ratios.roe >= 15 ? 'pass' : 'fail'
-    ),
-    crit(
-      'ROE costante 10 anni',
-      10,
-      '≥ 10% in ognuno degli ultimi 10 anni',
-      trend?.roeConsistent10y !== null && trend?.roeConsistent10y !== undefined
-        ? `${trend.years} anni analizzati`
-        : 'N/A',
-      trend?.roeConsistent10y === null || trend?.roeConsistent10y === undefined
-        ? 'na'
-        : trend.roeConsistent10y
-          ? 'pass'
-          : 'fail'
-    ),
-    crit(
-      'Margine netto sano',
-      5,
-      '≥ 10%',
-      ratios.netProfitMargin !== null ? `${ratios.netProfitMargin.toFixed(2)}%` : 'N/A',
-      ratios.netProfitMargin === null ? 'na' : ratios.netProfitMargin >= 10 ? 'pass' : 'fail'
-    ),
-    crit(
-      'Debito sotto controllo',
-      10,
-      '< 0.5',
-      ratios.debtToEquity !== null ? ratios.debtToEquity.toFixed(2) : 'N/A',
-      ratios.debtToEquity === null ? 'na' : ratios.debtToEquity < 0.5 ? 'pass' : 'fail'
-    ),
-    crit(
-      'Liquidità adeguata',
-      5,
-      '≥ 1.5',
-      ratios.currentRatio !== null ? ratios.currentRatio.toFixed(2) : 'N/A',
-      ratios.currentRatio === null ? 'na' : ratios.currentRatio >= 1.5 ? 'pass' : 'fail'
-    ),
-    crit(
-      'Graham Number',
-      10,
-      `prezzo < √(22.5 · EPS · BVPS)`,
-      grahamNumber !== null
-        ? `${formatCurrency(grahamNumber, 2, false, currency)} vs ${formatCurrency(price ?? 0, 2, false, currency)}`
-        : 'N/A',
-      grahamNumber === null || price === null ? 'na' : price < grahamNumber ? 'pass' : 'fail'
-    ),
-    crit(
-      'NCAV net-net',
-      10,
-      `prezzo < ⅔ · NCAV/share`,
-      ncavThreshold !== null
-        ? `${formatCurrency(ncavThreshold, 2, false, currency)} vs ${formatCurrency(price ?? 0, 2, false, currency)}`
-        : 'N/A',
-      ncavThreshold === null || price === null ? 'na' : price < ncavThreshold ? 'pass' : 'fail'
-    ),
-    crit(
-      'Margin of safety vs DCF',
-      10,
-      '< 70% del DCF',
-      isValid(data.dcf) && data.dcf > 0
-        ? `${formatCurrency(0.7 * data.dcf, 2, false, currency)} vs ${formatCurrency(price ?? 0, 2, false, currency)}`
-        : 'N/A',
-      !isValid(data.dcf) || data.dcf <= 0 || price === null
-        ? 'na'
-        : price < 0.7 * data.dcf
-          ? 'pass'
-          : 'fail'
-    ),
-  ];
+  // Valore numerico grezzo per ogni criterio (null = N/A)
+  const rawValue: Record<string, number | null> = {
+    eps: isValid(data.eps) ? data.eps : null,
+    pe: ratios.pe,
+    pb: ratios.pb,
+    ps: ratios.ps,
+    roe: ratios.roe,
+    netMargin: ratios.netProfitMargin,
+    de: ratios.debtToEquity,
+    current: ratios.currentRatio,
+    // criteri derivati: rapporto prezzo/soglia (pass se < 1)
+    graham: price !== null && grahamNumber !== null && grahamNumber > 0 ? price / grahamNumber : null,
+    ncav: price !== null && ncavThreshold !== null && ncavThreshold > 0 ? price / ncavThreshold : null,
+    dcf: price !== null && isValid(data.dcf) && data.dcf > 0 ? price / (0.7 * data.dcf) : null,
+  };
+
+  const criteriaOut: ScoreCriterion[] = criteria.map((cfg) => {
+    // ROE 10y: il confronto avviene dentro calculateHistoricalTrend (soglia minRoe editabile)
+    if (cfg.id === 'roe10y') {
+      const ok = trend?.roeConsistent10y;
+      return crit(
+        cfg.nameKey,
+        cfg.weight,
+        `≥ ${cfg.threshold ?? 10}% ogni anno`,
+        ok === null || ok === undefined ? 'N/A' : `${trend?.years ?? 0} anni analizzati`,
+        ok === null || ok === undefined ? 'na' : ok ? 'pass' : 'fail'
+      );
+    }
+
+    let status: ScoreCriterion['status'];
+    let valueStr: string;
+    let benchmarkStr: string;
+
+    if (cfg.id === 'graham' || cfg.id === 'ncav' || cfg.id === 'dcf') {
+      // criteri derivati: confronto diretto prezzo vs soglia calcolata dai dati
+      const derived =
+        cfg.id === 'graham' ? grahamNumber
+        : cfg.id === 'ncav' ? ncavThreshold
+        : isValid(data.dcf) && data.dcf > 0 ? 0.7 * data.dcf
+        : null;
+      if (price === null || derived === null) status = 'na';
+      else if (derived <= 0) status = 'fail'; // soglia derivata ≤ 0: il prezzo non può stare sotto
+      else status = price < derived ? 'pass' : 'fail';
+      valueStr = derived !== null && price !== null ? `${fmtC(derived)} vs ${fmtC(price)}` : 'N/A';
+      benchmarkStr =
+        cfg.id === 'graham' ? 'prezzo < √(22.5·EPS·BVPS)'
+        : cfg.id === 'ncav' ? 'prezzo < ⅔·NCAV/share'
+        : 'prezzo < 70% DCF';
+    } else {
+      const value = rawValue[cfg.id] ?? null;
+      status = value === null ? 'na' : compare(value, cfg.direction, cfg.threshold ?? 1) ? 'pass' : 'fail';
+      valueStr =
+        cfg.unit === '%' ? (value !== null ? `${value.toFixed(2)}%` : 'N/A')
+        : cfg.id === 'eps' ? fmtC(value)
+        : value !== null ? value.toFixed(2) : 'N/A';
+      benchmarkStr = `${DIRECTION_SYMBOL[cfg.direction]} ${cfg.threshold}${cfg.unit === '%' ? '%' : ''}`;
+    }
+
+    return crit(cfg.nameKey, cfg.weight, benchmarkStr, valueStr, status);
+  });
+  const scoreCriteria: ScoreCriterion[] = criteriaOut;
 
   // Score pesato: gli N/A sono esclusi dal totale
-  const totalWeight = criteria
+  const totalWeight = scoreCriteria
     .filter((c) => c.status !== 'na')
     .reduce((sum, c) => sum + c.weight, 0);
-  const achievedWeight = criteria
+  const achievedWeight = scoreCriteria
     .filter((c) => c.status === 'pass')
     .reduce((sum, c) => sum + c.weight, 0);
 
@@ -239,25 +231,26 @@ export const analyzeValueInvesting = (
   else if (overallScore >= 40) recommendation = 'hold';
   else recommendation = 'avoid';
 
+  // le note sono chiavi i18n (notes.*), tradotte in UI
   const notes: string[] = [];
   if (ratios.pe !== null && ratios.pe < 10) {
-    notes.push('P/E molto attraente - possibile sottovalutazione');
+    notes.push('notes.peLow');
   }
   if (ratios.roe !== null && ratios.roe > 20) {
-    notes.push('ROE eccellente - management efficiente');
+    notes.push('notes.roeHigh');
   }
   if (ratios.debtToEquity !== null && ratios.debtToEquity > 1) {
-    notes.push('⚠️ Livello di debito preoccupante');
+    notes.push('notes.debtHigh');
   }
   if (ratios.currentRatio !== null && ratios.currentRatio < 1) {
-    notes.push('⚠️ Possibili problemi di liquidità a breve termine');
+    notes.push('notes.liquidityLow');
   }
 
   return {
     symbol: data.symbol,
     companyName: data.companyName,
     overallScore: Math.round(overallScore),
-    criteria,
+    criteria: scoreCriteria,
     recommendation,
     notes,
   };

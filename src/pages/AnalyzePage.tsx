@@ -1,33 +1,79 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Button, ErrorState } from '@/components/common';
+import React, { useState } from 'react';
+import { Button, EmptyState, ErrorState } from '@/components/common';
 import { useAppStore } from '@/store';
-import {
-  FinancialDataInput,
-  RatiosDisplay,
-  VerdictCard,
-} from '@/components/modules/fundamental-analysis';
+import { RatiosDisplay, VerdictCard } from '@/components/modules/fundamental-analysis';
 import {
   ScreenerInput,
   ScreenerComparisonTable,
   ScreenerResult,
 } from '@/components/modules/screener';
-import { TickerSearch, RecentAnalyses, AnalysisSkeleton } from '@/components/modules/analyze';
+import {
+  TickerSearch,
+  RecentAnalyses,
+  AnalysisSkeleton,
+  FinancialsPanel,
+  CriteriaPanel,
+} from '@/components/modules/analyze';
 import { toFullFinancials } from '@/components/modules/analyze/toFullFinancials';
 import { getCompanyFinancials } from '@/services';
-import { calculateFinancialRatios, analyzeValueInvesting } from '@/utils/financial-calculations';
+import { calculateFinancialRatios, analyzeValueInvesting, DEFAULT_CRITERIA } from '@/utils/financial-calculations';
 import { useTranslation } from '@/i18n';
-import { CheckCircle2, Search, Layers } from 'lucide-react';
+import {
+  CompanyFinancials,
+  CriterionConfig,
+  FieldProvenance,
+  HistoricalMetrics,
+} from '@/types';
+import { CheckCircle2, Search, Layers, Play, RotateCcw } from 'lucide-react';
 
 type AnalyzeTab = 'single' | 'compare';
 
-// Home "cockpit": hero search ticker + tab Single | Compare + analisi recenti
+// PR7: home Analyze = hero "Carica dati" -> unico pannello dati editabili + criteri editabili -> "Analizza" on-demand
+const emptyDraft = (): CompanyFinancials => ({
+  symbol: '',
+  companyName: '',
+  sector: '',
+  industry: '',
+  revenue: 0,
+  netIncome: 0,
+  totalAssets: 0,
+  totalLiabilities: 0,
+  shareholdersEquity: 0,
+  longTermDebt: 0,
+  currentAssets: 0,
+  currentLiabilities: 0,
+  inventory: 0,
+  eps: 0,
+  bookValuePerShare: 0,
+  dividendPerShare: 0,
+  currentPrice: 0,
+  sharesOutstanding: 0,
+  marketCap: 0,
+  dcf: 0,
+  currency: 'USD',
+  reportDate: new Date().toISOString().split('T')[0],
+});
+
 export const AnalyzePage: React.FC = () => {
-  const { currentAnalysis, currentRatios, currentScore, currentProvenance, currentHistory, isLoading } = useAppStore();
+  const {
+    currentAnalysis,
+    currentRatios,
+    currentScore,
+    currentProvenance,
+    currentHistory,
+    isLoading,
+    setAnalysis,
+  } = useAppStore();
   const { t } = useTranslation();
   const [tab, setTab] = useState<AnalyzeTab>('single');
-  const [isInputCollapsed, setIsInputCollapsed] = useState(false);
-  const [showResults, setShowResults] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+
+  // Bozza editabile: popolata dall'hero (FMP) o a mano; l'analisi parte solo su "Analizza"
+  const [draft, setDraft] = useState<CompanyFinancials | null>(null);
+  const [draftHistory, setDraftHistory] = useState<HistoricalMetrics[] | undefined>(undefined);
+  const [draftProvenance, setDraftProvenance] = useState<FieldProvenance | null>(null);
+  const [criteria, setCriteria] = useState<CriterionConfig[]>(DEFAULT_CRITERIA);
+  const [showResults, setShowResults] = useState(false);
 
   // Stato del Compare mode (screener multi-azienda dentro Analyze)
   const [isScreenerLoading, setIsScreenerLoading] = useState(false);
@@ -35,26 +81,35 @@ export const AnalyzePage: React.FC = () => {
   const [screenerErrors, setScreenerErrors] = useState<string[]>([]);
   const [lastScreenerSymbols, setLastScreenerSymbols] = useState<string[]>([]);
 
-  const hasVisibleAnalysis = Boolean(
-    showResults && currentRatios && currentScore && currentAnalysis
-  );
+  const hasVisibleAnalysis = Boolean(showResults && currentRatios && currentScore && currentAnalysis);
+  const showAnalysisSkeleton = tab === 'single' && (isSearching || isLoading);
 
-  useEffect(() => {
-    // Collapse only when an analysis is actually visible.
-    if (hasVisibleAnalysis) {
-      setIsInputCollapsed(true);
-    }
-  }, [hasVisibleAnalysis]);
-
-  const handleAnalysisSuccess = useCallback(() => {
-    setShowResults(true);
-  }, []);
-
-  const handleStartNewSearch = useCallback(() => {
-    setIsInputCollapsed(false);
-    // Quando si riapre il pannello input, nasconde i risultati della precedente analisi.
+  const handleDataLoaded = (data: CompanyFinancials, history: HistoricalMetrics[], provenance: FieldProvenance) => {
+    setDraft(data);
+    setDraftHistory(history);
+    setDraftProvenance(provenance);
     setShowResults(false);
-  }, []);
+  };
+
+  const handleManualEntry = () => {
+    setDraft(emptyDraft());
+    setDraftHistory(undefined);
+    setDraftProvenance(null);
+    setShowResults(false);
+  };
+
+  const handleAnalyze = () => {
+    if (!draft) return;
+    setAnalysis(draft, draftHistory, draftProvenance ?? undefined, criteria);
+    setShowResults(true);
+  };
+
+  const handleNewSearch = () => {
+    setDraft(null);
+    setDraftHistory(undefined);
+    setDraftProvenance(null);
+    setShowResults(false);
+  };
 
   const handleScreenerRun = async (symbols: string[]) => {
     setIsScreenerLoading(true);
@@ -91,9 +146,6 @@ export const AnalyzePage: React.FC = () => {
     setScreenerErrors([]);
   };
 
-  // PR5: durante la ricerca hero o l'analisi del form, mostra skeleton al posto dei risultati
-  const showAnalysisSkeleton = tab === 'single' && (isSearching || isLoading);
-
   const tabs: { id: AnalyzeTab; label: string; icon: typeof Search }[] = [
     { id: 'single', label: t('analyze.tabSingle'), icon: Search },
     { id: 'compare', label: t('analyze.tabCompare'), icon: Layers },
@@ -101,8 +153,8 @@ export const AnalyzePage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Hero search — il gesto principale dell'app */}
-      <TickerSearch onAnalyzed={handleAnalysisSuccess} onSearchingChange={setIsSearching} />
+      {/* Hero: carica i dati nel pannello (non analizza) */}
+      <TickerSearch onDataLoaded={handleDataLoaded} onSearchingChange={setIsSearching} />
 
       {/* Tab Single | Compare */}
       <div className="flex gap-2 border-b border-gray-200" role="tablist" aria-label={t('analyze.tabsLabel')}>
@@ -132,13 +184,42 @@ export const AnalyzePage: React.FC = () => {
 
       {tab === 'single' && (
         <>
-          <FinancialDataInput
-            isCollapsed={isInputCollapsed}
-            onStartNewSearch={handleStartNewSearch}
-            onAnalysisSuccess={handleAnalysisSuccess}
-          />
-
           {showAnalysisSkeleton && <AnalysisSkeleton />}
+
+          {!showAnalysisSkeleton && !draft && (
+            <EmptyState
+              icon={Search}
+              title={t('analyze.emptyTitle')}
+              text={t('analyze.emptyText')}
+              action={
+                <Button onClick={handleManualEntry} type="button" variant="secondary">
+                  {t('analyze.manualEntry')}
+                </Button>
+              }
+            />
+          )}
+
+          {!showAnalysisSkeleton && draft && (
+            <>
+              <FinancialsPanel
+                value={draft}
+                onChange={(patch) => setDraft((prev) => (prev ? { ...prev, ...patch } : prev))}
+              />
+              <CriteriaPanel value={criteria} onChange={setCriteria} />
+              <div className="flex justify-end gap-3">
+                <Button variant="secondary" onClick={handleNewSearch} type="button">
+                  <span className="flex items-center gap-2">
+                    <RotateCcw className="w-4 h-4" /> {t('form.newSearch')}
+                  </span>
+                </Button>
+                <Button onClick={handleAnalyze} type="button" size="lg">
+                  <span className="flex items-center gap-2">
+                    <Play className="w-4 h-4" /> {t('form.analyze')}
+                  </span>
+                </Button>
+              </div>
+            </>
+          )}
 
           <div className="ui-anim-fade-slide" data-state={hasVisibleAnalysis && !showAnalysisSkeleton ? 'open' : 'closed'}>
             {currentRatios && <RatiosDisplay ratios={currentRatios} />}

@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import {
   AppState,
   CompanyFinancials,
+  CriterionConfig,
   FieldProvenance,
   HistoricalMetrics,
   PortfolioPosition,
@@ -32,8 +33,8 @@ function migrateLegacyStorage(): void {
 migrateLegacyStorage();
 
 interface AppStore extends AppState {
-  // Actions per analisi
-  setAnalysis: (data: CompanyFinancials, history?: HistoricalMetrics[], provenance?: FieldProvenance) => void;
+  // Actions per analisi (PR7: criteria opzionali, default DEFAULT_CRITERIA)
+  setAnalysis: (data: CompanyFinancials, history?: HistoricalMetrics[], provenance?: FieldProvenance, criteria?: CriterionConfig[]) => void;
   clearAnalysis: () => void;
   removeRecentAnalysis: (id: string) => void;
   
@@ -75,9 +76,9 @@ export const useAppStore = create<AppStore>()(
       error: null,
 
       // Analisi
-      setAnalysis: (data, history, provenance) => {
+      setAnalysis: (data, history, provenance, criteria) => {
         const ratios = calculateFinancialRatios(data);
-        const score = analyzeValueInvesting(data, ratios, history);
+        const score = analyzeValueInvesting(data, ratios, history, criteria);
 
         const newEntry: RecentAnalysis = {
           id: `analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
