@@ -78,7 +78,7 @@ export const Navigation: React.FC = () => {
               </button>
 
               {isMobileMenuOpen && (
-                <div className="absolute top-16 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-lg border-t border-white/60 dark:border-gray-800 z-50">
+                <div className="absolute top-16 left-0 right-0 bg-white dark:bg-gray-900 shadow-lg border-t border-gray-200 dark:border-gray-800 z-50">
                   <div className="px-4 py-2 space-y-1">
                     {navItems.map((item) => {
                       const Icon = item.icon;
