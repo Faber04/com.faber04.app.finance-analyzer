@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/common';
+import { useAppStore } from '@/store';
 import { JournalEntry } from '@/types';
 import { formatCurrency } from '@/utils/financial-calculations';
-import { Trash2, Edit2, TrendingUp, TrendingDown, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
+import { Trash2, Edit2, TrendingUp, TrendingDown, BookOpen, ChevronDown, ChevronUp, LineChart } from 'lucide-react';
 
 interface JournalEntryCardProps {
   entry: JournalEntry;
@@ -16,6 +17,12 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
   onDelete 
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { recentAnalyses } = useAppStore();
+
+  // Flight log: collega la entry all'analisi recente dello stesso symbol (analizzato → comprato → esito)
+  const linkedAnalysis = recentAnalyses.find(
+    (a) => a.symbol.toUpperCase() === entry.symbol.toUpperCase()
+  );
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -61,6 +68,21 @@ export const JournalEntryCard: React.FC<JournalEntryCardProps> = ({
             </span>
           </div>
           <p className="text-sm text-gray-500">{entry.companyName}</p>
+          {linkedAnalysis && (
+            <span
+              className="mt-1 inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-primary-50 text-primary-700 border border-primary-200"
+              title="Analisi collegata nella home Analyze"
+            >
+              <LineChart className="w-3.5 h-3.5" />
+              Analizzato il{' '}
+              {new Date(linkedAnalysis.analyzedAt).toLocaleDateString('it-IT', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+              })}{' '}
+              · Score {linkedAnalysis.overallScore}/100
+            </span>
+          )}
         </div>
         <div className="flex flex-col items-end">
           <span className="text-sm text-gray-500 mb-2">

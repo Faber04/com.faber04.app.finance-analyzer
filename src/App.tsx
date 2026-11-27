@@ -1,10 +1,8 @@
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { Navigation } from './components/Navigation';
-import { DashboardPage } from './pages/DashboardPage';
-import { AnalysisPage } from './pages/AnalysisPage';
+import { AnalyzePage } from './pages/AnalyzePage';
 import { PortfolioPage } from './pages/PortfolioPage';
 import { JournalPage } from './pages/JournalPage';
-import { ScreenerPage } from './pages/ScreenerPage';
 import { SettingsPage } from './pages/SettingsPage';
 
 function App() {
@@ -14,11 +12,10 @@ function App() {
         <Navigation />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/analysis" element={<AnalysisPage />} />
-            <Route path="/screener" element={<ScreenerPage />} />
+            <Route path="/" element={<AnalyzePage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/journal" element={<JournalPage />} />
+            {/* Settings raggiungibile solo dall'icona in nav, non da voce di menu */}
             <Route path="/settings" element={<SettingsPage />} />
           </Routes>
         </main>
