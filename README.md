@@ -1,38 +1,60 @@
-# Finance Analyzer — The Value Investor's Cockpit
+<h1 align="center">Finance Analyzer</h1>
 
-A professional web app to analyze investments, read company financials and apply the value investing principles of Benjamin Graham and Warren Buffett — from raw data to a clear verdict, in one cockpit.
+<p align="center"><b>The Value Investor's Cockpit</b><br>
+Analyze companies with Graham & Buffett's value investing principles — from raw financials to a clear verdict, in one place.</p>
 
-**Live Demo**: [https://www.faber04.com/app/finance-analyzer/](https://www.faber04.com/app/finance-analyzer/)
-**Current Version**: `v0.4.0-rc.1`
-**Status**: deployed and online, light/dark glass UI, EN/IT
+<p align="center">
+  <a href="https://www.faber04.com/app/finance-analyzer/"><img src="https://img.shields.io/badge/Live_Demo-0ea5e9?style=for-the-badge" alt="Live demo"></a>
+  <a href="https://github.com/Faber04/com.faber04.app.finance-analyzer"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
+</p>
 
-## What it does
+<p align="center">
+  <img src="https://img.shields.io/badge/version-0.4.0--rc.1-0ea5e9" alt="version">
+  <img src="https://img.shields.io/badge/tests-43_passing-22c55e" alt="tests">
+  <img src="https://img.shields.io/badge/license-MIT-fbbf24" alt="license">
+  <img src="https://img.shields.io/badge/EN_%2F_IT-i18n-8b5cf6" alt="i18n">
+</p>
 
-### Analyze — single company
-- Type a ticker in the hero and the app auto-fills the latest financials from Financial Modeling Prep (FMP), with per-field provenance and 10-year history.
-- All fundamental data lives in **one editable panel** — fix a number by hand if you disagree with the source.
-- Fixed **Graham/Buffett criteria** (read-only) drive the analysis.
-- Press **Analyze** and get ratios, a **Value Score (0–100)** with a recommendation (Strong Buy / Buy / Hold / Avoid), a score ring, a 10-year sparkline and a stale-data warning when the report is old.
+---
 
-### Compare — multi-company screener
-- Add up to **6 tickers** and run the screener: sortable comparison table (score, P/E, P/B, ROE, D/E, recommendation) with a trophy for the best score.
+## The cockpit
 
-### Track — portfolio
-- Add positions and monitor them: real-time gain/loss via quote refresh, sector allocation donut, gain/loss bar chart and performance chart (Recharts).
+| | | |
+|---|---|---|
+| **Analyze** | **Compare** | **Track** | **Reflect** |
+| Type a ticker: FMP auto-fills financials with per-field provenance and 10-year history. All data in one editable panel. Press Analyze for ratios + Value Score. | Screener for up to 6 companies side by side: sortable table, best-in-class trophy. | Portfolio with live gain/loss, sector donut, performance and gain/loss charts. | Investment journal: write the thesis before you buy, tag, filter, review outcomes. |
 
-### Reflect — investment journal
-- Write your thesis **before** you buy, tag it, filter and search entries, and review outcomes and lessons learned.
+Every analysis ends in a **Verdict Card**: Value Score 0–100, recommendation (Strong Buy / Buy / Hold / Avoid), score ring, 10-year sparkline, provenance badge and a stale-data warning when the report is old.
 
 ### Design
-- macOS-style design system: glass cards over a mesh gradient, **light/dark theme** (persisted), fully responsive with a solid mobile menu.
-- **i18n EN/IT** with English default; empty / error / loading states on every screen.
+
+macOS-style design system: **glass cards** over a mesh gradient, **light/dark theme** (persisted), responsive with a solid mobile menu, empty / error / loading states on every screen, **EN/IT i18n** with English default.
+
+---
+
+## Scoring — Value Score v2
+
+Weighted Graham/Buffett criteria in `src/utils/financial-calculations.ts` (sum 100). Criteria with missing data are N/A and excluded from the total — a missing number never passes or fails a test.
+
+| Criterion | Benchmark | Weight |
+|-----------|-----------|--------|
+| EPS | > 0 | 10% |
+| P/E | < 15 | 10% |
+| P/B | < 1.5 | 5% |
+| P/S | < 3 | 5% |
+| ROE | ≥ 15% | 10% |
+| ROE 10y trend | ≥ 10% in each of the last 10 years | 10% |
+| Net margin | ≥ 10% | 5% |
+| Debt/Equity | < 0.5 | 10% |
+| Current ratio | ≥ 1.5 | 5% |
+| Graham Number | price < √(22.5·EPS·BVPS) | 10% |
+| NCAV net-net | price < ⅔·NCAV per share | 10% |
+| Margin of safety vs DCF | price < 70% of FMP DCF | 10% |
+
+---
 
 ## Quick start
 
-### Prerequisites
-- Node.js 18+
-
-### Local setup
 ```bash
 git clone https://github.com/Faber04/com.faber04.app.finance-analyzer.git
 cd com.faber04.app.finance-analyzer
@@ -41,14 +63,25 @@ echo "VITE_FMP_API_KEY=your_fmp_key" > .env.local
 npm run dev
 ```
 
-### API key
-The app needs a **Financial Modeling Prep** API key. Set `VITE_FMP_API_KEY` in `.env.local` (recommended) or store `FMP_API_KEY` in the browser's localStorage.
+**API key**: set `VITE_FMP_API_KEY` in `.env.local`, or store `FMP_API_KEY` in the browser localStorage. Data provider: [Financial Modeling Prep](https://financialmodelingprep.com).
 
-### Production routing
-The app is published in a subfolder (`/app/finance-analyzer/`) and uses HashRouter:
-- `https://www.faber04.com/app/finance-analyzer/#/`
-- `.../#/portfolio`
-- `.../#/journal`
+Production uses HashRouter under a subfolder: `https://www.faber04.com/app/finance-analyzer/#/`, `#/portfolio`, `#/journal`.
+
+---
+
+## Tech stack
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React_18-61dafb?logo=react&logoColor=black" alt="React">
+  <img src="https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Vite-646cff?logo=vite&logoColor=white" alt="Vite">
+  <img src="https://img.shields.io/badge/Tailwind-38bdf8?logo=tailwindcss&logoColor=white" alt="Tailwind">
+  <img src="https://img.shields.io/badge/Zustand-ff7a00" alt="Zustand">
+  <img src="https://img.shields.io/badge/Recharts-ff6b6b" alt="Recharts">
+  <img src="https://img.shields.io/badge/Vitest-6e9f18?logo=vitest&logoColor=white" alt="Vitest">
+</p>
+
+Brand tokens: navy `#0a0f1c`, teal `#0ea5e9`, amber `#fbbf24`.
 
 ## Project structure
 
@@ -71,56 +104,27 @@ src/
   utils/                       # financial-calculations (ratios, value score)
 ```
 
-## Scoring criteria (Value Score v2)
-
-Companies are scored in `src/utils/financial-calculations.ts` — weighted Graham/Buffett criteria, sum 100. Criteria with missing data are marked N/A and excluded from the total, so a missing number never passes or fails a test:
-
-| Criterion | Benchmark | Weight |
-|-----------|-----------|--------|
-| EPS | > 0 | 10% |
-| P/E | < 15 | 10% |
-| P/B | < 1.5 | 5% |
-| P/S | < 3 | 5% |
-| ROE | ≥ 15% | 10% |
-| ROE 10y trend | ≥ 10% in each of the last 10 years | 10% |
-| Net margin | ≥ 10% | 5% |
-| Debt/Equity | < 0.5 | 10% |
-| Current ratio | ≥ 1.5 | 5% |
-| Graham Number | price < √(22.5·EPS·BVPS) | 10% |
-| NCAV net-net | price < ⅔·NCAV per share | 10% |
-| Margin of safety vs DCF | price < 70% of FMP DCF | 10% |
-
-## Tech stack
-
-- **React 18** + **TypeScript**
-- **Vite** build tool & dev server
-- **Tailwind CSS** design system (brand tokens: navy `#0a0f1c`, teal `#0ea5e9`, amber `#fbbf24`)
-- **Zustand** state management with persistence
-- **Recharts** charts
-- **Lucide React** icons
-- **Financial Modeling Prep (FMP)** data provider
-
 ## Quality
 
-- `npm test` — 43 tests (calculations, i18n parity, FMP client)
-- `npm run lint` — ESLint, zero warnings
-- `npm run build` — production build
+```bash
+npm test        # 43 tests: calculations, i18n parity, FMP client
+npm run lint    # ESLint, zero warnings
+npm run build   # production build
+```
 
 ## Roadmap
 
-- **0.5.0**: PDF export (analysis + portfolio)
-- **0.6.0**: installable PWA + price alerts + notification center
-- **0.7.0**: backtesting MVP with key metrics
-- **1.0.0**: final stabilization, end-to-end tests, release docs
-
-## Disclaimer
-
-**This app is for educational purposes only.** It is not financial advice. Data may not be 100% accurate. Always consult a professional before investing.
-
-## License
-
-MIT — free for educational and personal use.
+- **0.5.0** — PDF export (analysis + portfolio)
+- **0.6.0** — installable PWA + price alerts + notification center
+- **0.7.0** — backtesting MVP with key metrics
+- **1.0.0** — final stabilization, end-to-end tests, release docs
 
 ---
 
-Built by [@Faber04](https://github.com/Faber04)
+> **Disclaimer**: this app is for educational purposes only and is not financial advice. Data may not be 100% accurate. Always consult a professional before investing.
+
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-fbbf24" alt="MIT">
+</p>
+
+<p align="center">Built by <a href="https://github.com/Faber04">@Faber04</a></p>
