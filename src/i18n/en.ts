@@ -2,6 +2,7 @@
 export type Dictionary = Record<string, string>;
 
 export const en: Dictionary = {
+  'app.title': "Finance Analyzer — The Value Investor's Cockpit",
   // Navigation
   'nav.analyze': 'Analyze',
   'nav.portfolio': 'Portfolio',

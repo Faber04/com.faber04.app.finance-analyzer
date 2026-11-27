@@ -2,6 +2,7 @@
 import type { Dictionary } from './en';
 
 export const it: Dictionary = {
+  'app.title': "Finance Analyzer — La console dell'investitore value",
   // Navigazione
   'nav.analyze': 'Analyze',
   'nav.portfolio': 'Portfolio',

@@ -1,10 +1,19 @@
+import { useEffect } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { Navigation } from './components/Navigation';
+import { useTranslation } from './i18n';
 import { AnalyzePage } from './pages/AnalyzePage';
 import { PortfolioPage } from './pages/PortfolioPage';
 import { JournalPage } from './pages/JournalPage';
 
 function App() {
+  const { t, lang } = useTranslation();
+
+  // Titolo della scheda browser tradotto (default EN)
+  useEffect(() => {
+    document.title = t('app.title');
+  }, [t, lang]);
+
   return (
     <HashRouter>
       <div className="min-h-screen transition-colors duration-200">
